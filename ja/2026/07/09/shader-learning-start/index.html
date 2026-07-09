@@ -9,7 +9,7 @@
   
   <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.icon_font = '4552607_ex15nbittbh';window.REIMU_CONFIG.clipboard_tips = {"success":{"zh-CN":"复制成功 (*^▽^*)","ja":"コピー成功 (*^▽^*)"},"fail":{"zh-CN":"复制失败 (ﾟ⊿ﾟ)ﾂ","ja":"コピー失敗 (ﾟ⊿ﾟ)ﾂ"},"copyright":{"enable":false,"count":50,"license_type":"by-nc-sa"}};window.REIMU_CONFIG.clipboard_tips.copyright.content = '本博客所有文章除特别声明外，均采用 BY-NC-SA 许可协议。转载请注明出处！';window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://SANaoi.github.io';window.REIMU_CONFIG.relative = '/';window.REIMU_CONFIG.i18n_languages = ["ja"];</script>
   <title>
-    Hello World | SANaoi
+    グラフィックスレンダリング学習メモ00：ゼロから始めるShader学習 | SANaoi
   </title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic|Noto Serif SC:400,400italic,700,700italic&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic|Noto Serif SC:400,400italic,700,700italic&display=swap" media="print" onload="this.media='all'">
@@ -17,17 +17,23 @@
     
 <link rel="stylesheet" href="/css/loader.css">
 
-    <meta name="description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+    <meta name="description" content="はじめにゲーム制作をしている中で、少しずつ気づいたことがあります。通常のスクリプト、マテリアルのパラメータ、あるいは UI コンポーネントだけで実装しようとすると、処理が複雑になったり、表現が安定しなかったりする機能があります。 しかし Shader の考え方を使うと、より直接的で効率のよい方法で解決できる場合があります。 それが、私が Shader を本格的に学び始めた大きなきっかけです。 現在">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hello World">
-<meta property="og:url" content="https://sanaoi.github.io/ja/2026/07/08/undefined/index.html">
+<meta property="og:title" content="グラフィックスレンダリング学習メモ00：ゼロから始めるShader学習">
+<meta property="og:url" content="https://sanaoi.github.io/ja/2026/07/09/shader-learning-start/index.html">
 <meta property="og:site_name" content="SANaoi">
-<meta property="og:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+<meta property="og:description" content="はじめにゲーム制作をしている中で、少しずつ気づいたことがあります。通常のスクリプト、マテリアルのパラメータ、あるいは UI コンポーネントだけで実装しようとすると、処理が複雑になったり、表現が安定しなかったりする機能があります。 しかし Shader の考え方を使うと、より直接的で効率のよい方法で解決できる場合があります。 それが、私が Shader を本格的に学び始めた大きなきっかけです。 現在">
 <meta property="og:locale" content="ja_JP">
-<meta property="article:published_time" content="2026-07-07T15:03:50.642Z">
-<meta property="article:modified_time" content="2026-07-07T15:03:50.643Z">
+<meta property="og:image" content="https://sanaoi.github.io/2026/07/09/shader-learning-start/snowMap.gif">
+<meta property="og:image" content="https://sanaoi.github.io/2026/07/09/shader-learning-start/LOD.gif">
+<meta property="og:image" content="https://sanaoi.github.io/2026/07/09/shader-learning-start/MaskDustortTex.gif">
+<meta property="article:published_time" content="2026-07-09T13:35:00.000Z">
+<meta property="article:modified_time" content="2026-07-09T16:27:04.293Z">
 <meta property="article:author" content="SANaoi">
+<meta property="article:tag" content="Shader">
+<meta property="article:tag" content="Unity">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://sanaoi.github.io/2026/07/09/shader-learning-start/snowMap.gif">
     <link rel="alternate" href="/atom.xml" title="SANaoi" type="application/atom+xml">
     <link rel="shortcut icon" href="/images/favicon.ico">
   
@@ -148,8 +154,8 @@
         selectOptions.forEach((item) => {
           item.addEventListener("click", () => {
             const langMap = {};
-              langMap['zh-CN'] = '/2026/07/08/undefined/';
-              langMap['ja'] = '/ja/2026/07/08/undefined/';
+              langMap['zh-CN'] = '/2026/07/09/shader-learning-start/';
+              langMap['ja'] = '/ja/2026/07/09/shader-learning-start/';
             selectedLang.textContent = item.textContent;
             selectItems.classList.remove("show");
             selectOptions.forEach((option) => {
@@ -172,11 +178,11 @@
 <header id="header" aria-label="Site header">
         <picture>
         </picture>
-          <img  fetchpriority="high" src="/images/banner.webp" alt="Hello World">
+          <img  fetchpriority="high" src="/images/banner.webp" alt="グラフィックスレンダリング学習メモ00：ゼロから始めるShader学習">
   <div id="header-outer">
     <div id="header-title">
           <span id="logo">
-            <h1 data-aos="slide-up">Hello World</h1>
+            <h1 data-aos="slide-up">グラフィックスレンダリング学習メモ00：ゼロから始めるShader学習</h1>
           </span>
         <h2 id="subtitle-wrap" data-aos="slide-down">
         </h2>
@@ -191,26 +197,26 @@
     <div class="sidebar-wrap" data-aos="fade-up">
           <div class="sidebar-toc-sidebar"><h3 class="toc-title">見出し</h3>
 <div class="sidebar-toc-wrapper toc-div-class" >
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Quick-Start"><span class="toc-number">1.</span> <span class="toc-text">Quick Start</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Create-a-new-post"><span class="toc-number">1.1.</span> <span class="toc-text">Create a new post</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Run-server"><span class="toc-number">1.2.</span> <span class="toc-text">Run server</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Generate-static-files"><span class="toc-number">1.3.</span> <span class="toc-text">Generate static files</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Deploy-to-remote-sites"><span class="toc-number">1.4.</span> <span class="toc-text">Deploy to remote sites</span></a></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%81%AF%E3%81%98%E3%82%81%E3%81%AB"><span class="toc-number">1.</span> <span class="toc-text">はじめに</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%82%A8%E3%83%95%E3%82%A7%E3%82%AF%E3%83%88%E5%B1%95%E7%A4%BA"><span class="toc-number">2.</span> <span class="toc-text">エフェクト展示</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9B%AA%E4%B8%8A%E3%81%AE%E8%BB%8C%E8%B7%A1"><span class="toc-number">2.1.</span> <span class="toc-text">雪上の軌跡</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Tessellation-LOD"><span class="toc-number">2.2.</span> <span class="toc-text">Tessellation LOD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E3%83%86%E3%82%AF%E3%82%B9%E3%83%81%E3%83%A3%E6%AD%AA%E3%81%BF%E3%83%87%E3%82%A3%E3%82%BE%E3%83%AB%E3%83%96"><span class="toc-number">2.3.</span> <span class="toc-text">テクスチャ歪みディゾルブ</span></a></li></ol></li></ol>
 </div>
 </div>
           <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
-  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="SANaoi" class="lazyload">
+  <img data-src="/avatar/avatar.png" data-sizes="auto" alt="SANaoi" class="lazyload">
   <div class="sidebar-author-name">SANaoi</div>
   <div class="sidebar-description"></div>
 </div>
 <div class="sidebar-state">
   <div class="sidebar-state-article">
     <div>投稿</div>
-    <div class="sidebar-state-number">4</div>
+    <div class="sidebar-state-number">5</div>
   </div>
   <div class="sidebar-state-category">
     <div>カテゴリー</div>
-    <div class="sidebar-state-number">1</div>
+    <div class="sidebar-state-number">2</div>
   </div>
   <div class="sidebar-state-tag">
     <div>タグ</div>
-    <div class="sidebar-state-number">1</div>
+    <div class="sidebar-state-number">3</div>
   </div>
 </div>
 <div class="sidebar-social" >
@@ -257,13 +263,13 @@
   </div>
 </aside>
 
-          <section id="main" aria-label="Main content"><article id="post-hello-world" class="h-entry article" itemscope itemtype="https://schema.org/BlogPosting">
+          <section id="main" aria-label="Main content"><article id="post-shader/shader0-ja" class="h-entry article" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-inner" data-aos="fade-up">
     <div class="article-meta">
       <div class="article-date">
   <span class="article-date-link icon-calendar" data-aos="zoom-in">
-    <time datetime="2026-07-07T15:03:50.642Z" itemprop="datePublished">2026-07-08</time>
-    <time style="display: none;" id="post-update-time">2026-07-08</time>
+    <time datetime="2026-07-09T13:35:00.000Z" itemprop="datePublished">2026-07-09</time>
+    <time style="display: none;" id="post-update-time">2026-07-10</time>
   </span>
 </div>
 
@@ -272,24 +278,25 @@
     <div class="hr-line"></div>
     
     <div class="e-content article-entry" itemprop="articleBody">
-        <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+        <h2 id="はじめに"><a href="#はじめに" class="headerlink" title="はじめに"></a>はじめに</h2><p>ゲーム制作をしている中で、少しずつ気づいたことがあります。通常のスクリプト、マテリアルのパラメータ、あるいは UI コンポーネントだけで実装しようとすると、処理が複雑になったり、表現が安定しなかったりする機能があります。</p>
+<p>しかし Shader の考え方を使うと、より直接的で効率のよい方法で解決できる場合があります。</p>
+<p>それが、私が Shader を本格的に学び始めた大きなきっかけです。</p>
+<p>現在の学習方法は、かなり実践寄りです。興味を持ったエフェクトがあれば、まず自分で実装してみるようにしています。</p>
+<p>Shader 関連の書籍や記事を読みながら基礎概念を理解し、他の人が実装したエフェクトを分解して、ゲーム内で再現してみる。分からない部分は AI も活用しながら、コードの意味や処理の流れを整理しています。</p>
+<p>まだ体系的に理解できているとは言えませんが、いくつかの段階的な成果は出てきました。今後の記事では、実際に作ったエフェクトを中心に、重要な部分を絞って整理していく予定です。</p>
+<h2 id="エフェクト展示"><a href="#エフェクト展示" class="headerlink" title="エフェクト展示"></a>エフェクト展示</h2><h3 id="雪上の軌跡"><a href="#雪上の軌跡" class="headerlink" title="雪上の軌跡"></a>雪上の軌跡</h3><p>マウスの移動を記録し、雪の表面に目に見えるインタラクティブな軌跡を残します。</p>
+<p><img src="/2026/07/09/shader-learning-start/snowMap.gif" alt="雪上の軌跡"></p>
+<h3 id="Tessellation-LOD"><a href="#Tessellation-LOD" class="headerlink" title="Tessellation LOD"></a>Tessellation LOD</h3><p>カメラとの距離に応じて曲面細分の度合いを動的に調整し、近くではより多くのディテールを保ち、遠くでは三角形の数を減らします。</p>
+<p><img src="/2026/07/09/shader-learning-start/LOD.gif" alt="Tessellation LOD"></p>
+<h3 id="テクスチャ歪みディゾルブ"><a href="#テクスチャ歪みディゾルブ" class="headerlink" title="テクスチャ歪みディゾルブ"></a>テクスチャ歪みディゾルブ</h3><p>テクスチャ、歪み、エッジディゾルブを組み合わせた表現の実装例です。</p>
+<p><img src="/2026/07/09/shader-learning-start/MaskDustortTex.gif" alt="テクスチャ歪みディゾルブ"></p>
 
     </div>
     <footer class="article-footer">
-      
-      
+        <a class="article-category-link" href="/ja/categories/Unity-shader/" title="Unity-shader" data-aos="zoom-in">Unity-shader</a>
+
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/ja/tags/Shader/" rel="tag" title="Shader">Shader</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/ja/tags/Unity/" rel="tag" title="Unity">Unity</a></li></ul>
+
     </footer>
   </div>
     <nav id="article-nav" aria-label="Article navigation" data-aos="fade-up">
@@ -325,10 +332,10 @@
       </div>
       <div>
         <span class="icon-brush"></span>
-        87
+        867
         &nbsp;|&nbsp;
         <span class="icon-coffee"></span>
-        00:04
+        00:07
       </div>
       <div>
         <span class="icon-eye"></span>
@@ -350,26 +357,26 @@
   <div class="sidebar-wrap">
         <div class="sidebar-toc-sidebar"><h3 class="toc-title">見出し</h3>
 <div class="sidebar-toc-wrapper toc-div-class" >
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Quick-Start"><span class="toc-number">1.</span> <span class="toc-text">Quick Start</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Create-a-new-post"><span class="toc-number">1.1.</span> <span class="toc-text">Create a new post</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Run-server"><span class="toc-number">1.2.</span> <span class="toc-text">Run server</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Generate-static-files"><span class="toc-number">1.3.</span> <span class="toc-text">Generate static files</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Deploy-to-remote-sites"><span class="toc-number">1.4.</span> <span class="toc-text">Deploy to remote sites</span></a></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%81%AF%E3%81%98%E3%82%81%E3%81%AB"><span class="toc-number">1.</span> <span class="toc-text">はじめに</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%82%A8%E3%83%95%E3%82%A7%E3%82%AF%E3%83%88%E5%B1%95%E7%A4%BA"><span class="toc-number">2.</span> <span class="toc-text">エフェクト展示</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9B%AA%E4%B8%8A%E3%81%AE%E8%BB%8C%E8%B7%A1"><span class="toc-number">2.1.</span> <span class="toc-text">雪上の軌跡</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Tessellation-LOD"><span class="toc-number">2.2.</span> <span class="toc-text">Tessellation LOD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E3%83%86%E3%82%AF%E3%82%B9%E3%83%81%E3%83%A3%E6%AD%AA%E3%81%BF%E3%83%87%E3%82%A3%E3%82%BE%E3%83%AB%E3%83%96"><span class="toc-number">2.3.</span> <span class="toc-text">テクスチャ歪みディゾルブ</span></a></li></ol></li></ol>
 </div>
 </div>
         <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
-  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="SANaoi" class="lazyload">
+  <img data-src="/avatar/avatar.png" data-sizes="auto" alt="SANaoi" class="lazyload">
   <div class="sidebar-author-name">SANaoi</div>
   <div class="sidebar-description"></div>
 </div>
 <div class="sidebar-state">
   <div class="sidebar-state-article">
     <div>投稿</div>
-    <div class="sidebar-state-number">4</div>
+    <div class="sidebar-state-number">5</div>
   </div>
   <div class="sidebar-state-category">
     <div>カテゴリー</div>
-    <div class="sidebar-state-number">1</div>
+    <div class="sidebar-state-number">2</div>
   </div>
   <div class="sidebar-state-tag">
     <div>タグ</div>
-    <div class="sidebar-state-number">1</div>
+    <div class="sidebar-state-number">3</div>
   </div>
 </div>
 <div class="sidebar-social" >
@@ -472,13 +479,13 @@
       <script data-pjax>
         window.REIMU_POST = {
           author: "SANaoi",
-          title: "Hello World",
-          url: "https://sanaoi.github.io/2026/07/08/undefined/",
+          title: "グラフィックスレンダリング学習メモ00：ゼロから始めるShader学習",
+          url: "https://sanaoi.github.io/2026/07/09/shader-learning-start/",
           excerpt: "",
           description: "",
-          stripContent: "Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick StartCreate a new post1$ hexo new &amp;quot;My New Po",
-          date: "Wed Jul 08 2026 00:03:50 GMT+0900",
-          updated: "Wed Jul 08 2026 00:03:50 GMT+0900",
+          stripContent: "はじめにゲーム制作をしている中で、少しずつ気づいたことがあります。通常のスクリプト、マテリアルのパラメータ、あるいは UI コンポーネントだけで実装しようとすると、処理が複雑になったり、表現が安定しなかったりする機能があります。 しかし Shader の考え方を使うと、より直接的で効率のよい方法で解決できる場合があります。 それが、私が Shader を本格的に学び始めた大きなきっかけです。 現在の学習方法は、かなり実践寄りです。興味を持ったエフェクトがあれば、まず自分で実装してみるようにしてい",
+          date: "Thu Jul 09 2026 22:35:00 GMT+0900",
+          updated: "Fri Jul 10 2026 01:27:04 GMT+0900",
           cover: "/images/banner.webp",
         };
       </script>

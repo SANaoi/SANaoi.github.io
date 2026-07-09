@@ -1,5 +1,5 @@
   <!DOCTYPE html>
-  <html lang="ja"  
+  <html lang="zh-CN"  
       data-theme-mode="auto"
   >
   <head>
@@ -9,7 +9,7 @@
   
   <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.icon_font = '4552607_ex15nbittbh';window.REIMU_CONFIG.clipboard_tips = {"success":{"zh-CN":"复制成功 (*^▽^*)","ja":"コピー成功 (*^▽^*)"},"fail":{"zh-CN":"复制失败 (ﾟ⊿ﾟ)ﾂ","ja":"コピー失敗 (ﾟ⊿ﾟ)ﾂ"},"copyright":{"enable":false,"count":50,"license_type":"by-nc-sa"}};window.REIMU_CONFIG.clipboard_tips.copyright.content = '本博客所有文章除特别声明外，均采用 BY-NC-SA 许可协议。转载请注明出处！';window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://SANaoi.github.io';window.REIMU_CONFIG.relative = '/';window.REIMU_CONFIG.i18n_languages = ["ja"];</script>
   <title>
-    about | SANaoi
+    图形渲染学习笔记00：从0开始Shader学习 | SANaoi
   </title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic|Noto Serif SC:400,400italic,700,700italic&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic|Noto Serif SC:400,400italic,700,700italic&display=swap" media="print" onload="this.media='all'">
@@ -17,17 +17,23 @@
     
 <link rel="stylesheet" href="/css/loader.css">
 
-    <meta property="og:type" content="website">
-<meta property="og:title" content="about">
-<meta property="og:url" content="https://sanaoi.github.io/ja/about/index.html">
+    <meta name="description" content="写在前面很多时候，在做游戏项目的过程中慢慢意识到：有些功能如果只靠普通脚本、材质参数或者 UI 组件去堆，会变得很绕，效果也不一定稳定；但如果换成 Shader 的思路，反而可以用更直接、更高效的方式解决。 这也是我开始认真学习 Shader 的主要契机。 目前我的学习方式比较偏实践，对一个效果感兴趣的话就会尝试去实现。 一边阅读 Shader 相关书籍和文章，理解基础概念；拆解别人实现过的效果，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="图形渲染学习笔记00：从0开始Shader学习">
+<meta property="og:url" content="https://sanaoi.github.io/2026/07/09/shader-learning-start/index.html">
 <meta property="og:site_name" content="SANaoi">
-<meta property="og:locale" content="ja_JP">
-<meta property="og:image" content="https://sanaoi.github.io/images/banner.webp">
-<meta property="article:published_time" content="2026-07-07T15:27:43.000Z">
-<meta property="article:modified_time" content="2026-07-07T17:00:09.352Z">
+<meta property="og:description" content="写在前面很多时候，在做游戏项目的过程中慢慢意识到：有些功能如果只靠普通脚本、材质参数或者 UI 组件去堆，会变得很绕，效果也不一定稳定；但如果换成 Shader 的思路，反而可以用更直接、更高效的方式解决。 这也是我开始认真学习 Shader 的主要契机。 目前我的学习方式比较偏实践，对一个效果感兴趣的话就会尝试去实现。 一边阅读 Shader 相关书籍和文章，理解基础概念；拆解别人实现过的效果，">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://sanaoi.github.io/2026/07/09/shader-learning-start/snowMap.gif">
+<meta property="og:image" content="https://sanaoi.github.io/2026/07/09/shader-learning-start/LOD.gif">
+<meta property="og:image" content="https://sanaoi.github.io/2026/07/09/shader-learning-start/MaskDustortTex.gif">
+<meta property="article:published_time" content="2026-07-09T13:35:00.000Z">
+<meta property="article:modified_time" content="2026-07-09T16:22:47.426Z">
 <meta property="article:author" content="SANaoi">
+<meta property="article:tag" content="Shader">
+<meta property="article:tag" content="Unity">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://sanaoi.github.io/images/banner.webp">
+<meta name="twitter:image" content="https://sanaoi.github.io/2026/07/09/shader-learning-start/snowMap.gif">
     <link rel="alternate" href="/atom.xml" title="SANaoi" type="application/atom+xml">
     <link rel="shortcut icon" href="/images/favicon.ico">
   
@@ -93,44 +99,44 @@
       <div id="wrap">
         <div id="header-nav">
   <nav id="main-nav" aria-label="Primary navigation">
-        <a class="main-nav-link-wrap" href="/ja/">
+        <a class="main-nav-link-wrap" href="/">
             <div class="main-nav-icon icon rotate">
                 &#xe62b;
             </div>
-          <span class="main-nav-link">ホーム</span>
+          <span class="main-nav-link">首页</span>
         </a>
-        <a class="main-nav-link-wrap" href="/ja/archives">
+        <a class="main-nav-link-wrap" href="/archives">
             <div class="main-nav-icon icon rotate">
                 &#xe62b;
             </div>
-          <span class="main-nav-link">アーカイブ</span>
+          <span class="main-nav-link">归档</span>
         </a>
-        <a class="main-nav-link-wrap" href="/ja/about">
+        <a class="main-nav-link-wrap" href="/about">
             <div class="main-nav-icon icon rotate">
                 &#xe62b;
             </div>
-          <span class="main-nav-link">プロフィール</span>
+          <span class="main-nav-link">关于</span>
         </a>
-        <a class="main-nav-link-wrap" href="/ja/friend">
+        <a class="main-nav-link-wrap" href="/friend">
             <div class="main-nav-icon icon rotate">
                 &#xe62b;
             </div>
-          <span class="main-nav-link">フレンド</span>
+          <span class="main-nav-link">友链</span>
         </a>
     <a id="main-nav-toggle" class="nav-icon" aria-label="Toggle navigation" role="button"></a>
   </nav>
   <nav id="sub-nav" aria-label="Secondary navigation">
-      <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS フィード" aria-label="RSS フィード" target="_blank"></a>
+      <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅" aria-label="RSS 订阅" target="_blank"></a>
   </nav>
     <nav id="i18n-nav" aria-label="Language selection">
       <div class="custom-dropdown">
         <div class="select-selected" id="select-selected" role="button" aria-haspopup="listbox" aria-expanded="false" aria-label="Language menu">
           <span id="nav-language-btn" class="nav-icon" style="padding: 0 20px 0 0"></span>
-          <span id="selected-lang">日本語</span>
+          <span id="selected-lang">简体中文</span>
         </div>
         <ul class="select-items" id="select-items" role="listbox" aria-label="Languages">
-            <li data-value="zh-CN" role="option" aria-selected="false">简体中文</li>
-            <li data-value="ja" role="option" class="selected" aria-selected="true">日本語</li>
+            <li data-value="zh-CN" role="option" class="selected" aria-selected="true">简体中文</li>
+            <li data-value="ja" role="option" aria-selected="false">日本語</li>
         </ul>
       </div>
       <script>
@@ -148,8 +154,8 @@
         selectOptions.forEach((item) => {
           item.addEventListener("click", () => {
             const langMap = {};
-              langMap['zh-CN'] = '/about/';
-              langMap['ja'] = '/ja/about/';
+              langMap['zh-CN'] = '/2026/07/09/shader-learning-start/';
+              langMap['ja'] = '/ja/2026/07/09/shader-learning-start/';
             selectedLang.textContent = item.textContent;
             selectItems.classList.remove("show");
             selectOptions.forEach((option) => {
@@ -170,13 +176,13 @@
     </nav>
 </div>
 <header id="header" aria-label="Site header">
-      <picture>
-      </picture>
-        <img  fetchpriority="high" src="/images/banner.webp" alt="about">
+        <picture>
+        </picture>
+          <img  fetchpriority="high" src="/images/banner.webp" alt="图形渲染学习笔记00：从0开始Shader学习">
   <div id="header-outer">
     <div id="header-title">
           <span id="logo">
-            <h1 data-aos="slide-up">about</h1>
+            <h1 data-aos="slide-up">图形渲染学习笔记00：从0开始Shader学习</h1>
           </span>
         <h2 id="subtitle-wrap" data-aos="slide-down">
         </h2>
@@ -186,25 +192,30 @@
 
         <div id="content" aria-label="Page content"  class="sidebar-right" >
           <aside id="sidebar" aria-label="Sidebar">
-  <div class="sidebar-wrapper-container ">
+  <div class="sidebar-wrapper-container sticky">
   <div class="sidebar-wrapper">
     <div class="sidebar-wrap" data-aos="fade-up">
-        <div class="sidebar-author">
+          <div class="sidebar-toc-sidebar"><h3 class="toc-title">文章目录</h3>
+<div class="sidebar-toc-wrapper toc-div-class" >
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%99%E5%9C%A8%E5%89%8D%E9%9D%A2"><span class="toc-number">1.</span> <span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%88%E6%9E%9C%E5%B1%95%E7%A4%BA"><span class="toc-number">2.</span> <span class="toc-text">效果展示</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9B%AA%E5%9C%B0%E8%BD%A8%E8%BF%B9"><span class="toc-number">2.1.</span> <span class="toc-text">雪地轨迹</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9B%B2%E9%9D%A2%E7%BB%86%E5%88%86-LOD"><span class="toc-number">2.2.</span> <span class="toc-text">曲面细分 LOD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BA%B9%E7%90%86%E6%89%AD%E6%9B%B2%E6%BA%B6%E8%A7%A3"><span class="toc-number">2.3.</span> <span class="toc-text">纹理扭曲溶解</span></a></li></ol></li></ol>
+</div>
+</div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
   <img data-src="/avatar/avatar.png" data-sizes="auto" alt="SANaoi" class="lazyload">
   <div class="sidebar-author-name">SANaoi</div>
   <div class="sidebar-description"></div>
 </div>
 <div class="sidebar-state">
   <div class="sidebar-state-article">
-    <div>投稿</div>
+    <div>文章</div>
     <div class="sidebar-state-number">5</div>
   </div>
   <div class="sidebar-state-category">
-    <div>カテゴリー</div>
+    <div>分类</div>
     <div class="sidebar-state-number">2</div>
   </div>
   <div class="sidebar-state-tag">
-    <div>タグ</div>
+    <div>标签</div>
     <div class="sidebar-state-number">3</div>
   </div>
 </div>
@@ -212,35 +223,39 @@
 </div>
 <div class="sidebar-menu">
       <div class="sidebar-menu-link-wrap">
-        <a class="sidebar-menu-link-dummy" href="/ja/" aria-label="ホーム"></a>
+        <a class="sidebar-menu-link-dummy" href="/" aria-label="首页"></a>
           <div class="sidebar-menu-icon icon rotate">
               &#xe62b;
           </div>
-        <div class="sidebar-menu-link">ホーム</div>
+        <div class="sidebar-menu-link">首页</div>
       </div>
       <div class="sidebar-menu-link-wrap">
-        <a class="sidebar-menu-link-dummy" href="/ja/archives" aria-label="アーカイブ"></a>
+        <a class="sidebar-menu-link-dummy" href="/archives" aria-label="归档"></a>
           <div class="sidebar-menu-icon icon rotate">
               &#xe62b;
           </div>
-        <div class="sidebar-menu-link">アーカイブ</div>
+        <div class="sidebar-menu-link">归档</div>
       </div>
       <div class="sidebar-menu-link-wrap">
-        <a class="sidebar-menu-link-dummy" href="/ja/about" aria-label="プロフィール"></a>
+        <a class="sidebar-menu-link-dummy" href="/about" aria-label="关于"></a>
           <div class="sidebar-menu-icon icon rotate">
               &#xe62b;
           </div>
-        <div class="sidebar-menu-link">プロフィール</div>
+        <div class="sidebar-menu-link">关于</div>
       </div>
       <div class="sidebar-menu-link-wrap">
-        <a class="sidebar-menu-link-dummy" href="/ja/friend" aria-label="フレンド"></a>
+        <a class="sidebar-menu-link-dummy" href="/friend" aria-label="友链"></a>
           <div class="sidebar-menu-icon icon rotate">
               &#xe62b;
           </div>
-        <div class="sidebar-menu-link">フレンド</div>
+        <div class="sidebar-menu-link">友链</div>
       </div>
 </div>
-
+</div>
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
     </div>
   </div>
   <div class="sidebar-widget">
@@ -248,13 +263,13 @@
   </div>
 </aside>
 
-          <section id="main" aria-label="Main content"><article id="page-" class="h-entry article" itemscope itemtype="https://schema.org/BlogPosting">
+          <section id="main" aria-label="Main content"><article id="post-shader/shader0" class="h-entry article" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-inner" data-aos="fade-up">
     <div class="article-meta">
       <div class="article-date">
   <span class="article-date-link icon-calendar" data-aos="zoom-in">
-    <time datetime="2026-07-07T15:27:43.000Z" itemprop="datePublished">2026-07-08</time>
-    <time style="display: none;" id="post-update-time">2026-07-08</time>
+    <time datetime="2026-07-09T13:35:00.000Z" itemprop="datePublished">2026-07-09</time>
+    <time style="display: none;" id="post-update-time">2026-07-10</time>
   </span>
 </div>
 
@@ -263,14 +278,39 @@
     <div class="hr-line"></div>
     
     <div class="e-content article-entry" itemprop="articleBody">
-        
+        <h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p>很多时候，在做游戏项目的过程中慢慢意识到：有些功能如果只靠普通脚本、材质参数或者 UI 组件去堆，会变得很绕，效果也不一定稳定；但如果换成 Shader 的思路，反而可以用更直接、更高效的方式解决。</p>
+<p>这也是我开始认真学习 Shader 的主要契机。</p>
+<p>目前我的学习方式比较偏实践，对一个效果感兴趣的话就会尝试去实现。</p>
+<p>一边阅读 Shader 相关书籍和文章，理解基础概念；拆解别人实现过的效果，尝试在游戏里复现出来，并借助 AI 来解释代码、拆解流程。</p>
+<p>虽然还谈不上系统掌握，但已经有了一些阶段性的成果。后面几篇会从具体效果开始整理，把目前做过的内容挑重点写下来。</p>
+<h2 id="效果展示"><a href="#效果展示" class="headerlink" title="效果展示"></a>效果展示</h2><h3 id="雪地轨迹"><a href="#雪地轨迹" class="headerlink" title="雪地轨迹"></a>雪地轨迹</h3><p>记录鼠标经过，在雪地表面留下可见的交互痕迹。</p>
+<img src="/2026/07/09/shader-learning-start/snowMap.gif" class="" title="雪地轨迹">
+
+<h3 id="曲面细分-LOD"><a href="#曲面细分-LOD" class="headerlink" title="曲面细分 LOD"></a>曲面细分 LOD</h3><p>根据摄像机距离动态调整曲面细分程度，近处保留更多细节，远处减少三角面数量。</p>
+<img src="/2026/07/09/shader-learning-start/LOD.gif" class="" title="曲面细分 LOD">
+
+<h3 id="纹理扭曲溶解"><a href="#纹理扭曲溶解" class="headerlink" title="纹理扭曲溶解"></a>纹理扭曲溶解</h3><p>纹理、扭曲和边缘溶解的实现展示。</p>
+<img src="/2026/07/09/shader-learning-start/MaskDustortTex.gif" class="" title="纹理扭曲溶解">
+
     </div>
     <footer class="article-footer">
-      
-      
+        <a class="article-category-link" href="/categories/Unity-shader/" title="Unity-shader" data-aos="zoom-in">Unity-shader</a>
+
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/Shader/" rel="tag" title="Shader">Shader</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/Unity/" rel="tag" title="Unity">Unity</a></li></ul>
+
     </footer>
   </div>
-  
+    <nav id="article-nav" aria-label="Article navigation" data-aos="fade-up">
+    <div class="article-nav-link-wrap right">
+          <img data-src="https://d-sketon.top/img/_backwebp/bg1.webp" data-sizes="auto" alt="Unity" class="lazyload">
+      <a href="/2024/10/19/undefined/" aria-label="后一篇: Unity"  title="后一篇: Unity"></a>
+      <div class="article-nav-caption">后一篇</div>
+      <h3 class="article-nav-title">
+          Unity
+      </h3>
+    </div>
+  </nav>
+
 </article>
 
 
@@ -288,7 +328,7 @@
       SANaoi
     </div>
       <div>
-        Powered by&nbsp;<a href="https://hexo.io/" rel="noopener nofollow noreferrer" target="_blank">Hexo</a>&nbsp;
+        基于&nbsp;<a href="https://hexo.io/" rel="noopener nofollow noreferrer" target="_blank">Hexo</a>&nbsp;
         Theme.<a href="https://github.com/D-Sketon/hexo-theme-reimu" rel="noopener nofollow noreferrer" target="_blank">Reimu</a>
       </div>
       <div>
@@ -300,10 +340,10 @@
       </div>
       <div>
         <span class="icon-eye"></span>
-        <span id="busuanzi_container_site_pv">総閲覧数&nbsp;<span id="busuanzi_value_site_pv"></span></span>
+        <span id="busuanzi_container_site_pv">总访问量&nbsp;<span id="busuanzi_value_site_pv"></span></span>
         &nbsp;|&nbsp;
         <span class="icon-user"></span>
-        <span id="busuanzi_container_site_uv">総閲覧者数&nbsp;<span id="busuanzi_value_site_uv"></span></span>
+        <span id="busuanzi_container_site_uv">总访客量&nbsp;<span id="busuanzi_value_site_uv"></span></span>
       </div>
   </div>
 </footer>
@@ -316,22 +356,27 @@
       </div>
       <nav id="mobile-nav" aria-label="Mobile navigation">
   <div class="sidebar-wrap">
-      <div class="sidebar-author">
+        <div class="sidebar-toc-sidebar"><h3 class="toc-title">文章目录</h3>
+<div class="sidebar-toc-wrapper toc-div-class" >
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%99%E5%9C%A8%E5%89%8D%E9%9D%A2"><span class="toc-number">1.</span> <span class="toc-text">写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%88%E6%9E%9C%E5%B1%95%E7%A4%BA"><span class="toc-number">2.</span> <span class="toc-text">效果展示</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9B%AA%E5%9C%B0%E8%BD%A8%E8%BF%B9"><span class="toc-number">2.1.</span> <span class="toc-text">雪地轨迹</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9B%B2%E9%9D%A2%E7%BB%86%E5%88%86-LOD"><span class="toc-number">2.2.</span> <span class="toc-text">曲面细分 LOD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BA%B9%E7%90%86%E6%89%AD%E6%9B%B2%E6%BA%B6%E8%A7%A3"><span class="toc-number">2.3.</span> <span class="toc-text">纹理扭曲溶解</span></a></li></ol></li></ol>
+</div>
+</div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
   <img data-src="/avatar/avatar.png" data-sizes="auto" alt="SANaoi" class="lazyload">
   <div class="sidebar-author-name">SANaoi</div>
   <div class="sidebar-description"></div>
 </div>
 <div class="sidebar-state">
   <div class="sidebar-state-article">
-    <div>投稿</div>
+    <div>文章</div>
     <div class="sidebar-state-number">5</div>
   </div>
   <div class="sidebar-state-category">
-    <div>カテゴリー</div>
+    <div>分类</div>
     <div class="sidebar-state-number">2</div>
   </div>
   <div class="sidebar-state-tag">
-    <div>タグ</div>
+    <div>标签</div>
     <div class="sidebar-state-number">3</div>
   </div>
 </div>
@@ -339,36 +384,40 @@
 </div>
 <div class="sidebar-menu">
       <div class="sidebar-menu-link-wrap">
-        <a class="sidebar-menu-link-dummy" href="/ja/" aria-label="ホーム"></a>
+        <a class="sidebar-menu-link-dummy" href="/" aria-label="首页"></a>
           <div class="sidebar-menu-icon icon rotate">
               &#xe62b;
           </div>
-        <div class="sidebar-menu-link">ホーム</div>
+        <div class="sidebar-menu-link">首页</div>
       </div>
       <div class="sidebar-menu-link-wrap">
-        <a class="sidebar-menu-link-dummy" href="/ja/archives" aria-label="アーカイブ"></a>
+        <a class="sidebar-menu-link-dummy" href="/archives" aria-label="归档"></a>
           <div class="sidebar-menu-icon icon rotate">
               &#xe62b;
           </div>
-        <div class="sidebar-menu-link">アーカイブ</div>
+        <div class="sidebar-menu-link">归档</div>
       </div>
       <div class="sidebar-menu-link-wrap">
-        <a class="sidebar-menu-link-dummy" href="/ja/about" aria-label="プロフィール"></a>
+        <a class="sidebar-menu-link-dummy" href="/about" aria-label="关于"></a>
           <div class="sidebar-menu-icon icon rotate">
               &#xe62b;
           </div>
-        <div class="sidebar-menu-link">プロフィール</div>
+        <div class="sidebar-menu-link">关于</div>
       </div>
       <div class="sidebar-menu-link-wrap">
-        <a class="sidebar-menu-link-dummy" href="/ja/friend" aria-label="フレンド"></a>
+        <a class="sidebar-menu-link-dummy" href="/friend" aria-label="友链"></a>
           <div class="sidebar-menu-icon icon rotate">
               &#xe62b;
           </div>
-        <div class="sidebar-menu-link">フレンド</div>
+        <div class="sidebar-menu-link">友链</div>
       </div>
 </div>
-
+</div>
   </div>
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
 </nav>
 
     </div>
@@ -431,13 +480,13 @@
       <script data-pjax>
         window.REIMU_POST = {
           author: "SANaoi",
-          title: "about",
-          url: "https://sanaoi.github.io/ja/about/index.html",
+          title: "图形渲染学习笔记00：从0开始Shader学习",
+          url: "https://sanaoi.github.io/2026/07/09/shader-learning-start/",
           excerpt: "",
           description: "",
-          stripContent: "",
-          date: "Wed Jul 08 2026 00:27:43 GMT+0900",
-          updated: "Wed Jul 08 2026 02:00:09 GMT+0900",
+          stripContent: "写在前面很多时候，在做游戏项目的过程中慢慢意识到：有些功能如果只靠普通脚本、材质参数或者 UI 组件去堆，会变得很绕，效果也不一定稳定；但如果换成 Shader 的思路，反而可以用更直接、更高效的方式解决。 这也是我开始认真学习 Shader 的主要契机。 目前我的学习方式比较偏实践，对一个效果感兴趣的话就会尝试去实现。 一边阅读 Shader 相关书籍和文章，理解基础概念；拆解别人实现过的效果，尝试在游戏里复现出来，并借助 AI 来解释代码、拆解流程。 虽然还谈不上系统掌握，但已经有了一些阶段",
+          date: "Thu Jul 09 2026 22:35:00 GMT+0900",
+          updated: "Fri Jul 10 2026 01:22:47 GMT+0900",
           cover: "/images/banner.webp",
         };
       </script>
