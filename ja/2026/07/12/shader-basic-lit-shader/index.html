@@ -24,13 +24,16 @@
 <meta property="og:site_name" content="SANaoi">
 <meta property="og:description" content="目標一般的に、3D オブジェクトで使うマテリアル Shader には、いくつかの基本的な要素があります。たとえば UV テクスチャ、法線、光の受け取り、そして影の生成です。 この記事の目標は、まず基礎的な Lit Shader を実装し、今後のエフェクト実装の土台にすることです。 含まれる内容今回実装する Shader には、主に次の機能が含まれます。  ベースカラーとテクスチャで表面色を制御する">
 <meta property="og:locale" content="ja_JP">
+<meta property="og:image" content="https://sanaoi.github.io/2026/07/12/shader-basic-lit-shader/normalTex.png">
+<meta property="og:image" content="https://sanaoi.github.io/2026/07/12/shader-basic-lit-shader/ambient.png">
 <meta property="article:published_time" content="2026-07-11T15:00:00.000Z">
-<meta property="article:modified_time" content="2026-07-12T16:48:49.205Z">
+<meta property="article:modified_time" content="2026-07-12T16:59:47.787Z">
 <meta property="article:author" content="SANaoi">
 <meta property="article:tag" content="Shader">
 <meta property="article:tag" content="URP">
 <meta property="article:tag" content="Unity">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://sanaoi.github.io/2026/07/12/shader-basic-lit-shader/normalTex.png">
     <link rel="alternate" href="/atom.xml" title="SANaoi" type="application/atom+xml">
     <link rel="shortcut icon" href="/images/favicon.ico">
   
@@ -194,7 +197,7 @@
     <div class="sidebar-wrap" data-aos="fade-up">
           <div class="sidebar-toc-sidebar"><h3 class="toc-title">見出し</h3>
 <div class="sidebar-toc-wrapper toc-div-class" >
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%AE%E6%A8%99"><span class="toc-number">1.</span> <span class="toc-text">目標</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%AB%E3%81%BE%E3%82%8C%E3%82%8B%E5%86%85%E5%AE%B9"><span class="toc-number">2.</span> <span class="toc-text">含まれる内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%A3%E8%A8%80%E3%81%99%E3%82%8B%E6%A7%8B%E9%80%A0%E4%BD%93"><span class="toc-number">3.</span> <span class="toc-text">宣言する構造体</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%83%99%E3%83%BC%E3%82%B9%E3%82%AB%E3%83%A9%E3%83%BC%E3%81%A8-UV-%E3%82%B5%E3%83%B3%E3%83%97%E3%83%AA%E3%83%B3%E3%82%B0"><span class="toc-number">4.</span> <span class="toc-text">ベースカラーと UV サンプリング</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B3%95%E7%B7%9A%E3%83%9E%E3%83%83%E3%83%97"><span class="toc-number">5.</span> <span class="toc-text">法線マップ</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TBN-%E7%A9%BA%E9%96%93%E5%A4%89%E6%8F%9B"><span class="toc-number">6.</span> <span class="toc-text">TBN 空間変換</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%83%A9%E3%82%A4%E3%83%86%E3%82%A3%E3%83%B3%E3%82%B0%E8%A8%88%E7%AE%97"><span class="toc-number">7.</span> <span class="toc-text">ライティング計算</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#C-final"><span class="toc-number">8.</span> <span class="toc-text">$$C_{final}</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BD%B1%E3%81%AE%E7%94%9F%E6%88%90"><span class="toc-number">8.1.</span> <span class="toc-text">影の生成</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%81%BE%E3%81%A8%E3%82%81"><span class="toc-number">8.2.</span> <span class="toc-text">まとめ</span></a></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%AE%E6%A8%99"><span class="toc-number">1.</span> <span class="toc-text">目標</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%AB%E3%81%BE%E3%82%8C%E3%82%8B%E5%86%85%E5%AE%B9"><span class="toc-number">2.</span> <span class="toc-text">含まれる内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%A3%E8%A8%80%E3%81%99%E3%82%8B%E6%A7%8B%E9%80%A0%E4%BD%93"><span class="toc-number">3.</span> <span class="toc-text">宣言する構造体</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%83%99%E3%83%BC%E3%82%B9%E3%82%AB%E3%83%A9%E3%83%BC%E3%81%A8-UV-%E3%82%B5%E3%83%B3%E3%83%97%E3%83%AA%E3%83%B3%E3%82%B0"><span class="toc-number">4.</span> <span class="toc-text">ベースカラーと UV サンプリング</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B3%95%E7%B7%9A%E3%83%9E%E3%83%83%E3%83%97"><span class="toc-number">5.</span> <span class="toc-text">法線マップ</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TBN-%E7%A9%BA%E9%96%93%E5%A4%89%E6%8F%9B"><span class="toc-number">6.</span> <span class="toc-text">TBN 空間変換</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%83%A9%E3%82%A4%E3%83%86%E3%82%A3%E3%83%B3%E3%82%B0%E8%A8%88%E7%AE%97"><span class="toc-number">7.</span> <span class="toc-text">ライティング計算</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BD%B1%E3%81%AE%E7%94%9F%E6%88%90"><span class="toc-number">8.</span> <span class="toc-text">影の生成</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%81%BE%E3%81%A8%E3%82%81"><span class="toc-number">9.</span> <span class="toc-text">まとめ</span></a></li></ol>
 </div>
 </div>
           <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
@@ -300,7 +303,7 @@
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">float4 packedNormal = <span class="built_in">SAMPLE_TEXTURE2D</span>(_BumpMap, sampler_BumpMap, IN.uv);</span><br><span class="line">float3 normalTS = <span class="built_in">UnpackNormalScale</span>(packedNormal, _BumpScale);</span><br></pre></td></tr></table></figure>
 
 <p>次の画像を見ると、法線マップの効果をより直感的に理解できます。左側は法線マップを使用していない状態、右側は法線マップを使用した状態です。右側では、光が当たったときに表面の細かい凹凸がよりはっきり見えます。</p>
-
+<p><img src="/2026/07/12/shader-basic-lit-shader/normalTex.png" alt="法線マップ"></p>
 <p style="text-align:center;color:#888;font-size:0.9em;">左側は法線マップなし、右側は法線マップあり。光が当たったとき、表面の凹凸感がより強く表れています。</p>
 
 <p>注意したいのは、法線マップはモデルの形状を実際に変形しているわけではない、という点です。変えているのは、ライティング計算に使われる法線方向です。ここで得られる <code>normalTS</code> は接線空間の法線なので、そのままワールド空間のライティング計算には使えません。先に空間変換が必要になります。</p>
@@ -313,27 +316,29 @@
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">normalWS.x = <span class="built_in">dot</span>(IN.TtoW0, normalTS);</span><br><span class="line">normalWS.y = <span class="built_in">dot</span>(IN.TtoW1, normalTS);</span><br><span class="line">normalWS.z = <span class="built_in">dot</span>(IN.TtoW2, normalTS);</span><br><span class="line">normalWS = <span class="built_in">normalize</span>(normalWS);</span><br></pre></td></tr></table></figure>
 
 <h2 id="ライティング計算"><a href="#ライティング計算" class="headerlink" title="ライティング計算"></a>ライティング計算</h2><p>ライティング計算は Shader の中でも特に重要な部分です。ここでは Lambert ライティングモデルを使います。Lambert は最も基本的な拡散反射モデルで、粗い表面で光が均等に散乱するような見え方を表現します。基本式は次の通りです。</p>
-<p>$$<br>C_{diffuse} &#x3D; C_{albedo} \cdot C_{light} \cdot \max(0, N \cdot L)<br>$$</p>
+<div style="text-align:center;font-family:serif;font-size:1.1em;">C<sub>diffuse</sub> = C<sub>albedo</sub> · C<sub>light</sub> · max(0, N · L)</div>
+
 <p>それぞれの意味は次の通りです。</p>
 <ul>
-<li>$C_{diffuse}$：最終的に計算される拡散反射光の色。</li>
-<li>$C_{albedo}$：材質そのものの色。ここではテクスチャ色に相当します。</li>
-<li>$C_{light}$：入射光の色と強さ。</li>
-<li>$N$：表面法線方向。通常は単位ベクトルである必要があります。</li>
-<li>$L$：光源方向。こちらも通常は単位ベクトルである必要があります。</li>
-<li>$N \cdot L$：法線方向と光源方向の内積で、表面がどれだけ光源を向いているかを表します。</li>
+<li><code>C_diffuse</code>：最終的に計算される拡散反射光の色。</li>
+<li><code>C_albedo</code>：材質そのものの色。ここではテクスチャ色に相当します。</li>
+<li><code>C_light</code>：入射光の色と強さ。</li>
+<li><code>N</code>：表面法線方向。通常は単位ベクトルである必要があります。</li>
+<li><code>L</code>：光源方向。こちらも通常は単位ベクトルである必要があります。</li>
+<li><code>N · L</code>：法線方向と光源方向の内積で、表面がどれだけ光源を向いているかを表します。</li>
 </ul>
-<p>表面が光源を正面から向いているほど、$N \cdot L$ は 1 に近づき、光は強くなります。一方、表面が光源の反対側を向いている場合、$N \cdot L$ は 0 より小さくなります。光の強さが負になることはないので、$\max(0, N \cdot L)$ で 0 未満を切り捨てます。Shader では通常、<code>saturate</code> を使って同じ処理を行います。</p>
+<p>表面が光源を正面から向いているほど、<code>N · L</code> は 1 に近づき、光は強くなります。一方、表面が光源の反対側を向いている場合、<code>N · L</code> は 0 より小さくなります。光の強さが負になることはないので、<code>max(0, N · L)</code> で 0 未満を切り捨てます。Shader では通常、<code>saturate</code> を使って同じ処理を行います。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span> NdotL_Main = <span class="built_in">saturate</span>(<span class="built_in">dot</span>(normalWS, mainLight.direction));</span><br></pre></td></tr></table></figure>
 
 <p>実際のライティング計算では、影、距離減衰、環境光なども考慮する必要があります。そのため、直接光の計算は次のように拡張できます。</p>
-<p>$$<br>C_{direct} &#x3D;<br>C_{albedo}<br>\cdot C_{light}<br>\cdot \max(0, N \cdot L)<br>\cdot A_{distance}<br>\cdot A_{shadow}<br>$$</p>
+<div style="text-align:center;font-family:serif;font-size:1.1em;">C<sub>direct</sub> = C<sub>albedo</sub> · C<sub>light</sub> · max(0, N · L) · A<sub>distance</sub> · A<sub>shadow</sub></div>
+
 <p>ここで使っている項の意味は次の通りです。</p>
 <ul>
-<li>$A_{distance}$：距離減衰値。通常は $0 \sim 1$ の範囲で、光源から遠ざかるほど光が弱くなることを表します。</li>
-<li>$A_{shadow}$：影の減衰値。通常は $0 \sim 1$ の範囲で、そのピクセルが影に遮られているかどうかを表します。</li>
-<li>$A_{shadow} &#x3D; 0$ のとき、そのピクセルは完全に影の中にあり、直接光は遮られます。</li>
-<li>$A_{distance} &#x3D; 0$ のとき、そのピクセルは光源から遠すぎるため、直接光は 0 まで減衰します。</li>
+<li><code>A_distance</code>：距離減衰値。通常は <code>0 ~ 1</code> の範囲で、光源から遠ざかるほど光が弱くなることを表します。</li>
+<li><code>A_shadow</code>：影の減衰値。通常は <code>0 ~ 1</code> の範囲で、そのピクセルが影に遮られているかどうかを表します。</li>
+<li><code>A_shadow = 0</code> のとき、そのピクセルは完全に影の中にあり、直接光は遮られます。</li>
+<li><code>A_distance = 0</code> のとき、そのピクセルは光源から遠すぎるため、直接光は 0 まで減衰します。</li>
 <li>どちらも 1 のとき、そのピクセルはその光源からの直接光を完全に受けています。</li>
 </ul>
 <p>URP では、<code>GetMainLight(shadowCoord)</code> によってメインライト情報を取得できます。ここには光の方向、色、距離減衰、影の減衰が含まれています。</p>
@@ -345,15 +350,22 @@
 
 <p><code>SampleSH(normalWS)</code> は、現在のワールド空間法線方向に応じて球面調和関数による環境光をサンプリングします。環境光は、空やシーン内の間接反射から来る基礎的な明るさを表すもので、物体の背面が完全に黒くならないようにする役割があります。特定のライト 1 つの方向には依存せず、全体的に柔らかい照明を与えます。</p>
 <p>したがって、最終色は次のように考えられます。</p>
-<p>$$<br>C_{final} &#x3D; C_{direct} + C_{ambient}<br>$$</p>
+<div style="text-align:center;font-family:serif;font-size:1.1em;">C<sub>final</sub> = C<sub>direct</sub> + C<sub>ambient</sub></div>
+
 <p>環境光の部分は次のように表せます。</p>
-<p>$$<br>C_{ambient} &#x3D; C_{albedo} \cdot C_{SH}(N)<br>$$</p>
+<div style="text-align:center;font-family:serif;font-size:1.1em;">C<sub>ambient</sub> = C<sub>albedo</sub> · C<sub>SH</sub>(N)</div>
+
 <p>これらをまとめると、最終式は次のようになります。</p>
-<h1 id="C-final"><a href="#C-final" class="headerlink" title="$$C_{final}"></a>$$<br>C_{final}</h1><p>C_{albedo}<br>\cdot C_{light}<br>\cdot \max(0, N \cdot L)<br>\cdot A_{distance}<br>\cdot A_{shadow}<br>+<br>C_{albedo}<br>\cdot C_{SH}(N)<br>$$</p>
+<div style="text-align:center;font-family:serif;font-size:1.1em;">
+  C<sub>final</sub> =
+  C<sub>albedo</sub> · C<sub>light</sub> · max(0, N · L) · A<sub>distance</sub> · A<sub>shadow</sub>
+  + C<sub>albedo</sub> · C<sub>SH</sub>(N)
+</div>
+
 <p>対応する主なコードは次の通りです。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">Light mainLight = <span class="built_in">GetMainLight</span>(shadowCoord);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 環境光：背面が完全に黒くならないようにする</span></span><br><span class="line">float3 ambient = <span class="built_in">SampleSH</span>(normalWS) * TextureColor.rgb;</span><br><span class="line"></span><br><span class="line"><span class="comment">// メインライトの減衰：距離減衰 * 影減衰</span></span><br><span class="line"><span class="type">float</span> mainAttenuation =</span><br><span class="line">    mainLight.distanceAttenuation *</span><br><span class="line">    mainLight.shadowAttenuation;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Lambert 拡散反射：表面が光源を向いている度合い</span></span><br><span class="line"><span class="type">float</span> NdotL_Main = <span class="built_in">saturate</span>(<span class="built_in">dot</span>(normalWS, mainLight.direction));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 直接光</span></span><br><span class="line">float3 diffuse = TextureColor.rgb * mainLight.color * NdotL_Main * mainAttenuation;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 最終色 = 直接光 + 環境光</span></span><br><span class="line">float3 finalColor = diffuse + ambient;</span><br></pre></td></tr></table></figure>
 
-
+<p><img src="/2026/07/12/shader-basic-lit-shader/ambient.png" alt="環境光の比較"></p>
 <p style="text-align:center;color:#888;font-size:0.9em;">環境光を加えることで、背面が完全に黒くならず、明暗の移り変わりがより柔らかくなります。</p>
 
 <p>つまり、このコードで計算している内容は次のようにまとめられます。</p>
@@ -369,7 +381,7 @@
 
 <p>主な設定の意味は次の通りです。</p>
 <ul>
-<li><code>Tags &#123; &quot;LightMode&quot; = &quot;ShadowCaster&quot; &#125;</code>：URP に、この Pass が影生成用であることを伝えます。URP はシャドウマップを描画するとき、この Pass を使用します。</li>
+<li><code>Tags { &quot;LightMode&quot; = &quot;ShadowCaster&quot; }</code>：URP に、この Pass が影生成用であることを伝えます。URP はシャドウマップを描画するとき、この Pass を使用します。</li>
 <li><code>ZWrite On</code>：深度書き込みを有効にし、物体の深度をシャドウマップへ書き込みます。</li>
 <li><code>ZTest LEqual</code>：小さい、または等しい深度を通すテストを行い、正しい遮蔽関係を保ちます。</li>
 <li><code>ColorMask 0</code>：色の出力を無効にします。シャドウマップに必要なのは深度であり、色ではありません。</li>
@@ -423,10 +435,10 @@
       </div>
       <div>
         <span class="icon-brush"></span>
-        7.8k
+        7.7k
         &nbsp;|&nbsp;
         <span class="icon-coffee"></span>
-        00:33
+        00:31
       </div>
       <div>
         <span class="icon-eye"></span>
@@ -448,7 +460,7 @@
   <div class="sidebar-wrap">
         <div class="sidebar-toc-sidebar"><h3 class="toc-title">見出し</h3>
 <div class="sidebar-toc-wrapper toc-div-class" >
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%AE%E6%A8%99"><span class="toc-number">1.</span> <span class="toc-text">目標</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%AB%E3%81%BE%E3%82%8C%E3%82%8B%E5%86%85%E5%AE%B9"><span class="toc-number">2.</span> <span class="toc-text">含まれる内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%A3%E8%A8%80%E3%81%99%E3%82%8B%E6%A7%8B%E9%80%A0%E4%BD%93"><span class="toc-number">3.</span> <span class="toc-text">宣言する構造体</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%83%99%E3%83%BC%E3%82%B9%E3%82%AB%E3%83%A9%E3%83%BC%E3%81%A8-UV-%E3%82%B5%E3%83%B3%E3%83%97%E3%83%AA%E3%83%B3%E3%82%B0"><span class="toc-number">4.</span> <span class="toc-text">ベースカラーと UV サンプリング</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B3%95%E7%B7%9A%E3%83%9E%E3%83%83%E3%83%97"><span class="toc-number">5.</span> <span class="toc-text">法線マップ</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TBN-%E7%A9%BA%E9%96%93%E5%A4%89%E6%8F%9B"><span class="toc-number">6.</span> <span class="toc-text">TBN 空間変換</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%83%A9%E3%82%A4%E3%83%86%E3%82%A3%E3%83%B3%E3%82%B0%E8%A8%88%E7%AE%97"><span class="toc-number">7.</span> <span class="toc-text">ライティング計算</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#C-final"><span class="toc-number">8.</span> <span class="toc-text">$$C_{final}</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BD%B1%E3%81%AE%E7%94%9F%E6%88%90"><span class="toc-number">8.1.</span> <span class="toc-text">影の生成</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%81%BE%E3%81%A8%E3%82%81"><span class="toc-number">8.2.</span> <span class="toc-text">まとめ</span></a></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%AE%E6%A8%99"><span class="toc-number">1.</span> <span class="toc-text">目標</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%AB%E3%81%BE%E3%82%8C%E3%82%8B%E5%86%85%E5%AE%B9"><span class="toc-number">2.</span> <span class="toc-text">含まれる内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%A3%E8%A8%80%E3%81%99%E3%82%8B%E6%A7%8B%E9%80%A0%E4%BD%93"><span class="toc-number">3.</span> <span class="toc-text">宣言する構造体</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%83%99%E3%83%BC%E3%82%B9%E3%82%AB%E3%83%A9%E3%83%BC%E3%81%A8-UV-%E3%82%B5%E3%83%B3%E3%83%97%E3%83%AA%E3%83%B3%E3%82%B0"><span class="toc-number">4.</span> <span class="toc-text">ベースカラーと UV サンプリング</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B3%95%E7%B7%9A%E3%83%9E%E3%83%83%E3%83%97"><span class="toc-number">5.</span> <span class="toc-text">法線マップ</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TBN-%E7%A9%BA%E9%96%93%E5%A4%89%E6%8F%9B"><span class="toc-number">6.</span> <span class="toc-text">TBN 空間変換</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%83%A9%E3%82%A4%E3%83%86%E3%82%A3%E3%83%B3%E3%82%B0%E8%A8%88%E7%AE%97"><span class="toc-number">7.</span> <span class="toc-text">ライティング計算</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BD%B1%E3%81%AE%E7%94%9F%E6%88%90"><span class="toc-number">8.</span> <span class="toc-text">影の生成</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%81%BE%E3%81%A8%E3%82%81"><span class="toc-number">9.</span> <span class="toc-text">まとめ</span></a></li></ol>
 </div>
 </div>
         <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
@@ -576,7 +588,7 @@
           description: "",
           stripContent: "目標一般的に、3D オブジェクトで使うマテリアル Shader には、いくつかの基本的な要素があります。たとえば UV テクスチャ、法線、光の受け取り、そして影の生成です。 この記事の目標は、まず基礎的な Lit Shader を実装し、今後のエフェクト実装の土台にすることです。 含まれる内容今回実装する Shader には、主に次の機能が含まれます。  ベースカラーとテクスチャで表面色を制御する UV を使ってテクスチャをサンプリングする 法線マップで表面のディテールを強調する Lambert",
           date: "Sun Jul 12 2026 00:00:00 GMT+0900",
-          updated: "Mon Jul 13 2026 01:48:49 GMT+0900",
+          updated: "Mon Jul 13 2026 01:59:47 GMT+0900",
           cover: "/images/banner.webp",
         };
       </script>

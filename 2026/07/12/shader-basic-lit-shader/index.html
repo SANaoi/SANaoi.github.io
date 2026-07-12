@@ -27,7 +27,7 @@
 <meta property="og:image" content="https://sanaoi.github.io/2026/07/12/shader-basic-lit-shader/normalTex.png">
 <meta property="og:image" content="https://sanaoi.github.io/2026/07/12/shader-basic-lit-shader/ambient.png">
 <meta property="article:published_time" content="2026-07-11T15:00:00.000Z">
-<meta property="article:modified_time" content="2026-07-12T16:48:14.509Z">
+<meta property="article:modified_time" content="2026-07-12T16:59:13.364Z">
 <meta property="article:author" content="SANaoi">
 <meta property="article:tag" content="Shader">
 <meta property="article:tag" content="URP">
@@ -197,7 +197,7 @@
     <div class="sidebar-wrap" data-aos="fade-up">
           <div class="sidebar-toc-sidebar"><h3 class="toc-title">文章目录</h3>
 <div class="sidebar-toc-wrapper toc-div-class" >
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%AE%E6%A0%87"><span class="toc-number">1.</span> <span class="toc-text">目标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8C%85%E5%90%AB%E4%BB%80%E4%B9%88"><span class="toc-number">2.</span> <span class="toc-text">包含什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9C%80%E8%A6%81%E5%A3%B0%E6%98%8E%E7%9A%84%E7%BB%93%E6%9E%84%E4%BD%93"><span class="toc-number">3.</span> <span class="toc-text">需要声明的结构体</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80%E9%A2%9C%E8%89%B2%E4%B8%8E-UV-%E9%87%87%E6%A0%B7"><span class="toc-number">4.</span> <span class="toc-text">基础颜色与 UV 采样</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B3%95%E7%BA%BF%E8%B4%B4%E5%9B%BE"><span class="toc-number">5.</span> <span class="toc-text">法线贴图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TBN-%E7%A9%BA%E9%97%B4%E8%BD%AC%E6%8D%A2"><span class="toc-number">6.</span> <span class="toc-text">TBN 空间转换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%89%E7%85%A7%E8%AE%A1%E7%AE%97"><span class="toc-number">7.</span> <span class="toc-text">光照计算</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#C-final"><span class="toc-number">8.</span> <span class="toc-text">$$C_{final}</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%B4%E5%BD%B1%E7%94%9F%E6%88%90"><span class="toc-number">8.1.</span> <span class="toc-text">阴影生成</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">8.2.</span> <span class="toc-text">小结</span></a></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%AE%E6%A0%87"><span class="toc-number">1.</span> <span class="toc-text">目标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8C%85%E5%90%AB%E4%BB%80%E4%B9%88"><span class="toc-number">2.</span> <span class="toc-text">包含什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9C%80%E8%A6%81%E5%A3%B0%E6%98%8E%E7%9A%84%E7%BB%93%E6%9E%84%E4%BD%93"><span class="toc-number">3.</span> <span class="toc-text">需要声明的结构体</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80%E9%A2%9C%E8%89%B2%E4%B8%8E-UV-%E9%87%87%E6%A0%B7"><span class="toc-number">4.</span> <span class="toc-text">基础颜色与 UV 采样</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B3%95%E7%BA%BF%E8%B4%B4%E5%9B%BE"><span class="toc-number">5.</span> <span class="toc-text">法线贴图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TBN-%E7%A9%BA%E9%97%B4%E8%BD%AC%E6%8D%A2"><span class="toc-number">6.</span> <span class="toc-text">TBN 空间转换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%89%E7%85%A7%E8%AE%A1%E7%AE%97"><span class="toc-number">7.</span> <span class="toc-text">光照计算</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%B4%E5%BD%B1%E7%94%9F%E6%88%90"><span class="toc-number">8.</span> <span class="toc-text">阴影生成</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">9.</span> <span class="toc-text">小结</span></a></li></ol>
 </div>
 </div>
           <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
@@ -315,26 +315,28 @@
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">normalWS.x = <span class="built_in">dot</span>(IN.TtoW0, normalTS);</span><br><span class="line">normalWS.y = <span class="built_in">dot</span>(IN.TtoW1, normalTS);</span><br><span class="line">normalWS.z = <span class="built_in">dot</span>(IN.TtoW2, normalTS);</span><br><span class="line">normalWS = <span class="built_in">normalize</span>(normalWS);</span><br></pre></td></tr></table></figure>
 
 <h2 id="光照计算"><a href="#光照计算" class="headerlink" title="光照计算"></a>光照计算</h2><p>光照计算是 Shader 中最核心的部分。这里使用了 Lambert 光照模型，它是最基础的漫反射光照模型，用来模拟光线在粗糙表面的均匀散射效果。模型核心公式是：</p>
-<p>$$<br>C_{diffuse} &#x3D; C_{albedo} \cdot C_{light} \cdot \max(0, N \cdot L)<br>$$</p>
+<div style="text-align:center;font-family:serif;font-size:1.1em;">C<sub>diffuse</sub> = C<sub>albedo</sub> · C<sub>light</sub> · max(0, N · L)</div>
+
 <p>其中：</p>
 <ul>
-<li>$C_{diffuse}$：最终计算得到的漫反射光颜色。</li>
-<li>$C_{albedo}$：材质本身的颜色，也就是贴图颜色。</li>
-<li>$C_{light}$：入射光的颜色和强度。</li>
-<li>$N$：表面法线方向，通常需要是单位向量。</li>
-<li>$L$：指向光源的方向，通常也需要是单位向量。</li>
+<li><code>C_diffuse</code>：最终计算得到的漫反射光颜色。</li>
+<li><code>C_albedo</code>：材质本身的颜色，也就是贴图颜色。</li>
+<li><code>C_light</code>：入射光的颜色和强度。</li>
+<li><code>N</code>：表面法线方向，通常需要是单位向量。</li>
+<li><code>L</code>：指向光源的方向，通常也需要是单位向量。</li>
 </ul>
-<p>当表面越正对光源时，$N \cdot L$ 越接近 1，光照越强；当表面背对光源时，$N \cdot L$ 会小于 0。由于光照强度不能为负数，因此需要使用 $\max(0, N \cdot L)$ 将结果限制在非负范围内。在 Shader 中通常使用 <code>saturate</code> 来实现这一点：</p>
+<p>当表面越正对光源时，<code>N · L</code> 越接近 1，光照越强；当表面背对光源时，<code>N · L</code> 会小于 0。由于光照强度不能为负数，因此需要使用 <code>max(0, N · L)</code> 将结果限制在非负范围内。在 Shader 中通常使用 <code>saturate</code> 来实现这一点：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span> NdotL_Main = <span class="built_in">saturate</span>(<span class="built_in">dot</span>(normalWS, mainLight.direction));</span><br></pre></td></tr></table></figure>
 
 <p>但在实际计算中，光照还需要考虑阴影、距离衰减和环境光等因素。因此，直接光照部分可以扩展为：</p>
-<p>$$<br>C_{direct} &#x3D;<br>C_{albedo}<br>\cdot C_{light}<br>\cdot \max(0, N \cdot L)<br>\cdot A_{distance}<br>\cdot A_{shadow}<br>$$</p>
+<div style="text-align:center;font-family:serif;font-size:1.1em;">C<sub>direct</sub> = C<sub>albedo</sub> · C<sub>light</sub> · max(0, N · L) · A<sub>distance</sub> · A<sub>shadow</sub></div>
+
 <p>其中：</p>
 <ul>
-<li>$A_{distance}$：距离衰减值，范围通常是 $0 \sim 1$，表示光照随距离变远而减弱。</li>
-<li>$A_{shadow}$：阴影衰减值，范围通常是 $0 \sim 1$，表示当前片元是否受到阴影遮挡。</li>
-<li>当 $A_{shadow} &#x3D; 0$ 时，表示当前片元完全处于阴影中，直接光照被遮挡。</li>
-<li>当 $A_{distance} &#x3D; 0$ 时，表示当前片元距离光源过远，直接光照衰减为 0。</li>
+<li><code>A_distance</code>：距离衰减值，范围通常是 <code>0 ~ 1</code>，表示光照随距离变远而减弱。</li>
+<li><code>A_shadow</code>：阴影衰减值，范围通常是 <code>0 ~ 1</code>，表示当前片元是否受到阴影遮挡。</li>
+<li>当 <code>A_shadow = 0</code> 时，表示当前片元完全处于阴影中，直接光照被遮挡。</li>
+<li>当 <code>A_distance = 0</code> 时，表示当前片元距离光源过远，直接光照衰减为 0。</li>
 <li>当二者都为 1 时，表示当前片元完整受到该光源的直接光照影响。</li>
 </ul>
 <p>在 URP 中，可以通过 <code>GetMainLight(shadowCoord)</code> 获取主光源信息，其中包含光照方向、光照颜色、距离衰减和阴影衰减：</p>
@@ -346,11 +348,18 @@
 
 <p><code>SampleSH(normalWS)</code> 会根据当前世界空间法线方向采样球谐环境光。环境光用于模拟来自天空、场景和间接反射的基础光照，让物体背光面不会完全变黑。它不依赖某一盏具体灯光的方向，而是提供一个比较柔和的整体照明效果。</p>
 <p>因此，最终颜色可以理解为：</p>
-<p>$$<br>C_{final} &#x3D; C_{direct} + C_{ambient}<br>$$</p>
+<div style="text-align:center;font-family:serif;font-size:1.1em;">C<sub>final</sub> = C<sub>direct</sub> + C<sub>ambient</sub></div>
+
 <p>其中环境光部分为：</p>
-<p>$$<br>C_{ambient} &#x3D; C_{albedo} \cdot C_{SH}(N)<br>$$</p>
+<div style="text-align:center;font-family:serif;font-size:1.1em;">C<sub>ambient</sub> = C<sub>albedo</sub> · C<sub>SH</sub>(N)</div>
+
 <p>最终合并后：</p>
-<h1 id="C-final"><a href="#C-final" class="headerlink" title="$$C_{final}"></a>$$<br>C_{final}</h1><p>C_{albedo}<br>\cdot C_{light}<br>\cdot \max(0, N \cdot L)<br>\cdot A_{distance}<br>\cdot A_{shadow}<br>+<br>C_{albedo}<br>\cdot C_{SH}(N)<br>$$</p>
+<div style="text-align:center;font-family:serif;font-size:1.1em;">
+  C<sub>final</sub> =
+  C<sub>albedo</sub> · C<sub>light</sub> · max(0, N · L) · A<sub>distance</sub> · A<sub>shadow</sub>
+  + C<sub>albedo</sub> · C<sub>SH</sub>(N)
+</div>
+
 <p>对应的核心光照计算代码如下：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">Light mainLight = <span class="built_in">GetMainLight</span>(shadowCoord);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 环境光：让背光区域不会完全变黑</span></span><br><span class="line">float3 ambient = <span class="built_in">SampleSH</span>(normalWS) * TextureColor.rgb;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 主光源衰减：距离衰减 * 阴影衰减</span></span><br><span class="line"><span class="type">float</span> mainAttenuation =</span><br><span class="line">    mainLight.distanceAttenuation *</span><br><span class="line">    mainLight.shadowAttenuation;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Lambert 漫反射：表面朝向光源的程度</span></span><br><span class="line"><span class="type">float</span> NdotL_Main = <span class="built_in">saturate</span>(<span class="built_in">dot</span>(normalWS, mainLight.direction));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 直接光照</span></span><br><span class="line">float3 diffuse = TextureColor.rgb * mainLight.color * NdotL_Main * mainAttenuation;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 最终颜色 = 直接光照 + 环境光</span></span><br><span class="line">float3 finalColor = diffuse + ambient;</span><br></pre></td></tr></table></figure>
 
@@ -423,10 +432,10 @@
       </div>
       <div>
         <span class="icon-brush"></span>
-        7.8k
+        7.7k
         &nbsp;|&nbsp;
         <span class="icon-coffee"></span>
-        00:33
+        00:31
       </div>
       <div>
         <span class="icon-eye"></span>
@@ -448,7 +457,7 @@
   <div class="sidebar-wrap">
         <div class="sidebar-toc-sidebar"><h3 class="toc-title">文章目录</h3>
 <div class="sidebar-toc-wrapper toc-div-class" >
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%AE%E6%A0%87"><span class="toc-number">1.</span> <span class="toc-text">目标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8C%85%E5%90%AB%E4%BB%80%E4%B9%88"><span class="toc-number">2.</span> <span class="toc-text">包含什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9C%80%E8%A6%81%E5%A3%B0%E6%98%8E%E7%9A%84%E7%BB%93%E6%9E%84%E4%BD%93"><span class="toc-number">3.</span> <span class="toc-text">需要声明的结构体</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80%E9%A2%9C%E8%89%B2%E4%B8%8E-UV-%E9%87%87%E6%A0%B7"><span class="toc-number">4.</span> <span class="toc-text">基础颜色与 UV 采样</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B3%95%E7%BA%BF%E8%B4%B4%E5%9B%BE"><span class="toc-number">5.</span> <span class="toc-text">法线贴图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TBN-%E7%A9%BA%E9%97%B4%E8%BD%AC%E6%8D%A2"><span class="toc-number">6.</span> <span class="toc-text">TBN 空间转换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%89%E7%85%A7%E8%AE%A1%E7%AE%97"><span class="toc-number">7.</span> <span class="toc-text">光照计算</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#C-final"><span class="toc-number">8.</span> <span class="toc-text">$$C_{final}</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%B4%E5%BD%B1%E7%94%9F%E6%88%90"><span class="toc-number">8.1.</span> <span class="toc-text">阴影生成</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">8.2.</span> <span class="toc-text">小结</span></a></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%AE%E6%A0%87"><span class="toc-number">1.</span> <span class="toc-text">目标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8C%85%E5%90%AB%E4%BB%80%E4%B9%88"><span class="toc-number">2.</span> <span class="toc-text">包含什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9C%80%E8%A6%81%E5%A3%B0%E6%98%8E%E7%9A%84%E7%BB%93%E6%9E%84%E4%BD%93"><span class="toc-number">3.</span> <span class="toc-text">需要声明的结构体</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80%E9%A2%9C%E8%89%B2%E4%B8%8E-UV-%E9%87%87%E6%A0%B7"><span class="toc-number">4.</span> <span class="toc-text">基础颜色与 UV 采样</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B3%95%E7%BA%BF%E8%B4%B4%E5%9B%BE"><span class="toc-number">5.</span> <span class="toc-text">法线贴图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TBN-%E7%A9%BA%E9%97%B4%E8%BD%AC%E6%8D%A2"><span class="toc-number">6.</span> <span class="toc-text">TBN 空间转换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%89%E7%85%A7%E8%AE%A1%E7%AE%97"><span class="toc-number">7.</span> <span class="toc-text">光照计算</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%B4%E5%BD%B1%E7%94%9F%E6%88%90"><span class="toc-number">8.</span> <span class="toc-text">阴影生成</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">9.</span> <span class="toc-text">小结</span></a></li></ol>
 </div>
 </div>
         <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
@@ -576,7 +585,7 @@
           description: "",
           stripContent: "目标一般来说，3D 物体所使用的材质 Shader，都会包含几个比较基础的部分：UV 贴图、法线、光照接收，以及阴影生成。 本文的目标，就是先实现一个基础的 Lit Shader，并把它作为后续效果的起点。 包含什么这次实现的 Shader 主要包含以下几个部分：  基础颜色和贴图控制物体表面颜色 UV 贴图采样 法线贴图增强表面细节 使用Lambbert光照模型计算光照 通过 ShadowCaster Pass 让物体可以生成阴影  需要声明的结构体1234567891011121314151",
           date: "Sun Jul 12 2026 00:00:00 GMT+0900",
-          updated: "Mon Jul 13 2026 01:48:14 GMT+0900",
+          updated: "Mon Jul 13 2026 01:59:13 GMT+0900",
           cover: "/images/banner.webp",
         };
       </script>
