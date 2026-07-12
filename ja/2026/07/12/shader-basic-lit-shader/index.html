@@ -1,0 +1,647 @@
+  <!DOCTYPE html>
+  <html lang="ja"  
+      data-theme-mode="auto"
+  >
+  <head>
+  <meta charset="utf-8">
+  
+  
+  
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.icon_font = '4552607_ex15nbittbh';window.REIMU_CONFIG.clipboard_tips = {"success":{"zh-CN":"复制成功 (*^▽^*)","ja":"コピー成功 (*^▽^*)"},"fail":{"zh-CN":"复制失败 (ﾟ⊿ﾟ)ﾂ","ja":"コピー失敗 (ﾟ⊿ﾟ)ﾂ"},"copyright":{"enable":false,"count":50,"license_type":"by-nc-sa"}};window.REIMU_CONFIG.clipboard_tips.copyright.content = '本博客所有文章除特别声明外，均采用 BY-NC-SA 许可协议。转载请注明出处！';window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://SANaoi.github.io';window.REIMU_CONFIG.relative = '/';window.REIMU_CONFIG.i18n_languages = ["ja"];</script>
+  <title>
+    Shader 学習メモ01：基礎的な Lit Shader | SANaoi
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic|Noto Serif SC:400,400italic,700,700italic&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic|Noto Serif SC:400,400italic,700,700italic&display=swap" media="print" onload="this.media='all'">
+    <link rel="preload" href="//at.alicdn.com/t/c/font_4552607_ex15nbittbh.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+    
+<link rel="stylesheet" href="/css/loader.css">
+
+    <meta name="description" content="目標一般的に、3D オブジェクトで使うマテリアル Shader には、いくつかの基本的な要素があります。たとえば UV テクスチャ、法線、光の受け取り、そして影の生成です。 この記事の目標は、まず基礎的な Lit Shader を実装し、今後のエフェクト実装の土台にすることです。 含まれる内容今回実装する Shader には、主に次の機能が含まれます。  ベースカラーとテクスチャで表面色を制御する">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Shader 学習メモ01：基礎的な Lit Shader">
+<meta property="og:url" content="https://sanaoi.github.io/ja/2026/07/12/shader-basic-lit-shader/index.html">
+<meta property="og:site_name" content="SANaoi">
+<meta property="og:description" content="目標一般的に、3D オブジェクトで使うマテリアル Shader には、いくつかの基本的な要素があります。たとえば UV テクスチャ、法線、光の受け取り、そして影の生成です。 この記事の目標は、まず基礎的な Lit Shader を実装し、今後のエフェクト実装の土台にすることです。 含まれる内容今回実装する Shader には、主に次の機能が含まれます。  ベースカラーとテクスチャで表面色を制御する">
+<meta property="og:locale" content="ja_JP">
+<meta property="article:published_time" content="2026-07-11T15:00:00.000Z">
+<meta property="article:modified_time" content="2026-07-12T16:48:49.205Z">
+<meta property="article:author" content="SANaoi">
+<meta property="article:tag" content="Shader">
+<meta property="article:tag" content="URP">
+<meta property="article:tag" content="Unity">
+<meta name="twitter:card" content="summary">
+    <link rel="alternate" href="/atom.xml" title="SANaoi" type="application/atom+xml">
+    <link rel="shortcut icon" href="/images/favicon.ico">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css" integrity="sha384-IfxC36XL/toUyJ939C73PcgMuRzAZuIzZxE38drsmO5p6jD7ei+Zx/1oA/0l8ysE" crossorigin="anonymous">
+    
+<script src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js" integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"></script>
+
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.2/dist/aos.css" integrity="sha384-GMRP93c6Hkz9JVKGAuRR3nTS7M07RwPgTFenXiosjq2VbVgvdDNcz1g6Mkj8AONa" crossorigin="anonymous">
+
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+  <body>
+      <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi rotate">
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="var(--red-1, #ff5252)" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+           M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="var(--red-1, #ff5252)" />
+          </svg>
+      </div>
+      <div class="loading-word">少女祈祷中...</div>
+    </div>
+  </div>
+  <script>
+    var time = null;
+    var loaderEl = document.getElementById('loader');
+    var startLoading = () => {
+      time = Date.now();
+      loaderEl.classList.remove("loading");
+    }
+    var hideLoader = () => {
+      document.body.style.overflow = 'auto';
+      loader.classList.add('loading');
+    };
+
+    var endLoading = () => {
+      if (!time) {
+        hideLoader();
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          hideLoader();
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    loaderEl.addEventListener('click', endLoading);
+  </script>
+<div id="copy-tooltip"></div>
+<div id="heatmap-tooltip"></div>
+
+
+    <div id="container">
+      <div id="wrap">
+        <div id="header-nav">
+  <nav id="main-nav" aria-label="Primary navigation">
+        <a class="main-nav-link-wrap" href="/ja/">
+            <div class="main-nav-icon icon rotate">
+                &#xe62b;
+            </div>
+          <span class="main-nav-link">ホーム</span>
+        </a>
+        <a class="main-nav-link-wrap" href="/ja/archives">
+            <div class="main-nav-icon icon rotate">
+                &#xe62b;
+            </div>
+          <span class="main-nav-link">アーカイブ</span>
+        </a>
+        <a class="main-nav-link-wrap" href="/ja/about">
+            <div class="main-nav-icon icon rotate">
+                &#xe62b;
+            </div>
+          <span class="main-nav-link">プロフィール</span>
+        </a>
+        <a class="main-nav-link-wrap" href="/ja/friend">
+            <div class="main-nav-icon icon rotate">
+                &#xe62b;
+            </div>
+          <span class="main-nav-link">フレンド</span>
+        </a>
+    <a id="main-nav-toggle" class="nav-icon" aria-label="Toggle navigation" role="button"></a>
+  </nav>
+  <nav id="sub-nav" aria-label="Secondary navigation">
+      <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS フィード" aria-label="RSS フィード" target="_blank"></a>
+  </nav>
+    <nav id="i18n-nav" aria-label="Language selection">
+      <div class="custom-dropdown">
+        <div class="select-selected" id="select-selected" role="button" aria-haspopup="listbox" aria-expanded="false" aria-label="Language menu">
+          <span id="nav-language-btn" class="nav-icon" style="padding: 0 20px 0 0"></span>
+          <span id="selected-lang">日本語</span>
+        </div>
+        <ul class="select-items" id="select-items" role="listbox" aria-label="Languages">
+            <li data-value="zh-CN" role="option" aria-selected="false">简体中文</li>
+            <li data-value="ja" role="option" class="selected" aria-selected="true">日本語</li>
+        </ul>
+      </div>
+      <script>
+        var selectSelected = document.getElementById("select-selected");
+        var selectedLang = document.getElementById("selected-lang");
+        var selectItems = document.getElementById("select-items");
+        var selectOptions = selectItems.querySelectorAll("li");
+
+        selectSelected.addEventListener("click", () => {
+          selectItems.classList.toggle("show");
+          var expanded = selectSelected.getAttribute("aria-expanded") === "true";
+          selectSelected.setAttribute("aria-expanded", (!expanded).toString());
+        });
+
+        selectOptions.forEach((item) => {
+          item.addEventListener("click", () => {
+            const langMap = {};
+              langMap['zh-CN'] = '/2026/07/12/shader-basic-lit-shader/';
+              langMap['ja'] = '/ja/2026/07/12/shader-basic-lit-shader/';
+            selectedLang.textContent = item.textContent;
+            selectItems.classList.remove("show");
+            selectOptions.forEach((option) => {
+              option.classList.remove("selected");
+            });
+            item.classList.add("selected");
+            window.location = langMap[item.dataset.value];
+          });
+        });
+
+        document.addEventListener("click", (event) => {
+          if (!event.target.closest(".custom-dropdown")) {
+            selectItems.classList.remove("show");
+            selectSelected.setAttribute("aria-expanded", "false");
+          }
+        });
+      </script>
+    </nav>
+</div>
+<header id="header" aria-label="Site header">
+        <picture>
+        </picture>
+          <img  fetchpriority="high" src="/images/banner.webp" alt="Shader 学習メモ01：基礎的な Lit Shader">
+  <div id="header-outer">
+    <div id="header-title">
+          <span id="logo">
+            <h1 data-aos="slide-up">Shader 学習メモ01：基礎的な Lit Shader</h1>
+          </span>
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+        </h2>
+    </div>
+  </div>
+</header>
+
+        <div id="content" aria-label="Page content"  class="sidebar-right" >
+          <aside id="sidebar" aria-label="Sidebar">
+  <div class="sidebar-wrapper-container sticky">
+  <div class="sidebar-wrapper">
+    <div class="sidebar-wrap" data-aos="fade-up">
+          <div class="sidebar-toc-sidebar"><h3 class="toc-title">見出し</h3>
+<div class="sidebar-toc-wrapper toc-div-class" >
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%AE%E6%A8%99"><span class="toc-number">1.</span> <span class="toc-text">目標</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%AB%E3%81%BE%E3%82%8C%E3%82%8B%E5%86%85%E5%AE%B9"><span class="toc-number">2.</span> <span class="toc-text">含まれる内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%A3%E8%A8%80%E3%81%99%E3%82%8B%E6%A7%8B%E9%80%A0%E4%BD%93"><span class="toc-number">3.</span> <span class="toc-text">宣言する構造体</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%83%99%E3%83%BC%E3%82%B9%E3%82%AB%E3%83%A9%E3%83%BC%E3%81%A8-UV-%E3%82%B5%E3%83%B3%E3%83%97%E3%83%AA%E3%83%B3%E3%82%B0"><span class="toc-number">4.</span> <span class="toc-text">ベースカラーと UV サンプリング</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B3%95%E7%B7%9A%E3%83%9E%E3%83%83%E3%83%97"><span class="toc-number">5.</span> <span class="toc-text">法線マップ</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TBN-%E7%A9%BA%E9%96%93%E5%A4%89%E6%8F%9B"><span class="toc-number">6.</span> <span class="toc-text">TBN 空間変換</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%83%A9%E3%82%A4%E3%83%86%E3%82%A3%E3%83%B3%E3%82%B0%E8%A8%88%E7%AE%97"><span class="toc-number">7.</span> <span class="toc-text">ライティング計算</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#C-final"><span class="toc-number">8.</span> <span class="toc-text">$$C_{final}</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BD%B1%E3%81%AE%E7%94%9F%E6%88%90"><span class="toc-number">8.1.</span> <span class="toc-text">影の生成</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%81%BE%E3%81%A8%E3%82%81"><span class="toc-number">8.2.</span> <span class="toc-text">まとめ</span></a></li></ol></li></ol>
+</div>
+</div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.png" data-sizes="auto" alt="SANaoi" class="lazyload">
+  <div class="sidebar-author-name">SANaoi</div>
+  <div class="sidebar-description"></div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>投稿</div>
+    <div class="sidebar-state-number">6</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>カテゴリー</div>
+    <div class="sidebar-state-number">1</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>タグ</div>
+    <div class="sidebar-state-number">3</div>
+  </div>
+</div>
+<div class="sidebar-social" >
+</div>
+<div class="sidebar-menu">
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/" aria-label="ホーム"></a>
+          <div class="sidebar-menu-icon icon rotate">
+              &#xe62b;
+          </div>
+        <div class="sidebar-menu-link">ホーム</div>
+      </div>
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/archives" aria-label="アーカイブ"></a>
+          <div class="sidebar-menu-icon icon rotate">
+              &#xe62b;
+          </div>
+        <div class="sidebar-menu-link">アーカイブ</div>
+      </div>
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/about" aria-label="プロフィール"></a>
+          <div class="sidebar-menu-icon icon rotate">
+              &#xe62b;
+          </div>
+        <div class="sidebar-menu-link">プロフィール</div>
+      </div>
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/friend" aria-label="フレンド"></a>
+          <div class="sidebar-menu-icon icon rotate">
+              &#xe62b;
+          </div>
+        <div class="sidebar-menu-link">フレンド</div>
+      </div>
+</div>
+</div>
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+    </div>
+  </div>
+  <div class="sidebar-widget">
+  </div>
+  </div>
+</aside>
+
+          <section id="main" aria-label="Main content"><article id="post-shader/shader1-ja" class="h-entry article" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner" data-aos="fade-up">
+    <div class="article-meta">
+      <div class="article-date">
+  <span class="article-date-link icon-calendar" data-aos="zoom-in">
+    <time datetime="2026-07-11T15:00:00.000Z" itemprop="datePublished">2026-07-12</time>
+    <time style="display: none;" id="post-update-time">2026-07-13</time>
+  </span>
+</div>
+
+    </div>
+    
+    <div class="hr-line"></div>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+        <h2 id="目標"><a href="#目標" class="headerlink" title="目標"></a>目標</h2><p>一般的に、3D オブジェクトで使うマテリアル Shader には、いくつかの基本的な要素があります。たとえば UV テクスチャ、法線、光の受け取り、そして影の生成です。</p>
+<p>この記事の目標は、まず基礎的な Lit Shader を実装し、今後のエフェクト実装の土台にすることです。</p>
+<h2 id="含まれる内容"><a href="#含まれる内容" class="headerlink" title="含まれる内容"></a>含まれる内容</h2><p>今回実装する Shader には、主に次の機能が含まれます。</p>
+<ul>
+<li>ベースカラーとテクスチャで表面色を制御する</li>
+<li>UV を使ってテクスチャをサンプリングする</li>
+<li>法線マップで表面のディテールを強調する</li>
+<li>Lambert ライティングモデルでライティング計算を行う</li>
+<li><code>ShadowCaster</code> Pass によって物体が影を落とせるようにする</li>
+</ul>
+<h2 id="宣言する構造体"><a href="#宣言する構造体" class="headerlink" title="宣言する構造体"></a>宣言する構造体</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Attributes</span></span><br><span class="line">&#123;</span><br><span class="line">  float4 positionOS : POSITION;</span><br><span class="line">  float2 uv : TEXCOORD0;</span><br><span class="line">  float3 normalOS : NORMAL;</span><br><span class="line">  float4 tangentOS : TANGENT; <span class="comment">// 接線ベクトル</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Varyings</span></span><br><span class="line">&#123;</span><br><span class="line">  float4 positionHCS : SV_POSITION;</span><br><span class="line">  float2 uv : TEXCOORD0;</span><br><span class="line">  float4 shadowCoord : TEXCOORD1; <span class="comment">// 影座標</span></span><br><span class="line">  float3 positionWS : TEXCOORD2;</span><br><span class="line">  <span class="comment">// TBN 行列の 3 行。接線空間の法線をワールド空間へ変換し、ライティング計算に使う</span></span><br><span class="line">  float3 TtoW0 : TEXCOORD3;</span><br><span class="line">  float3 TtoW1 : TEXCOORD4;</span><br><span class="line">  float3 TtoW2 : TEXCOORD5;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h2 id="ベースカラーと-UV-サンプリング"><a href="#ベースカラーと-UV-サンプリング" class="headerlink" title="ベースカラーと UV サンプリング"></a>ベースカラーと UV サンプリング</h2><p>最初の部分は比較的分かりやすいです。<code>_BaseMap</code> からテクスチャをサンプリングし、さらに <code>_BaseColor</code> を掛けることで、最終的なベースカラーを得ます。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">half4 textureColor = <span class="built_in">SAMPLE_TEXTURE2D</span>(_BaseMap, sampler_BaseMap, IN.uv) * _BaseColor;</span><br></pre></td></tr></table></figure>
+
+<p>ここで使っている <code>IN.uv</code> は頂点ステージから渡される値です。頂点シェーダーでは、テクスチャの Tiling と Offset に応じて UV を変換します。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">OUT.uv = IN.uv * _BaseMap_ST.xy + _BaseMap_ST.zw;</span><br></pre></td></tr></table></figure>
+
+<p>この処理によって、テクスチャがモデル表面にどのように貼られるかが決まります。処理自体は複雑ではありませんが、テクスチャを使うほとんどの表現はここから始まります。</p>
+<h2 id="法線マップ"><a href="#法線マップ" class="headerlink" title="法線マップ"></a>法線マップ</h2><p>通常のカラーテクスチャは表面の色だけを変えますが、ライティング計算で使う方向そのものは変えません。</p>
+<p>法線マップの役割は、各ピクセルに追加の法線方向を持たせることです。これにより、モデル自体のポリゴン数を増やさなくても、ライティング結果で凹凸のディテールを表現できます。</p>
+<p>Shader では、まず法線マップをサンプリングし、<code>UnpackNormalScale</code> で展開します。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">float4 packedNormal = <span class="built_in">SAMPLE_TEXTURE2D</span>(_BumpMap, sampler_BumpMap, IN.uv);</span><br><span class="line">float3 normalTS = <span class="built_in">UnpackNormalScale</span>(packedNormal, _BumpScale);</span><br></pre></td></tr></table></figure>
+
+<p>次の画像を見ると、法線マップの効果をより直感的に理解できます。左側は法線マップを使用していない状態、右側は法線マップを使用した状態です。右側では、光が当たったときに表面の細かい凹凸がよりはっきり見えます。</p>
+
+<p style="text-align:center;color:#888;font-size:0.9em;">左側は法線マップなし、右側は法線マップあり。光が当たったとき、表面の凹凸感がより強く表れています。</p>
+
+<p>注意したいのは、法線マップはモデルの形状を実際に変形しているわけではない、という点です。変えているのは、ライティング計算に使われる法線方向です。ここで得られる <code>normalTS</code> は接線空間の法線なので、そのままワールド空間のライティング計算には使えません。先に空間変換が必要になります。</p>
+<h2 id="TBN-空間変換"><a href="#TBN-空間変換" class="headerlink" title="TBN 空間変換"></a>TBN 空間変換</h2><p>テクスチャサンプリングと法線マップの処理ができたので、次はライティング計算に進みます。ただし、ワールド空間でライティング計算を行うためには、接線空間の法線をワールド空間へ変換する必要があります。そこで使うのが TBN 行列です。</p>
+<p>モデルの頂点には通常、法線と接線の情報が含まれています。Unity が提供する <code>GetVertexNormalInputs</code> を使うと、ワールド空間の Normal、Tangent、Bitangent を取得できます。それぞれ法線、接線、副接線を表します。接線と副接線は互いに垂直で、どちらも表面の接平面上にあります。法線、接線、副接線の 3 方向を組み合わせることで、TBN 行列を作ることができます。</p>
+<p>頂点シェーダーでは、TBN 行列の 3 行をフラグメントシェーダーへ渡します。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">VertexNormalInputs normInputs = <span class="built_in">GetVertexNormalInputs</span>(IN.normalOS, IN.tangentOS);</span><br><span class="line">float3 normalWS = normInputs.normalWS;</span><br><span class="line">float3 tangentWS = normInputs.tangentWS;</span><br><span class="line">float3 bitangentWS = normInputs.bitangentWS;</span><br></pre></td></tr></table></figure>
+
+<p>これら 3 つの方向を使うことで、法線マップから得た接線空間の法線をワールド空間へ変換できます。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">normalWS.x = <span class="built_in">dot</span>(IN.TtoW0, normalTS);</span><br><span class="line">normalWS.y = <span class="built_in">dot</span>(IN.TtoW1, normalTS);</span><br><span class="line">normalWS.z = <span class="built_in">dot</span>(IN.TtoW2, normalTS);</span><br><span class="line">normalWS = <span class="built_in">normalize</span>(normalWS);</span><br></pre></td></tr></table></figure>
+
+<h2 id="ライティング計算"><a href="#ライティング計算" class="headerlink" title="ライティング計算"></a>ライティング計算</h2><p>ライティング計算は Shader の中でも特に重要な部分です。ここでは Lambert ライティングモデルを使います。Lambert は最も基本的な拡散反射モデルで、粗い表面で光が均等に散乱するような見え方を表現します。基本式は次の通りです。</p>
+<p>$$<br>C_{diffuse} &#x3D; C_{albedo} \cdot C_{light} \cdot \max(0, N \cdot L)<br>$$</p>
+<p>それぞれの意味は次の通りです。</p>
+<ul>
+<li>$C_{diffuse}$：最終的に計算される拡散反射光の色。</li>
+<li>$C_{albedo}$：材質そのものの色。ここではテクスチャ色に相当します。</li>
+<li>$C_{light}$：入射光の色と強さ。</li>
+<li>$N$：表面法線方向。通常は単位ベクトルである必要があります。</li>
+<li>$L$：光源方向。こちらも通常は単位ベクトルである必要があります。</li>
+<li>$N \cdot L$：法線方向と光源方向の内積で、表面がどれだけ光源を向いているかを表します。</li>
+</ul>
+<p>表面が光源を正面から向いているほど、$N \cdot L$ は 1 に近づき、光は強くなります。一方、表面が光源の反対側を向いている場合、$N \cdot L$ は 0 より小さくなります。光の強さが負になることはないので、$\max(0, N \cdot L)$ で 0 未満を切り捨てます。Shader では通常、<code>saturate</code> を使って同じ処理を行います。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span> NdotL_Main = <span class="built_in">saturate</span>(<span class="built_in">dot</span>(normalWS, mainLight.direction));</span><br></pre></td></tr></table></figure>
+
+<p>実際のライティング計算では、影、距離減衰、環境光なども考慮する必要があります。そのため、直接光の計算は次のように拡張できます。</p>
+<p>$$<br>C_{direct} &#x3D;<br>C_{albedo}<br>\cdot C_{light}<br>\cdot \max(0, N \cdot L)<br>\cdot A_{distance}<br>\cdot A_{shadow}<br>$$</p>
+<p>ここで使っている項の意味は次の通りです。</p>
+<ul>
+<li>$A_{distance}$：距離減衰値。通常は $0 \sim 1$ の範囲で、光源から遠ざかるほど光が弱くなることを表します。</li>
+<li>$A_{shadow}$：影の減衰値。通常は $0 \sim 1$ の範囲で、そのピクセルが影に遮られているかどうかを表します。</li>
+<li>$A_{shadow} &#x3D; 0$ のとき、そのピクセルは完全に影の中にあり、直接光は遮られます。</li>
+<li>$A_{distance} &#x3D; 0$ のとき、そのピクセルは光源から遠すぎるため、直接光は 0 まで減衰します。</li>
+<li>どちらも 1 のとき、そのピクセルはその光源からの直接光を完全に受けています。</li>
+</ul>
+<p>URP では、<code>GetMainLight(shadowCoord)</code> によってメインライト情報を取得できます。ここには光の方向、色、距離減衰、影の減衰が含まれています。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Light mainLight = <span class="built_in">GetMainLight</span>(shadowCoord);</span><br><span class="line"><span class="type">float</span> mainAttenuation = mainLight.distanceAttenuation * mainLight.shadowAttenuation;</span><br></pre></td></tr></table></figure>
+
+<p>ここでの <code>shadowCoord</code> は、現在のピクセルがシャドウマップ上のどこに対応するかを表す座標です。URP はこの座標をもとに <code>mainLight.shadowAttenuation</code> を計算し、そのピクセルがどれだけ影の影響を受けるかを表します。</p>
+<p>直接光に加えて、このコードでは環境光も加えています。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">float3 ambient = <span class="built_in">SampleSH</span>(normalWS) * TextureColor.rgb;</span><br></pre></td></tr></table></figure>
+
+<p><code>SampleSH(normalWS)</code> は、現在のワールド空間法線方向に応じて球面調和関数による環境光をサンプリングします。環境光は、空やシーン内の間接反射から来る基礎的な明るさを表すもので、物体の背面が完全に黒くならないようにする役割があります。特定のライト 1 つの方向には依存せず、全体的に柔らかい照明を与えます。</p>
+<p>したがって、最終色は次のように考えられます。</p>
+<p>$$<br>C_{final} &#x3D; C_{direct} + C_{ambient}<br>$$</p>
+<p>環境光の部分は次のように表せます。</p>
+<p>$$<br>C_{ambient} &#x3D; C_{albedo} \cdot C_{SH}(N)<br>$$</p>
+<p>これらをまとめると、最終式は次のようになります。</p>
+<h1 id="C-final"><a href="#C-final" class="headerlink" title="$$C_{final}"></a>$$<br>C_{final}</h1><p>C_{albedo}<br>\cdot C_{light}<br>\cdot \max(0, N \cdot L)<br>\cdot A_{distance}<br>\cdot A_{shadow}<br>+<br>C_{albedo}<br>\cdot C_{SH}(N)<br>$$</p>
+<p>対応する主なコードは次の通りです。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">Light mainLight = <span class="built_in">GetMainLight</span>(shadowCoord);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 環境光：背面が完全に黒くならないようにする</span></span><br><span class="line">float3 ambient = <span class="built_in">SampleSH</span>(normalWS) * TextureColor.rgb;</span><br><span class="line"></span><br><span class="line"><span class="comment">// メインライトの減衰：距離減衰 * 影減衰</span></span><br><span class="line"><span class="type">float</span> mainAttenuation =</span><br><span class="line">    mainLight.distanceAttenuation *</span><br><span class="line">    mainLight.shadowAttenuation;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Lambert 拡散反射：表面が光源を向いている度合い</span></span><br><span class="line"><span class="type">float</span> NdotL_Main = <span class="built_in">saturate</span>(<span class="built_in">dot</span>(normalWS, mainLight.direction));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 直接光</span></span><br><span class="line">float3 diffuse = TextureColor.rgb * mainLight.color * NdotL_Main * mainAttenuation;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 最終色 = 直接光 + 環境光</span></span><br><span class="line">float3 finalColor = diffuse + ambient;</span><br></pre></td></tr></table></figure>
+
+
+<p style="text-align:center;color:#888;font-size:0.9em;">環境光を加えることで、背面が完全に黒くならず、明暗の移り変わりがより柔らかくなります。</p>
+
+<p>つまり、このコードで計算している内容は次のようにまとめられます。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">最終色 = テクスチャ色 × メインライト色 × Lambert の明暗 × 距離減衰 × 影減衰 + 環境光</span><br></pre></td></tr></table></figure>
+
+<p>なお、ここで説明しているのはメインライトのライティング計算です。シーン内に複数のライトがある場合、URP では各ライトの影響を計算して最終色へ加算します。プロジェクトのソースコードでは複数ライト対応も追加していますが、この記事では詳しく扱いません。</p>
+<h2 id="影の生成"><a href="#影の生成" class="headerlink" title="影の生成"></a>影の生成</h2><p>ライティング計算だけでなく、より自然な見た目にするためには、物体が影を落とせる必要があります。ただし、影の生成をすべて自分で実装するのはかなり難しいです。幸い、URP はシャドウマップの生成とサンプリングをすでに用意してくれているため、Shader 側では <code>ShadowCaster</code> Pass を宣言するだけで、物体が影を落とせるようになります。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">Pass</span><br><span class="line">&#123;</span><br><span class="line">    Name <span class="string">&quot;ShadowCaster&quot;</span></span><br><span class="line">    Tags &#123; <span class="string">&quot;LightMode&quot;</span> = <span class="string">&quot;ShadowCaster&quot;</span> &#125;</span><br><span class="line"></span><br><span class="line">    ZWrite On</span><br><span class="line">    ZTest LEqual</span><br><span class="line">    ColorMask <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    HLSLPROGRAM</span><br><span class="line">    <span class="meta">#<span class="keyword">pragma</span> vertex ShadowPassVertex</span></span><br><span class="line">    <span class="meta">#<span class="keyword">pragma</span> fragment ShadowPassFragment</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">#<span class="keyword">include</span> <span class="string">&quot;Packages/com.unity.render-pipelines.universal/Shaders/ShadowCasterPass.hlsl&quot;</span></span></span><br><span class="line">    ENDHLSL</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>この Pass は通常の色を描画する Pass とは異なります。物体の色を出力するのではなく、ライトの視点から物体を一度描画し、その深度情報をシャドウマップへ書き込みます。その後、他の物体がライティング計算を行うとき、このシャドウマップを使って現在のピクセルが遮られているかどうかを判断できます。</p>
+<p>つまり、役割は次のように分けられます。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ShadowCaster Pass：現在の物体をシャドウマップへ書き込み、影を落とせるようにする</span><br><span class="line">Forward/Lit Pass：シャドウマップをサンプリングし、現在の物体が影を受けられるようにする</span><br></pre></td></tr></table></figure>
+
+<p>主な設定の意味は次の通りです。</p>
+<ul>
+<li><code>Tags &#123; &quot;LightMode&quot; = &quot;ShadowCaster&quot; &#125;</code>：URP に、この Pass が影生成用であることを伝えます。URP はシャドウマップを描画するとき、この Pass を使用します。</li>
+<li><code>ZWrite On</code>：深度書き込みを有効にし、物体の深度をシャドウマップへ書き込みます。</li>
+<li><code>ZTest LEqual</code>：小さい、または等しい深度を通すテストを行い、正しい遮蔽関係を保ちます。</li>
+<li><code>ColorMask 0</code>：色の出力を無効にします。シャドウマップに必要なのは深度であり、色ではありません。</li>
+<li><code>ShadowPassVertex</code>：URP が用意している影生成用の頂点シェーダー関数です。</li>
+<li><code>ShadowPassFragment</code>：URP が用意している影生成用のフラグメントシェーダー関数です。</li>
+<li><code>ShadowCasterPass.hlsl</code>：URP が提供する影生成の実装で、影のバイアス、クリッピング、ライト種類ごとの処理などが含まれています。</li>
+</ul>
+<p>注意点として、<code>ShadowCaster</code> Pass が解決するのは「この物体が影を落とせるかどうか」です。一方で「この物体が影を受け取れるかどうか」は、前述のライティング Pass 側で処理します。つまり、<code>GetMainLight(shadowCoord)</code> から <code>mainLight.shadowAttenuation</code> を取得し、その影減衰を直接光の結果に掛けることで影を受け取ります。</p>
+<h2 id="まとめ"><a href="#まとめ" class="headerlink" title="まとめ"></a>まとめ</h2><p>この記事では、基礎的な Lit Shader を実装しました。内容としては、カラーテクスチャのサンプリング、法線マップ、基本的な Lambert ライティング、環境光、影の受け取り、影の生成といった機能を扱いました。</p>
+<p>これらの機能があれば、基本的なマテリアル表示には十分使えます。ただし、これはあくまで簡略化したライティング Shader です。現在使っているのはベースカラーテクスチャと法線マップのみで、高光マップ、金属度マップ、粗さマップ、AO マップなど、より完全なマテリアル情報はまだ扱っていません。</p>
+<p>また、Lambert ライティングモデルは拡散反射だけを計算するため、高光、反射、金属度、粗さといった表現は含まれていません。より現実に近い材質表現を行うには、この基礎の上に Blinn-Phong や PBR ライティングモデル（Physically Based Rendering、物理ベースレンダリング）を実装していく必要があります。</p>
+
+    </div>
+    <footer class="article-footer">
+        <a class="article-category-link" href="/ja/categories/Unity-shader/" title="Unity-shader" data-aos="zoom-in">Unity-shader</a>
+
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/ja/tags/Shader/" rel="tag" title="Shader">Shader</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/ja/tags/URP/" rel="tag" title="URP">URP</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/ja/tags/Unity/" rel="tag" title="Unity">Unity</a></li></ul>
+
+    </footer>
+  </div>
+    <nav id="article-nav" aria-label="Article navigation" data-aos="fade-up">
+    <div class="article-nav-link-wrap right">
+          <img data-src="https://d-sketon.top/img/_backwebp/bg1.webp" data-sizes="auto" alt="Shader 学習メモ00：はじめに" class="lazyload">
+      <a href="/ja/2026/07/09/shader-learning-start/" aria-label="次の記事: Shader 学習メモ00：はじめに"  title="次の記事: Shader 学習メモ00：はじめに"></a>
+      <div class="article-nav-caption">次の記事</div>
+      <h3 class="article-nav-title">
+          Shader 学習メモ00：はじめに
+      </h3>
+    </div>
+  </nav>
+
+</article>
+
+
+</section>
+        </div>
+        <footer id="footer" aria-label="Site footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    <div>
+      <span class="icon-copyright"></span>
+        2020-2026
+        <span class="footer-info-sep rotate"></span>
+      SANaoi
+    </div>
+      <div>
+        Powered by&nbsp;<a href="https://hexo.io/" rel="noopener nofollow noreferrer" target="_blank">Hexo</a>&nbsp;
+        Theme.<a href="https://github.com/D-Sketon/hexo-theme-reimu" rel="noopener nofollow noreferrer" target="_blank">Reimu</a>
+      </div>
+      <div>
+        <span class="icon-brush"></span>
+        7.8k
+        &nbsp;|&nbsp;
+        <span class="icon-coffee"></span>
+        00:33
+      </div>
+      <div>
+        <span class="icon-eye"></span>
+        <span id="busuanzi_container_site_pv">総閲覧数&nbsp;<span id="busuanzi_value_site_pv"></span></span>
+        &nbsp;|&nbsp;
+        <span class="icon-user"></span>
+        <span id="busuanzi_container_site_uv">総閲覧者数&nbsp;<span id="busuanzi_value_site_uv"></span></span>
+      </div>
+  </div>
+</footer>
+
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav" aria-label="Mobile navigation">
+  <div class="sidebar-wrap">
+        <div class="sidebar-toc-sidebar"><h3 class="toc-title">見出し</h3>
+<div class="sidebar-toc-wrapper toc-div-class" >
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%AE%E6%A8%99"><span class="toc-number">1.</span> <span class="toc-text">目標</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%AB%E3%81%BE%E3%82%8C%E3%82%8B%E5%86%85%E5%AE%B9"><span class="toc-number">2.</span> <span class="toc-text">含まれる内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%A3%E8%A8%80%E3%81%99%E3%82%8B%E6%A7%8B%E9%80%A0%E4%BD%93"><span class="toc-number">3.</span> <span class="toc-text">宣言する構造体</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%83%99%E3%83%BC%E3%82%B9%E3%82%AB%E3%83%A9%E3%83%BC%E3%81%A8-UV-%E3%82%B5%E3%83%B3%E3%83%97%E3%83%AA%E3%83%B3%E3%82%B0"><span class="toc-number">4.</span> <span class="toc-text">ベースカラーと UV サンプリング</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B3%95%E7%B7%9A%E3%83%9E%E3%83%83%E3%83%97"><span class="toc-number">5.</span> <span class="toc-text">法線マップ</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TBN-%E7%A9%BA%E9%96%93%E5%A4%89%E6%8F%9B"><span class="toc-number">6.</span> <span class="toc-text">TBN 空間変換</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%83%A9%E3%82%A4%E3%83%86%E3%82%A3%E3%83%B3%E3%82%B0%E8%A8%88%E7%AE%97"><span class="toc-number">7.</span> <span class="toc-text">ライティング計算</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#C-final"><span class="toc-number">8.</span> <span class="toc-text">$$C_{final}</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BD%B1%E3%81%AE%E7%94%9F%E6%88%90"><span class="toc-number">8.1.</span> <span class="toc-text">影の生成</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%81%BE%E3%81%A8%E3%82%81"><span class="toc-number">8.2.</span> <span class="toc-text">まとめ</span></a></li></ol></li></ol>
+</div>
+</div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.png" data-sizes="auto" alt="SANaoi" class="lazyload">
+  <div class="sidebar-author-name">SANaoi</div>
+  <div class="sidebar-description"></div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>投稿</div>
+    <div class="sidebar-state-number">6</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>カテゴリー</div>
+    <div class="sidebar-state-number">1</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>タグ</div>
+    <div class="sidebar-state-number">3</div>
+  </div>
+</div>
+<div class="sidebar-social" >
+</div>
+<div class="sidebar-menu">
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/" aria-label="ホーム"></a>
+          <div class="sidebar-menu-icon icon rotate">
+              &#xe62b;
+          </div>
+        <div class="sidebar-menu-link">ホーム</div>
+      </div>
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/archives" aria-label="アーカイブ"></a>
+          <div class="sidebar-menu-icon icon rotate">
+              &#xe62b;
+          </div>
+        <div class="sidebar-menu-link">アーカイブ</div>
+      </div>
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/about" aria-label="プロフィール"></a>
+          <div class="sidebar-menu-icon icon rotate">
+              &#xe62b;
+          </div>
+        <div class="sidebar-menu-link">プロフィール</div>
+      </div>
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/friend" aria-label="フレンド"></a>
+          <div class="sidebar-menu-icon icon rotate">
+              &#xe62b;
+          </div>
+        <div class="sidebar-menu-link">フレンド</div>
+      </div>
+</div>
+</div>
+  </div>
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+</nav>
+
+    </div>
+    
+<script src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js" integrity="sha384-3gT&#x2F;vsepWkfz&#x2F;ff7PpWNUeMzeWoH3cDhm&#x2F;A8jM7ouoAK0&#x2F;fP&#x2F;9bcHHR5kHq2nf+e" crossorigin="anonymous"></script>
+
+
+<script src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js" integrity="sha384-J08i8An&#x2F;QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+  
+<script src="/js/aos.js"></script>
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+<script src="/js/pjax_script.js" data-pjax></script>
+
+
+
+
+  <script>
+    var setupFirework = () => {
+      if (!false || !window.matchMedia('(max-width: 768px)').matches) {
+        window.firework && window.firework(JSON.parse('{"excludeElements":["a","button"],"particles":[{"shape":"circle","move":["emit"],"easing":"easeOutExpo","colors":["var(--red-1)","var(--red-2)","var(--red-3)","var(--red-4)"],"number":20,"duration":[1200,1800],"shapeOptions":{"radius":[16,32],"alpha":[0.3,0.5]}},{"shape":"circle","move":["diffuse"],"easing":"easeOutExpo","colors":["var(--red-0)"],"number":1,"duration":[1200,1800],"shapeOptions":{"radius":20,"alpha":[0.2,0.5],"lineWidth":6}}]}'));
+      }
+    }
+  </script>
+  
+<script src="https://npm.webcache.cn/mouse-firework@0.2.0/dist/index.umd.js" integrity="sha384-qi9WggRt19tv8Vc7pCHW3ulMNLwrn515zaLEWZjl1px07vz8+pUoWX8n1rgq282T" crossorigin="anonymous" onload="setupFirework()" defer></script>
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+      
+      
+      <script data-pjax>
+        window.REIMU_POST = {
+          author: "SANaoi",
+          title: "Shader 学習メモ01：基礎的な Lit Shader",
+          url: "https://sanaoi.github.io/2026/07/12/shader-basic-lit-shader/",
+          excerpt: "",
+          description: "",
+          stripContent: "目標一般的に、3D オブジェクトで使うマテリアル Shader には、いくつかの基本的な要素があります。たとえば UV テクスチャ、法線、光の受け取り、そして影の生成です。 この記事の目標は、まず基礎的な Lit Shader を実装し、今後のエフェクト実装の土台にすることです。 含まれる内容今回実装する Shader には、主に次の機能が含まれます。  ベースカラーとテクスチャで表面色を制御する UV を使ってテクスチャをサンプリングする 法線マップで表面のディテールを強調する Lambert",
+          date: "Sun Jul 12 2026 00:00:00 GMT+0900",
+          updated: "Mon Jul 13 2026 01:48:49 GMT+0900",
+          cover: "/images/banner.webp",
+        };
+      </script>
+        
+<script src="/js/insert_highlight.js" data-pjax></script>
+
+      
+<script src="/js/tabs.js" data-pjax defer></script>
+
+      <script type="module" data-pjax>
+        (async () => {
+          const PhotoSwipeLightbox = (await safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js", "sha384-DiL6M/gG+wmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF/N6lrZi/")).default;
+          const initPswp = (gallery, children) => {
+            if (_$$(`${gallery} ${children}`).length > 0) {
+              new PhotoSwipeLightbox({
+                gallery,
+                children,
+                pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+              }).init();
+            }
+          }
+          const pswp = () => {
+            initPswp('.article-entry', 'a.article-gallery-item');
+            initPswp('.article-gallery', 'a.article-gallery-item');
+          }
+          pswp();
+        })();
+      </script>
+        
+
+
+  </div>
+</div>
+
+
+  <script>
+    console.log(String.raw`%c 
+ ______     ______     __     __    __     __  __    
+/\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+\ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+ \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+  \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                  
+`,'color: #ff5252;')
+    console.log('%c Theme.Reimu v' + '1.12.5' + ' %c https://github.com/D-Sketon/hexo-theme-reimu ', 'color: white; background: #ff5252; padding:5px 0;', 'padding:4px;border:1px solid #ff5252;')
+  </script>
+  
+
+
+  
+<script src="https://npm.webcache.cn/busuanzi@2.3.0/bsz.pure.mini.js" integrity="sha384-0M75wtSkhjIInv4coYlaJU83+OypaRCIq2SukQVQX04eGTCBXJDuWAbJet56id+S" crossorigin="anonymous" async></script>
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+</script>
+
+
+
+
+  </body>
+  </html>

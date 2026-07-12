@@ -195,11 +195,11 @@
 <div class="sidebar-state">
   <div class="sidebar-state-article">
     <div>文章</div>
-    <div class="sidebar-state-number">5</div>
+    <div class="sidebar-state-number">6</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
-    <div class="sidebar-state-number">2</div>
+    <div class="sidebar-state-number">1</div>
   </div>
   <div class="sidebar-state-tag">
     <div>标签</div>
@@ -248,46 +248,53 @@
 
           <section id="main" aria-label="Main content">      <div class="post-wrapper">
   <div class="post-wrap left" data-aos="fade-up">
-      <a class="post-link" href="/2026/07/09/shader-learning-start/" aria-label="图形渲染学习笔记00：从0开始Shader学习" title="图形渲染学习笔记00：从0开始Shader学习"></a>
+      <a class="post-link" href="/2026/07/12/shader-basic-lit-shader/" aria-label="Shader 学习笔记01：一个基础 Lit Shader" title="Shader 学习笔记01：一个基础 Lit Shader"></a>
     <div class="post-cover left">
-          <img data-src="https://d-sketon.top/img/_backwebp/bg1.webp" data-sizes="auto" alt="图形渲染学习笔记00：从0开始Shader学习" class="lazyload">
+          <img data-src="https://d-sketon.top/img/_backwebp/bg1.webp" data-sizes="auto" alt="Shader 学习笔记01：一个基础 Lit Shader" class="lazyload">
     </div>
     <div class="post-info">
       <div class="post-meta">
-        <span><span class="icon-calendar"></span>2026-07-09</span>
-        <span><span class="icon-pencil"></span>319 字</span>
-        <span><span class="icon-clock"></span>2 分钟</span>
+        <span><span class="icon-calendar"></span>2026-07-12</span>
+        <span><span class="icon-pencil"></span>2.7k 字</span>
+        <span><span class="icon-clock"></span>11 分钟</span>
       </div>
-      <h2 class="post-title">图形渲染学习笔记00：从0开始Shader学习</h2>
+      <h2 class="post-title">Shader 学习笔记01：一个基础 Lit Shader</h2>
       <article class="post-article">
-          写在前面很多时候，在做游戏项目的过程中慢慢意识到：有些功能如果只靠普通脚本、材质参数或者 UI 组件去堆，会变得很绕，效果也不一定稳定；但如果换成 Shader 的思路，反而可以用更直接、更高效的方式解决。
-这也是我开始认真学习 Shader 的主要契机。
-目前我的学习方式比较偏实践，对一个效果感兴趣的话就会尝试去实现。
-一边阅读 Shader 相关书籍和文章，理解基础概念；拆解别人实现过的效果，尝试在游戏里复现出来，并借助 AI 来解释代码、拆解流程。
-虽然还谈不上系统掌握，但已经有了一些阶段性的成果。后面几篇会从具体效果开始整理，把目前做过的内容挑重点写下来。
-效果展示雪地轨迹记录鼠标经过
+          目标一般来说，3D 物体所使用的材质 Shader，都会包含几个比较基础的部分：UV 贴图、法线、光照接收，以及阴影生成。
+本文的目标，就是先实现一个基础的 Lit Shader，并把它作为后续效果的起点。
+包含什么这次实现的 Shader 主要包含以下几个部分：
+
+基础颜色和贴图控制物体表面颜色
+UV 贴图采样
+法线贴图增强表面细节
+使用Lambbert光照模型计算光照
+通过 ShadowCaster Pass 让物体可以生成阴影
+
+需要声明的结构体123456789101112131415161718struct Attributes&amp;#123;  float4 positionOS : 
       </article>
     </div>
   </div>
 </div>
       <div class="post-wrapper">
   <div class="post-wrap right" data-aos="fade-up">
-      <a class="post-link" href="/2024/10/19/undefined/" aria-label="Unity" title="Unity"></a>
+      <a class="post-link" href="/2026/07/09/shader-learning-start/" aria-label="Shader 学习笔记00：写在前面" title="Shader 学习笔记00：写在前面"></a>
     <div class="post-cover right">
-          <img data-src="https://d-sketon.top/img/_backwebp/bg1.webp" data-sizes="auto" alt="Unity" class="lazyload">
+          <img data-src="https://d-sketon.top/img/_backwebp/bg1.webp" data-sizes="auto" alt="Shader 学习笔记00：写在前面" class="lazyload">
     </div>
     <div class="post-info">
       <div class="post-meta">
-        <span><span class="icon-calendar"></span>2024-10-19</span>
-        <span><span class="icon-pencil"></span>4 字</span>
-        <span><span class="icon-clock"></span>1 分钟</span>
+        <span><span class="icon-calendar"></span>2026-07-09</span>
+        <span><span class="icon-pencil"></span>471 字</span>
+        <span><span class="icon-clock"></span>2 分钟</span>
       </div>
-      <h2 class="post-title">Unity</h2>
+      <h2 class="post-title">Shader 学习笔记00：写在前面</h2>
       <article class="post-article">
-          
-
-啥也不是！
-
+          前言很多时候，在做游戏项目的过程中慢慢意识到：有些功能如果只靠普通脚本、材质参数或者 UI 组件去堆，会变得很绕，效果也不一定稳定；但如果换成 Shader 的思路，反而可以用更直接、更高效的方式解决。
+这也是我开始认真学习 Shader 的主要契机。
+目前我的学习方式比较偏实践，对一个效果感兴趣的话就会尝试去实现。
+一边阅读 Shader 相关书籍和文章，理解基础概念；拆解别人实现过的效果，尝试在游戏里复现出来，并借助 AI 来解释代码、拆解流程。
+虽然还谈不上系统掌握，但已经有了一些阶段性的成果。后面几篇会从具体效果开始整理，把目前做过的内容挑重点写下来。
+这组文章更偏向学习记录和效果整理
       </article>
     </div>
   </div>
@@ -334,10 +341,10 @@
       </div>
       <div>
         <span class="icon-brush"></span>
-        867
+        7.8k
         &nbsp;|&nbsp;
         <span class="icon-coffee"></span>
-        00:07
+        00:33
       </div>
       <div>
         <span class="icon-eye"></span>
@@ -365,11 +372,11 @@
 <div class="sidebar-state">
   <div class="sidebar-state-article">
     <div>文章</div>
-    <div class="sidebar-state-number">5</div>
+    <div class="sidebar-state-number">6</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
-    <div class="sidebar-state-number">2</div>
+    <div class="sidebar-state-number">1</div>
   </div>
   <div class="sidebar-state-tag">
     <div>标签</div>

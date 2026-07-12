@@ -195,11 +195,11 @@
 <div class="sidebar-state">
   <div class="sidebar-state-article">
     <div>投稿</div>
-    <div class="sidebar-state-number">5</div>
+    <div class="sidebar-state-number">6</div>
   </div>
   <div class="sidebar-state-category">
     <div>カテゴリー</div>
-    <div class="sidebar-state-number">2</div>
+    <div class="sidebar-state-number">1</div>
   </div>
   <div class="sidebar-state-tag">
     <div>タグ</div>
@@ -248,45 +248,50 @@
 
           <section id="main" aria-label="Main content">      <div class="post-wrapper">
   <div class="post-wrap left" data-aos="fade-up">
-      <a class="post-link" href="/ja/2026/07/09/shader-learning-start/" aria-label="グラフィックスレンダリング学習メモ00：ゼロから始めるShader学習" title="グラフィックスレンダリング学習メモ00：ゼロから始めるShader学習"></a>
+      <a class="post-link" href="/ja/2026/07/12/shader-basic-lit-shader/" aria-label="Shader 学習メモ01：基礎的な Lit Shader" title="Shader 学習メモ01：基礎的な Lit Shader"></a>
     <div class="post-cover left">
-          <img data-src="https://d-sketon.top/img/_backwebp/bg1.webp" data-sizes="auto" alt="グラフィックスレンダリング学習メモ00：ゼロから始めるShader学習" class="lazyload">
+          <img data-src="https://d-sketon.top/img/_backwebp/bg1.webp" data-sizes="auto" alt="Shader 学習メモ01：基礎的な Lit Shader" class="lazyload">
     </div>
     <div class="post-info">
       <div class="post-meta">
-        <span><span class="icon-calendar"></span>2026-07-09</span>
-        <span><span class="icon-pencil"></span>536 文字</span>
-        <span><span class="icon-clock"></span>2 分</span>
+        <span><span class="icon-calendar"></span>2026-07-12</span>
+        <span><span class="icon-pencil"></span>3.9k 文字</span>
+        <span><span class="icon-clock"></span>15 分</span>
       </div>
-      <h2 class="post-title">グラフィックスレンダリング学習メモ00：ゼロから始めるShader学習</h2>
+      <h2 class="post-title">Shader 学習メモ01：基礎的な Lit Shader</h2>
       <article class="post-article">
-          はじめにゲーム制作をしている中で、少しずつ気づいたことがあります。通常のスクリプト、マテリアルのパラメータ、あるいは UI コンポーネントだけで実装しようとすると、処理が複雑になったり、表現が安定しなかったりする機能があります。
-しかし Shader の考え方を使うと、より直接的で効率のよい方法で解決できる場合があります。
-それが、私が Shader を本格的に学び始めた大きなきっかけです。
-現在の学習方法は、かなり実践寄りです。興味を持ったエフェクトがあれば、まず自分で実装してみるようにしています。
-Shader 関連の書籍や記事を読みながら基礎概念を理解し、他の人が実装したエフェクトを分解
+          目標一般的に、3D オブジェクトで使うマテリアル Shader には、いくつかの基本的な要素があります。たとえば UV テクスチャ、法線、光の受け取り、そして影の生成です。
+この記事の目標は、まず基礎的な Lit Shader を実装し、今後のエフェクト実装の土台にすることです。
+含まれる内容今回実装する Shader には、主に次の機能が含まれます。
+
+ベースカラーとテクスチャで表面色を制御する
+UV を使ってテクスチャをサンプリングする
+法線マップで表面のディテールを強調する
+Lambert ライティングモデルでライティング計算を行う
+ShadowCaster Pass によって物体が影を
       </article>
     </div>
   </div>
 </div>
       <div class="post-wrapper">
   <div class="post-wrap right" data-aos="fade-up">
-      <a class="post-link" href="/ja/2024/10/19/undefined/" aria-label="Unity" title="Unity"></a>
+      <a class="post-link" href="/ja/2026/07/09/shader-learning-start/" aria-label="Shader 学習メモ00：はじめに" title="Shader 学習メモ00：はじめに"></a>
     <div class="post-cover right">
-          <img data-src="https://d-sketon.top/img/_backwebp/bg1.webp" data-sizes="auto" alt="Unity" class="lazyload">
+          <img data-src="https://d-sketon.top/img/_backwebp/bg1.webp" data-sizes="auto" alt="Shader 学習メモ00：はじめに" class="lazyload">
     </div>
     <div class="post-info">
       <div class="post-meta">
-        <span><span class="icon-calendar"></span>2024-10-19</span>
-        <span><span class="icon-pencil"></span>4 文字</span>
-        <span><span class="icon-clock"></span>1 分</span>
+        <span><span class="icon-calendar"></span>2026-07-09</span>
+        <span><span class="icon-pencil"></span>822 文字</span>
+        <span><span class="icon-clock"></span>3 分</span>
       </div>
-      <h2 class="post-title">Unity</h2>
+      <h2 class="post-title">Shader 学習メモ00：はじめに</h2>
       <article class="post-article">
-          
-
-啥也不是！
-
+          はじめにゲーム制作をしている中で、少しずつ気づいたことがあります。通常のスクリプト、マテリアルのパラメータ、あるいは UI コンポーネントだけで実装しようとすると、処理が複雑になったり、表現が安定しなかったりする機能があります。
+しかし Shader の考え方を使うと、より直接的で効率のよい方法で解決できる場合があります。
+それが、私が Shader を本格的に学び始めた大きなきっかけです。
+現在の学習方法は、かなり実践寄りです。興味を持ったエフェクトがあれば、まず自分で実装してみるようにしています。
+Shader 関連の書籍や記事を読みながら基礎概念を理解し、他の人が実装したエフェクトを分解
       </article>
     </div>
   </div>
@@ -331,10 +336,10 @@ Shader 関連の書籍や記事を読みながら基礎概念を理解し、他�
       </div>
       <div>
         <span class="icon-brush"></span>
-        867
+        7.8k
         &nbsp;|&nbsp;
         <span class="icon-coffee"></span>
-        00:07
+        00:33
       </div>
       <div>
         <span class="icon-eye"></span>
@@ -362,11 +367,11 @@ Shader 関連の書籍や記事を読みながら基礎概念を理解し、他�
 <div class="sidebar-state">
   <div class="sidebar-state-article">
     <div>投稿</div>
-    <div class="sidebar-state-number">5</div>
+    <div class="sidebar-state-number">6</div>
   </div>
   <div class="sidebar-state-category">
     <div>カテゴリー</div>
-    <div class="sidebar-state-number">2</div>
+    <div class="sidebar-state-number">1</div>
   </div>
   <div class="sidebar-state-tag">
     <div>タグ</div>

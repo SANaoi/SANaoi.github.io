@@ -9,7 +9,7 @@
   
   <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.icon_font = '4552607_ex15nbittbh';window.REIMU_CONFIG.clipboard_tips = {"success":{"zh-CN":"复制成功 (*^▽^*)","ja":"コピー成功 (*^▽^*)"},"fail":{"zh-CN":"复制失败 (ﾟ⊿ﾟ)ﾂ","ja":"コピー失敗 (ﾟ⊿ﾟ)ﾂ"},"copyright":{"enable":false,"count":50,"license_type":"by-nc-sa"}};window.REIMU_CONFIG.clipboard_tips.copyright.content = '本博客所有文章除特别声明外，均采用 BY-NC-SA 许可协议。转载请注明出处！';window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://SANaoi.github.io';window.REIMU_CONFIG.relative = '/';window.REIMU_CONFIG.i18n_languages = ["ja"];</script>
   <title>
-    グラフィックスレンダリング学習メモ00：ゼロから始めるShader学習 | SANaoi
+    Shader 学習メモ00：はじめに | SANaoi
   </title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic|Noto Serif SC:400,400italic,700,700italic&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic|Noto Serif SC:400,400italic,700,700italic&display=swap" media="print" onload="this.media='all'">
@@ -19,7 +19,7 @@
 
     <meta name="description" content="はじめにゲーム制作をしている中で、少しずつ気づいたことがあります。通常のスクリプト、マテリアルのパラメータ、あるいは UI コンポーネントだけで実装しようとすると、処理が複雑になったり、表現が安定しなかったりする機能があります。 しかし Shader の考え方を使うと、より直接的で効率のよい方法で解決できる場合があります。 それが、私が Shader を本格的に学び始めた大きなきっかけです。 現在">
 <meta property="og:type" content="article">
-<meta property="og:title" content="グラフィックスレンダリング学習メモ00：ゼロから始めるShader学習">
+<meta property="og:title" content="Shader 学習メモ00：はじめに">
 <meta property="og:url" content="https://sanaoi.github.io/ja/2026/07/09/shader-learning-start/index.html">
 <meta property="og:site_name" content="SANaoi">
 <meta property="og:description" content="はじめにゲーム制作をしている中で、少しずつ気づいたことがあります。通常のスクリプト、マテリアルのパラメータ、あるいは UI コンポーネントだけで実装しようとすると、処理が複雑になったり、表現が安定しなかったりする機能があります。 しかし Shader の考え方を使うと、より直接的で効率のよい方法で解決できる場合があります。 それが、私が Shader を本格的に学び始めた大きなきっかけです。 現在">
@@ -28,7 +28,7 @@
 <meta property="og:image" content="https://sanaoi.github.io/2026/07/09/shader-learning-start/LOD.gif">
 <meta property="og:image" content="https://sanaoi.github.io/2026/07/09/shader-learning-start/MaskDustortTex.gif">
 <meta property="article:published_time" content="2026-07-09T13:35:00.000Z">
-<meta property="article:modified_time" content="2026-07-09T16:27:04.293Z">
+<meta property="article:modified_time" content="2026-07-12T13:50:27.564Z">
 <meta property="article:author" content="SANaoi">
 <meta property="article:tag" content="Shader">
 <meta property="article:tag" content="Unity">
@@ -178,11 +178,11 @@
 <header id="header" aria-label="Site header">
         <picture>
         </picture>
-          <img  fetchpriority="high" src="/images/banner.webp" alt="グラフィックスレンダリング学習メモ00：ゼロから始めるShader学習">
+          <img  fetchpriority="high" src="/images/banner.webp" alt="Shader 学習メモ00：はじめに">
   <div id="header-outer">
     <div id="header-title">
           <span id="logo">
-            <h1 data-aos="slide-up">グラフィックスレンダリング学習メモ00：ゼロから始めるShader学習</h1>
+            <h1 data-aos="slide-up">Shader 学習メモ00：はじめに</h1>
           </span>
         <h2 id="subtitle-wrap" data-aos="slide-down">
         </h2>
@@ -208,11 +208,11 @@
 <div class="sidebar-state">
   <div class="sidebar-state-article">
     <div>投稿</div>
-    <div class="sidebar-state-number">5</div>
+    <div class="sidebar-state-number">6</div>
   </div>
   <div class="sidebar-state-category">
     <div>カテゴリー</div>
-    <div class="sidebar-state-number">2</div>
+    <div class="sidebar-state-number">1</div>
   </div>
   <div class="sidebar-state-tag">
     <div>タグ</div>
@@ -269,7 +269,7 @@
       <div class="article-date">
   <span class="article-date-link icon-calendar" data-aos="zoom-in">
     <time datetime="2026-07-09T13:35:00.000Z" itemprop="datePublished">2026-07-09</time>
-    <time style="display: none;" id="post-update-time">2026-07-10</time>
+    <time style="display: none;" id="post-update-time">2026-07-12</time>
   </span>
 </div>
 
@@ -284,6 +284,9 @@
 <p>現在の学習方法は、かなり実践寄りです。興味を持ったエフェクトがあれば、まず自分で実装してみるようにしています。</p>
 <p>Shader 関連の書籍や記事を読みながら基礎概念を理解し、他の人が実装したエフェクトを分解して、ゲーム内で再現してみる。分からない部分は AI も活用しながら、コードの意味や処理の流れを整理しています。</p>
 <p>まだ体系的に理解できているとは言えませんが、いくつかの段階的な成果は出てきました。今後の記事では、実際に作ったエフェクトを中心に、重要な部分を絞って整理していく予定です。</p>
+<p>このシリーズは、学習記録とエフェクトの整理を中心にした内容です。レンダリングパイプラインやラスタライズといったグラフィックスの基礎から詳しく掘り下げるものではありません。そうした内容だけでも十分に大きなテーマになるため、ここでは実践の中で出会った課題、実装したエフェクト、そしてその時点で理解できた要点を残していきたいと思います。</p>
+<p>このシリーズでは、レンダリングパイプラインとして URP を使用し、Shader コードは HLSL 言語で記述しています。今後、他のレンダリングパイプラインや言語を使用する場合は、記事内で説明します。</p>
+<p>この記事で紹介している Shader コードは、<a target="_blank" rel="noopener" href="https://github.com/SANaoi/UNITY_URP_SHADER">GitHub</a> の <code>Assets/ShaderTest/Scripts/ShaderTest2.0</code> ディレクトリから関連するソースコードを確認できます。</p>
 <h2 id="エフェクト展示"><a href="#エフェクト展示" class="headerlink" title="エフェクト展示"></a>エフェクト展示</h2><h3 id="雪上の軌跡"><a href="#雪上の軌跡" class="headerlink" title="雪上の軌跡"></a>雪上の軌跡</h3><p>マウスの移動を記録し、雪の表面に目に見えるインタラクティブな軌跡を残します。</p>
 <p><img src="/2026/07/09/shader-learning-start/snowMap.gif" alt="雪上の軌跡"></p>
 <h3 id="Tessellation-LOD"><a href="#Tessellation-LOD" class="headerlink" title="Tessellation LOD"></a>Tessellation LOD</h3><p>カメラとの距離に応じて曲面細分の度合いを動的に調整し、近くではより多くのディテールを保ち、遠くでは三角形の数を減らします。</p>
@@ -300,12 +303,20 @@
     </footer>
   </div>
     <nav id="article-nav" aria-label="Article navigation" data-aos="fade-up">
+      <div class="article-nav-link-wrap left">
+            <img data-src="https://d-sketon.top/img/_backwebp/bg1.webp" data-sizes="auto" alt="Shader 学習メモ01：基礎的な Lit Shader" class="lazyload">
+        <a href="/ja/2026/07/12/shader-basic-lit-shader/" aria-label="前の記事: Shader 学習メモ01：基礎的な Lit Shader" title="前の記事: Shader 学習メモ01：基礎的な Lit Shader"></a>
+        <div class="article-nav-caption">前の記事</div>
+        <h3 class="article-nav-title">
+            Shader 学習メモ01：基礎的な Lit Shader
+        </h3>
+      </div>
     <div class="article-nav-link-wrap right">
-          <img data-src="https://d-sketon.top/img/_backwebp/bg1.webp" data-sizes="auto" alt="Unity" class="lazyload">
-      <a href="/ja/2024/10/19/undefined/" aria-label="次の記事: Unity"  title="次の記事: Unity"></a>
+          <img data-src="https://d-sketon.top/img/_backwebp/bg1.webp" data-sizes="auto" alt="テスト" class="lazyload">
+      <a href="/ja/2024/01/20/test/" aria-label="次の記事: テスト"  title="次の記事: テスト"></a>
       <div class="article-nav-caption">次の記事</div>
       <h3 class="article-nav-title">
-          Unity
+          テスト
       </h3>
     </div>
   </nav>
@@ -332,10 +343,10 @@
       </div>
       <div>
         <span class="icon-brush"></span>
-        867
+        7.8k
         &nbsp;|&nbsp;
         <span class="icon-coffee"></span>
-        00:07
+        00:33
       </div>
       <div>
         <span class="icon-eye"></span>
@@ -368,11 +379,11 @@
 <div class="sidebar-state">
   <div class="sidebar-state-article">
     <div>投稿</div>
-    <div class="sidebar-state-number">5</div>
+    <div class="sidebar-state-number">6</div>
   </div>
   <div class="sidebar-state-category">
     <div>カテゴリー</div>
-    <div class="sidebar-state-number">2</div>
+    <div class="sidebar-state-number">1</div>
   </div>
   <div class="sidebar-state-tag">
     <div>タグ</div>
@@ -479,13 +490,13 @@
       <script data-pjax>
         window.REIMU_POST = {
           author: "SANaoi",
-          title: "グラフィックスレンダリング学習メモ00：ゼロから始めるShader学習",
+          title: "Shader 学習メモ00：はじめに",
           url: "https://sanaoi.github.io/2026/07/09/shader-learning-start/",
           excerpt: "",
           description: "",
           stripContent: "はじめにゲーム制作をしている中で、少しずつ気づいたことがあります。通常のスクリプト、マテリアルのパラメータ、あるいは UI コンポーネントだけで実装しようとすると、処理が複雑になったり、表現が安定しなかったりする機能があります。 しかし Shader の考え方を使うと、より直接的で効率のよい方法で解決できる場合があります。 それが、私が Shader を本格的に学び始めた大きなきっかけです。 現在の学習方法は、かなり実践寄りです。興味を持ったエフェクトがあれば、まず自分で実装してみるようにしてい",
           date: "Thu Jul 09 2026 22:35:00 GMT+0900",
-          updated: "Fri Jul 10 2026 01:27:04 GMT+0900",
+          updated: "Sun Jul 12 2026 22:50:27 GMT+0900",
           cover: "/images/banner.webp",
         };
       </script>
