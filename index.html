@@ -195,7 +195,7 @@
 <div class="sidebar-state">
   <div class="sidebar-state-article">
     <div>文章</div>
-    <div class="sidebar-state-number">6</div>
+    <div class="sidebar-state-number">8</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
@@ -203,7 +203,7 @@
   </div>
   <div class="sidebar-state-tag">
     <div>标签</div>
-    <div class="sidebar-state-number">3</div>
+    <div class="sidebar-state-number">4</div>
   </div>
 </div>
 <div class="sidebar-social" >
@@ -248,8 +248,37 @@
 
           <section id="main" aria-label="Main content">      <div class="post-wrapper">
   <div class="post-wrap left" data-aos="fade-up">
-      <a class="post-link" href="/2026/07/12/shader-basic-lit-shader/" aria-label="Shader 学习笔记01：一个基础 Lit Shader" title="Shader 学习笔记01：一个基础 Lit Shader"></a>
+      <a class="post-link" href="/2026/07/15/shader-mask-distort-dissolve/" aria-label="Shader 学习笔记02：Unity中实现遮罩、扭曲、溶解" title="Shader 学习笔记02：Unity中实现遮罩、扭曲、溶解"></a>
     <div class="post-cover left">
+          <img data-src="https://d-sketon.top/img/_backwebp/bg1.webp" data-sizes="auto" alt="Shader 学习笔记02：Unity中实现遮罩、扭曲、溶解" class="lazyload">
+    </div>
+    <div class="post-info">
+      <div class="post-meta">
+        <span><span class="icon-calendar"></span>2026-07-15</span>
+        <span><span class="icon-pencil"></span>1.7k 字</span>
+        <span><span class="icon-clock"></span>7 分钟</span>
+      </div>
+      <h2 class="post-title">Shader 学习笔记02：Unity中实现遮罩、扭曲、溶解</h2>
+      <article class="post-article">
+          目标图形渲染中除了模仿现实世界的效果外，更多时候是为了实现一些特效，或者说是为了让画面更好看。常见的特效有遮罩、扭曲、溶解等，这些效果在游戏中经常会用到。
+本文用一个 URP HLSL Shader 来实现一个“纹理扭曲溶解”效果。它主要包含三个部分：
+
+遮罩：控制纹理的显示范围。
+扭曲：通过噪声扰动主纹理 UV。
+溶解：通过灰度图和阈值控制像素是否显示。
+
+思路分析当对图形渲染的理解不断加深，就越意识到 Shader 能实现很多酷炫的效果，但基本思路都是类似的：控制顶点的位置，控制纹理的采样，控制像素最终输出的颜色。
+这次要实现的三个效果，本质上都发生在像素阶段。
+遮罩
+遮罩是采样一张纹理通
+      </article>
+    </div>
+  </div>
+</div>
+      <div class="post-wrapper">
+  <div class="post-wrap right" data-aos="fade-up">
+      <a class="post-link" href="/2026/07/12/shader-basic-lit-shader/" aria-label="Shader 学习笔记01：一个基础 Lit Shader" title="Shader 学习笔记01：一个基础 Lit Shader"></a>
+    <div class="post-cover right">
           <img data-src="https://d-sketon.top/img/_backwebp/bg1.webp" data-sizes="auto" alt="Shader 学习笔记01：一个基础 Lit Shader" class="lazyload">
     </div>
     <div class="post-info">
@@ -264,21 +293,20 @@
 本文的目标，就是先实现一个基础的 Lit Shader，并把它作为后续效果的起点。
 包含什么这次实现的 Shader 主要包含以下几个部分：
 
-基础颜色和贴图控制物体表面颜色
 UV 贴图采样
 法线贴图增强表面细节
 使用Lambbert光照模型计算光照
 通过 ShadowCaster Pass 让物体可以生成阴影
 
-需要声明的结构体123456789101112131415161718struct Attributes&amp;#123;  float4 positionOS : 
+需要声明的结构体123456789101112131415161718struct Attributes&amp;#123;  float4 positionOS : POSITION;  float
       </article>
     </div>
   </div>
 </div>
       <div class="post-wrapper">
-  <div class="post-wrap right" data-aos="fade-up">
+  <div class="post-wrap left" data-aos="fade-up">
       <a class="post-link" href="/2026/07/09/shader-learning-start/" aria-label="Shader 学习笔记00：写在前面" title="Shader 学习笔记00：写在前面"></a>
-    <div class="post-cover right">
+    <div class="post-cover left">
           <img data-src="https://d-sketon.top/img/_backwebp/bg1.webp" data-sizes="auto" alt="Shader 学习笔记00：写在前面" class="lazyload">
     </div>
     <div class="post-info">
@@ -300,9 +328,9 @@ UV 贴图采样
   </div>
 </div>
       <div class="post-wrapper">
-  <div class="post-wrap left" data-aos="fade-up">
+  <div class="post-wrap right" data-aos="fade-up">
       <a class="post-link" href="/2024/01/20/test/" aria-label="测试" title="测试"></a>
-    <div class="post-cover left">
+    <div class="post-cover right">
           <img data-src="https://d-sketon.top/img/_backwebp/bg1.webp" data-sizes="auto" alt="测试" class="lazyload">
     </div>
     <div class="post-info">
@@ -341,10 +369,10 @@ UV 贴图采样
       </div>
       <div>
         <span class="icon-brush"></span>
-        7.7k
+        12.2k
         &nbsp;|&nbsp;
         <span class="icon-coffee"></span>
-        00:31
+        00:49
       </div>
       <div>
         <span class="icon-eye"></span>
@@ -372,7 +400,7 @@ UV 贴图采样
 <div class="sidebar-state">
   <div class="sidebar-state-article">
     <div>文章</div>
-    <div class="sidebar-state-number">6</div>
+    <div class="sidebar-state-number">8</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
@@ -380,7 +408,7 @@ UV 贴图采样
   </div>
   <div class="sidebar-state-tag">
     <div>标签</div>
-    <div class="sidebar-state-number">3</div>
+    <div class="sidebar-state-number">4</div>
   </div>
 </div>
 <div class="sidebar-social" >

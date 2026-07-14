@@ -1,0 +1,678 @@
+  <!DOCTYPE html>
+  <html lang="ja"  
+      data-theme-mode="auto"
+  >
+  <head>
+  <meta charset="utf-8">
+  
+  
+  
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.icon_font = '4552607_ex15nbittbh';window.REIMU_CONFIG.clipboard_tips = {"success":{"zh-CN":"复制成功 (*^▽^*)","ja":"コピー成功 (*^▽^*)"},"fail":{"zh-CN":"复制失败 (ﾟ⊿ﾟ)ﾂ","ja":"コピー失敗 (ﾟ⊿ﾟ)ﾂ"},"copyright":{"enable":false,"count":50,"license_type":"by-nc-sa"}};window.REIMU_CONFIG.clipboard_tips.copyright.content = '本博客所有文章除特别声明外，均采用 BY-NC-SA 许可协议。转载请注明出处！';window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://SANaoi.github.io';window.REIMU_CONFIG.relative = '/';window.REIMU_CONFIG.i18n_languages = ["ja"];</script>
+  <title>
+    Shader 学習メモ02：Unity でマスク、歪み、ディゾルブを実装する | SANaoi
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic|Noto Serif SC:400,400italic,700,700italic&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic|Noto Serif SC:400,400italic,700,700italic&display=swap" media="print" onload="this.media='all'">
+    <link rel="preload" href="//at.alicdn.com/t/c/font_4552607_ex15nbittbh.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+    
+<link rel="stylesheet" href="/css/loader.css">
+
+    <meta name="description" content="目標グラフィックス表現では、現実世界の見た目を再現するだけでなく、エフェクトを実現したり、画面をより魅力的に見せたりすることも多くあります。マスク、歪み、ディゾルブなどは、ゲーム内でもよく使われる代表的なエフェクトです。 この記事では、URP HLSL Shader を使って「テクスチャ歪みディゾルブ」エフェクトを実装します。主に次の 3 つの要素で構成されています。  マスク：テクスチャの表示範">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Shader 学習メモ02：Unity でマスク、歪み、ディゾルブを実装する">
+<meta property="og:url" content="https://sanaoi.github.io/ja/2026/07/15/shader-mask-distort-dissolve/index.html">
+<meta property="og:site_name" content="SANaoi">
+<meta property="og:description" content="目標グラフィックス表現では、現実世界の見た目を再現するだけでなく、エフェクトを実現したり、画面をより魅力的に見せたりすることも多くあります。マスク、歪み、ディゾルブなどは、ゲーム内でもよく使われる代表的なエフェクトです。 この記事では、URP HLSL Shader を使って「テクスチャ歪みディゾルブ」エフェクトを実装します。主に次の 3 つの要素で構成されています。  マスク：テクスチャの表示範">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:image" content="https://sanaoi.github.io/2026/07/15/shader-mask-distort-dissolve/MaskDustortNoT.gif">
+<meta property="og:image" content="https://sanaoi.github.io/2026/07/15/shader-mask-distort-dissolve/MaskDustortTex.gif">
+<meta property="article:published_time" content="2026-07-14T15:00:00.000Z">
+<meta property="article:modified_time" content="2026-07-14T16:19:05.376Z">
+<meta property="article:author" content="SANaoi">
+<meta property="article:tag" content="HLSL">
+<meta property="article:tag" content="Shader">
+<meta property="article:tag" content="URP">
+<meta property="article:tag" content="Unity">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://sanaoi.github.io/2026/07/15/shader-mask-distort-dissolve/MaskDustortNoT.gif">
+    <link rel="alternate" href="/atom.xml" title="SANaoi" type="application/atom+xml">
+    <link rel="shortcut icon" href="/images/favicon.ico">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css" integrity="sha384-IfxC36XL/toUyJ939C73PcgMuRzAZuIzZxE38drsmO5p6jD7ei+Zx/1oA/0l8ysE" crossorigin="anonymous">
+    
+<script src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js" integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"></script>
+
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.2/dist/aos.css" integrity="sha384-GMRP93c6Hkz9JVKGAuRR3nTS7M07RwPgTFenXiosjq2VbVgvdDNcz1g6Mkj8AONa" crossorigin="anonymous">
+
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+  <body>
+      <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi rotate">
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="var(--red-1, #ff5252)" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+           M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="var(--red-1, #ff5252)" />
+          </svg>
+      </div>
+      <div class="loading-word">少女祈祷中...</div>
+    </div>
+  </div>
+  <script>
+    var time = null;
+    var loaderEl = document.getElementById('loader');
+    var startLoading = () => {
+      time = Date.now();
+      loaderEl.classList.remove("loading");
+    }
+    var hideLoader = () => {
+      document.body.style.overflow = 'auto';
+      loader.classList.add('loading');
+    };
+
+    var endLoading = () => {
+      if (!time) {
+        hideLoader();
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          hideLoader();
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    loaderEl.addEventListener('click', endLoading);
+  </script>
+<div id="copy-tooltip"></div>
+<div id="heatmap-tooltip"></div>
+
+
+    <div id="container">
+      <div id="wrap">
+        <div id="header-nav">
+  <nav id="main-nav" aria-label="Primary navigation">
+        <a class="main-nav-link-wrap" href="/ja/">
+            <div class="main-nav-icon icon rotate">
+                &#xe62b;
+            </div>
+          <span class="main-nav-link">ホーム</span>
+        </a>
+        <a class="main-nav-link-wrap" href="/ja/archives">
+            <div class="main-nav-icon icon rotate">
+                &#xe62b;
+            </div>
+          <span class="main-nav-link">アーカイブ</span>
+        </a>
+        <a class="main-nav-link-wrap" href="/ja/about">
+            <div class="main-nav-icon icon rotate">
+                &#xe62b;
+            </div>
+          <span class="main-nav-link">プロフィール</span>
+        </a>
+        <a class="main-nav-link-wrap" href="/ja/friend">
+            <div class="main-nav-icon icon rotate">
+                &#xe62b;
+            </div>
+          <span class="main-nav-link">フレンド</span>
+        </a>
+    <a id="main-nav-toggle" class="nav-icon" aria-label="Toggle navigation" role="button"></a>
+  </nav>
+  <nav id="sub-nav" aria-label="Secondary navigation">
+      <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS フィード" aria-label="RSS フィード" target="_blank"></a>
+  </nav>
+    <nav id="i18n-nav" aria-label="Language selection">
+      <div class="custom-dropdown">
+        <div class="select-selected" id="select-selected" role="button" aria-haspopup="listbox" aria-expanded="false" aria-label="Language menu">
+          <span id="nav-language-btn" class="nav-icon" style="padding: 0 20px 0 0"></span>
+          <span id="selected-lang">日本語</span>
+        </div>
+        <ul class="select-items" id="select-items" role="listbox" aria-label="Languages">
+            <li data-value="zh-CN" role="option" aria-selected="false">简体中文</li>
+            <li data-value="ja" role="option" class="selected" aria-selected="true">日本語</li>
+        </ul>
+      </div>
+      <script>
+        var selectSelected = document.getElementById("select-selected");
+        var selectedLang = document.getElementById("selected-lang");
+        var selectItems = document.getElementById("select-items");
+        var selectOptions = selectItems.querySelectorAll("li");
+
+        selectSelected.addEventListener("click", () => {
+          selectItems.classList.toggle("show");
+          var expanded = selectSelected.getAttribute("aria-expanded") === "true";
+          selectSelected.setAttribute("aria-expanded", (!expanded).toString());
+        });
+
+        selectOptions.forEach((item) => {
+          item.addEventListener("click", () => {
+            const langMap = {};
+              langMap['zh-CN'] = '/2026/07/15/shader-mask-distort-dissolve/';
+              langMap['ja'] = '/ja/2026/07/15/shader-mask-distort-dissolve/';
+            selectedLang.textContent = item.textContent;
+            selectItems.classList.remove("show");
+            selectOptions.forEach((option) => {
+              option.classList.remove("selected");
+            });
+            item.classList.add("selected");
+            window.location = langMap[item.dataset.value];
+          });
+        });
+
+        document.addEventListener("click", (event) => {
+          if (!event.target.closest(".custom-dropdown")) {
+            selectItems.classList.remove("show");
+            selectSelected.setAttribute("aria-expanded", "false");
+          }
+        });
+      </script>
+    </nav>
+</div>
+<header id="header" aria-label="Site header">
+        <picture>
+        </picture>
+          <img  fetchpriority="high" src="/images/banner.webp" alt="Shader 学習メモ02：Unity でマスク、歪み、ディゾルブを実装する">
+  <div id="header-outer">
+    <div id="header-title">
+          <span id="logo">
+            <h1 data-aos="slide-up">Shader 学習メモ02：Unity でマスク、歪み、ディゾルブを実装する</h1>
+          </span>
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+        </h2>
+    </div>
+  </div>
+</header>
+
+        <div id="content" aria-label="Page content"  class="sidebar-right" >
+          <aside id="sidebar" aria-label="Sidebar">
+  <div class="sidebar-wrapper-container sticky">
+  <div class="sidebar-wrapper">
+    <div class="sidebar-wrap" data-aos="fade-up">
+          <div class="sidebar-toc-sidebar"><h3 class="toc-title">見出し</h3>
+<div class="sidebar-toc-wrapper toc-div-class" >
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%AE%E6%A8%99"><span class="toc-number">1.</span> <span class="toc-text">目標</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%80%83%E3%81%88%E6%96%B9"><span class="toc-number">2.</span> <span class="toc-text">考え方</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9F%E8%A3%85"><span class="toc-number">3.</span> <span class="toc-text">実装</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E3%83%AC%E3%83%B3%E3%83%80%E3%83%AA%E3%83%B3%E3%82%B0%E3%82%B9%E3%83%86%E3%83%BC%E3%83%88"><span class="toc-number">3.1.</span> <span class="toc-text">レンダリングステート</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%A5%E5%8A%9B%E3%81%A8%E5%87%BA%E5%8A%9B%E3%81%AE%E6%A7%8B%E9%80%A0%E4%BD%93"><span class="toc-number">3.2.</span> <span class="toc-text">入力と出力の構造体</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A0%82%E7%82%B9%E6%AE%B5%E9%9A%8E"><span class="toc-number">3.3.</span> <span class="toc-text">頂点段階</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E3%83%95%E3%83%A9%E3%82%B0%E3%83%A1%E3%83%B3%E3%83%88%E6%AE%B5%E9%9A%8E%EF%BC%9A%E3%83%A1%E3%82%A4%E3%83%B3%E3%83%86%E3%82%AF%E3%82%B9%E3%83%81%E3%83%A3%E3%82%92%E6%AD%AA%E3%81%BE%E3%81%9B%E3%82%8B"><span class="toc-number">3.4.</span> <span class="toc-text">フラグメント段階：メインテクスチャを歪ませる</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E3%83%95%E3%83%A9%E3%82%B0%E3%83%A1%E3%83%B3%E3%83%88%E6%AE%B5%E9%9A%8E%EF%BC%9A%E3%83%87%E3%82%A3%E3%82%BE%E3%83%AB%E3%83%96%E8%A3%81%E5%89%AA"><span class="toc-number">3.5.</span> <span class="toc-text">フラグメント段階：ディゾルブ裁剪</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E3%83%95%E3%83%A9%E3%82%B0%E3%83%A1%E3%83%B3%E3%83%88%E6%AE%B5%E9%9A%8E%EF%BC%9A%E3%83%9E%E3%82%B9%E3%82%AF%E3%82%92%E9%81%A9%E7%94%A8%E3%81%99%E3%82%8B"><span class="toc-number">3.6.</span> <span class="toc-text">フラグメント段階：マスクを適用する</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%83%87%E3%82%A3%E3%82%BE%E3%83%AB%E3%83%96%E3%82%A8%E3%83%83%E3%82%B8%E3%81%AE%E8%89%B2"><span class="toc-number">4.</span> <span class="toc-text">ディゾルブエッジの色</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%81%BE%E3%81%A8%E3%82%81"><span class="toc-number">5.</span> <span class="toc-text">まとめ</span></a></li></ol>
+</div>
+</div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.png" data-sizes="auto" alt="SANaoi" class="lazyload">
+  <div class="sidebar-author-name">SANaoi</div>
+  <div class="sidebar-description"></div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>投稿</div>
+    <div class="sidebar-state-number">8</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>カテゴリー</div>
+    <div class="sidebar-state-number">1</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>タグ</div>
+    <div class="sidebar-state-number">4</div>
+  </div>
+</div>
+<div class="sidebar-social" >
+</div>
+<div class="sidebar-menu">
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/" aria-label="ホーム"></a>
+          <div class="sidebar-menu-icon icon rotate">
+              &#xe62b;
+          </div>
+        <div class="sidebar-menu-link">ホーム</div>
+      </div>
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/archives" aria-label="アーカイブ"></a>
+          <div class="sidebar-menu-icon icon rotate">
+              &#xe62b;
+          </div>
+        <div class="sidebar-menu-link">アーカイブ</div>
+      </div>
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/about" aria-label="プロフィール"></a>
+          <div class="sidebar-menu-icon icon rotate">
+              &#xe62b;
+          </div>
+        <div class="sidebar-menu-link">プロフィール</div>
+      </div>
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/friend" aria-label="フレンド"></a>
+          <div class="sidebar-menu-icon icon rotate">
+              &#xe62b;
+          </div>
+        <div class="sidebar-menu-link">フレンド</div>
+      </div>
+</div>
+</div>
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+    </div>
+  </div>
+  <div class="sidebar-widget">
+  </div>
+  </div>
+</aside>
+
+          <section id="main" aria-label="Main content"><article id="post-shader/shader2-ja" class="h-entry article" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner" data-aos="fade-up">
+    <div class="article-meta">
+      <div class="article-date">
+  <span class="article-date-link icon-calendar" data-aos="zoom-in">
+    <time datetime="2026-07-14T15:00:00.000Z" itemprop="datePublished">2026-07-15</time>
+    <time style="display: none;" id="post-update-time">2026-07-15</time>
+  </span>
+</div>
+
+    </div>
+    
+    <div class="hr-line"></div>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+        <h2 id="目標"><a href="#目標" class="headerlink" title="目標"></a>目標</h2><p>グラフィックス表現では、現実世界の見た目を再現するだけでなく、エフェクトを実現したり、画面をより魅力的に見せたりすることも多くあります。マスク、歪み、ディゾルブなどは、ゲーム内でもよく使われる代表的なエフェクトです。</p>
+<p>この記事では、URP HLSL Shader を使って「テクスチャ歪みディゾルブ」エフェクトを実装します。主に次の 3 つの要素で構成されています。</p>
+<ul>
+<li>マスク：テクスチャの表示範囲を制御する。</li>
+<li>歪み：ノイズでメインテクスチャの UV を揺らす。</li>
+<li>ディゾルブ：グレースケール画像としきい値でピクセルを表示するかどうかを制御する。</li>
+</ul>
+<h2 id="考え方"><a href="#考え方" class="headerlink" title="考え方"></a>考え方</h2><p>グラフィックスレンダリングへの理解が深まるほど、Shader はさまざまな派手な表現を作れる一方で、基本的な考え方は似ていると感じます。つまり、頂点の位置を制御し、テクスチャのサンプリングを制御し、最終的にピクセルが出力する色を制御するということです。</p>
+<p>今回実装する 3 つの効果は、本質的にはピクセル段階で行われます。</p>
+<p><strong>マスク</strong></p>
+<p>マスクは、テクスチャのチャンネルをサンプリングし、その値で最終的な表示範囲を制御します。通常、<code>0</code> は透明、<code>1</code> は不透明、中間値は半透明を表します。</p>
+<p><strong>歪み</strong></p>
+<p>歪みは、歪みテクスチャの <code>RG</code> チャンネルをサンプリングして 2 次元のオフセット値を取得し、その値でメインテクスチャの UV をずらします。UV が変わるとメインテクスチャのサンプリング位置も変わるため、水面、熱気、エネルギーの揺らぎのような表現を作れます。</p>
+<p><strong>ディゾルブ</strong></p>
+<p>ディゾルブは、グレースケール値としきい値によってピクセルを表示するかどうかを決めます。グレースケール値がしきい値より大きいピクセルは残り、小さいピクセルは破棄されます。そのため、ディゾルブにはディゾルブテクスチャだけでなく、ディゾルブの進行度を制御するしきい値パラメータも必要です。</p>
+<p>そのため、必要な主要パラメータはかなり明確です。</p>
+<table>
+<thead>
+<tr>
+<th>パラメータ</th>
+<th>役割</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>_MainTex</code></td>
+<td>メインテクスチャ。基本色を提供する</td>
+</tr>
+<tr>
+<td><code>_MaskTex</code></td>
+<td>マスクテクスチャ。表示範囲を制御する</td>
+</tr>
+<tr>
+<td><code>_DistortTex</code></td>
+<td>歪みテクスチャ。UV オフセットを制御する</td>
+</tr>
+<tr>
+<td><code>_DissolveTex</code></td>
+<td>ディゾルブテクスチャ。グレースケールによる破棄判定の基準になる</td>
+</tr>
+<tr>
+<td><code>_DissolveThreshold</code></td>
+<td>ディゾルブしきい値。ディゾルブの進行度を制御する</td>
+</tr>
+<tr>
+<td><code>_DissolveEdge</code></td>
+<td>ディゾルブエッジの幅</td>
+</tr>
+<tr>
+<td><code>_RampTex</code></td>
+<td>ディゾルブエッジの色</td>
+</tr>
+</tbody></table>
+<p>上記の説明から分かるように、マスク、歪み、ディゾルブは主にフラグメント段階で完成します。頂点段階では、モデル座標をクリップ空間へ変換し、フラグメント段階で必要になる UV を渡します。</p>
+<h2 id="実装"><a href="#実装" class="headerlink" title="実装"></a>実装</h2><h3 id="レンダリングステート"><a href="#レンダリングステート" class="headerlink" title="レンダリングステート"></a>レンダリングステート</h3><p>頂点関数とフラグメント関数を書く前に、透明系エフェクトでよく使うレンダリングステートを設定します。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Blend [_SrcBlend] [_DstBlend]</span><br><span class="line">Cull [_Cull]</span><br><span class="line">ZWrite Off</span><br></pre></td></tr></table></figure>
+
+<p><code>Blend</code> は、現在の色と画面上にすでにある色をどのように合成するかを制御します。透明マテリアルでは、よく次の設定を使います。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Blend SrcAlpha OneMinusSrcAlpha</span><br></pre></td></tr></table></figure>
+
+<p><code>Cull</code> は、表面、裏面、または両面のどれを描画するかを制御します。多くのエフェクト用の板ポリゴンは表裏どちらからも見える必要があるため、マテリアルパネルから切り替えられるようにしておくと便利です。</p>
+<p><code>ZWrite Off</code> は、深度書き込みを無効にする設定です。透明オブジェクトでは深度を書き込むと、あとから描画される透明オブジェクトを遮ってしまい、透明ソートや重ね合わせの結果が不自然になることがあります。</p>
+<h3 id="入力と出力の構造体"><a href="#入力と出力の構造体" class="headerlink" title="入力と出力の構造体"></a>入力と出力の構造体</h3><p>まず、頂点入力と頂点出力の構造体を定義します。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Attributes</span></span><br><span class="line">&#123;</span><br><span class="line">    float4 positionOS : POSITION;</span><br><span class="line">    float2 uv : TEXCOORD0;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Varyings</span></span><br><span class="line">&#123;</span><br><span class="line">    float4 positionCS : SV_POSITION;</span><br><span class="line">    float4 uv : TEXCOORD0;</span><br><span class="line">    float2 distortUV : TEXCOORD1;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>注意点として、ディゾルブはメインテクスチャと一致させたいので、ここでは <code>dissolveUV</code> を別に渡していません。あとで <code>_DissolveTex</code> をサンプリングするときは、歪み適用後の <code>mainUV</code> をそのまま使います。これにより、メインテクスチャが歪んだとき、ディゾルブのエッジも一緒に歪みます。</p>
+<h3 id="頂点段階"><a href="#頂点段階" class="headerlink" title="頂点段階"></a>頂点段階</h3><p>頂点関数では、主に 2 つのことを行います。頂点座標の変換と、いくつかのテクスチャ UV の計算です。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Varyings <span class="title">vert</span><span class="params">(Attributes input)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    Varyings output;</span><br><span class="line"></span><br><span class="line">    output.positionCS = <span class="built_in">TransformObjectToHClip</span>(input.positionOS.xyz);</span><br><span class="line"></span><br><span class="line">    output.uv.xy = <span class="built_in">TRANSFORM_TEX</span>(input.uv, _MainTex)</span><br><span class="line">        + <span class="built_in">float2</span>(_MainUVSpeedX, _MainUVSpeedY) * _Time.y;</span><br><span class="line"></span><br><span class="line">    output.uv.zw = <span class="built_in">TRANSFORM_TEX</span>(input.uv, _MaskTex)</span><br><span class="line">        + <span class="built_in">float2</span>(_MaskUVSpeedX, _MaskUVSpeedY) * _Time.y;</span><br><span class="line"></span><br><span class="line">    output.distortUV = <span class="built_in">TRANSFORM_TEX</span>(input.uv, _DistortTex)</span><br><span class="line">        + <span class="built_in">float2</span>(_DistortUVSpeedX, _DistortUVSpeedY) * _Time.y;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> output;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>TRANSFORM_TEX</code> は、マテリアルパネルの Tiling と Offset を適用します。そこにさらに次の値を足すことで、テクスチャを時間に合わせてスクロールさせられます。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">float2</span>(speedX, speedY) * _Time.y</span><br></pre></td></tr></table></figure>
+
+<h3 id="フラグメント段階：メインテクスチャを歪ませる"><a href="#フラグメント段階：メインテクスチャを歪ませる" class="headerlink" title="フラグメント段階：メインテクスチャを歪ませる"></a>フラグメント段階：メインテクスチャを歪ませる</h3><p>フラグメント段階では、まずメインテクスチャの UV を取り出します。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">float2 mainUV = input.uv.xy;</span><br></pre></td></tr></table></figure>
+
+<p>歪みを有効にしている場合は、歪みテクスチャをサンプリングします。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">half2 distortNoise = <span class="built_in">SAMPLE_TEXTURE2D</span>(</span><br><span class="line">    _DistortTex,</span><br><span class="line">    sampler_DistortTex,</span><br><span class="line">    input.distortUV</span><br><span class="line">).rg;</span><br></pre></td></tr></table></figure>
+
+<p>テクスチャのサンプリング値は <code>0~1</code> ですが、UV オフセットには正負両方向が必要なので、<code>-1~1</code> に変換します。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mainUV += (distortNoise * <span class="number">2.0</span>h - <span class="number">1.0</span>h) * _Distort;</span><br></pre></td></tr></table></figure>
+
+<p>これで <code>mainUV</code> は歪みテクスチャによって揺らされます。その後、この UV でメインテクスチャをサンプリングします。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">half4 color = <span class="built_in">SAMPLE_TEXTURE2D</span>(_MainTex, sampler_MainTex, mainUV);</span><br><span class="line">color *= _Color * _Intensity;</span><br></pre></td></tr></table></figure>
+
+<h3 id="フラグメント段階：ディゾルブ裁剪"><a href="#フラグメント段階：ディゾルブ裁剪" class="headerlink" title="フラグメント段階：ディゾルブ裁剪"></a>フラグメント段階：ディゾルブ裁剪</h3><p>ディゾルブも同じ <code>mainUV</code> を使用します。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">half dissolve = <span class="built_in">SAMPLE_TEXTURE2D</span>(</span><br><span class="line">    _DissolveTex,</span><br><span class="line">    sampler_DissolveTex,</span><br><span class="line">    mainUV</span><br><span class="line">).r;</span><br></pre></td></tr></table></figure>
+
+<p>次に <code>clip</code> でピクセルを裁剪します。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">clip</span>(dissolve - _DissolveThreshold);</span><br></pre></td></tr></table></figure>
+
+<p><code>clip</code> のルールは、渡した値が <code>0</code> より小さい場合、そのピクセルを破棄するというものです。</p>
+<p><code>_DissolveThreshold</code> が <code>0</code> から <code>1</code> に増えていくと、破棄されるピクセルが増え、ディゾルブ効果になります。</p>
+<h3 id="フラグメント段階：マスクを適用する"><a href="#フラグメント段階：マスクを適用する" class="headerlink" title="フラグメント段階：マスクを適用する"></a>フラグメント段階：マスクを適用する</h3><p>最後にマスクテクスチャをサンプリングします。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">half mask = <span class="built_in">SAMPLE_TEXTURE2D</span>(_MaskTex, sampler_MaskTex, input.uv.zw).r;</span><br><span class="line">color.a *= mask;</span><br></pre></td></tr></table></figure>
+
+<p>効果表示</p>
+<p><img src="/2026/07/15/shader-mask-distort-dissolve/MaskDustortNoT.gif" alt="テクスチャ歪みディゾルブ"></p>
+<h2 id="ディゾルブエッジの色"><a href="#ディゾルブエッジの色" class="headerlink" title="ディゾルブエッジの色"></a>ディゾルブエッジの色</h2><p>ここまでのディゾルブは <code>clip</code> だけを使っています。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">clip</span>(dissolve - _DissolveThreshold);</span><br></pre></td></tr></table></figure>
+
+<p>このコードは、ピクセルを破棄するかどうかだけを決めます。つまり、ピクセルは表示されるか消えるかのどちらかなので、エッジが硬く見えます。ディゾルブをより分かりやすく見せたい場合は、裁剪しきい値に近い部分に色を加えると効果的です。</p>
+<p>まず、2 つのパラメータを追加します。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[NoScaleOffset] _RampTex(<span class="string">&quot;RampTex&quot;</span>, <span class="number">2</span>D) = <span class="string">&quot;white&quot;</span> &#123;&#125;</span><br><span class="line">_DissolveEdge(<span class="string">&quot;Dissolve Edge&quot;</span>, <span class="built_in">Range</span>(<span class="number">0.001</span>, <span class="number">1</span>)) = <span class="number">0.1</span></span><br></pre></td></tr></table></figure>
+
+<p><code>_DissolveEdge</code> はエッジ幅を制御し、<code>_RampTex</code> はエッジの色を制御します。</p>
+<p>フラグメント段階では、<code>clip</code> のあとにエッジ範囲を計算します。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">half edgeWidth = <span class="built_in">max</span>(_DissolveEdge, <span class="number">0.001</span>h);</span><br><span class="line">half edgeValue = <span class="built_in">saturate</span>((dissolve - _DissolveThreshold) / edgeWidth);</span><br></pre></td></tr></table></figure>
+
+<p>ここで重要なのは次の部分です。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dissolve - _DissolveThreshold</span><br></pre></td></tr></table></figure>
+
+<p>これは、現在のピクセルがディゾルブしきい値からどれだけ離れているかを表します。<code>0</code> に近いほどディゾルブエッジに近く、値が大きいほどエッジから離れています。</p>
+<p>さらに <code>_DissolveEdge</code> で割ることで、エッジ範囲を指定した幅に収めます。最後に <code>saturate</code> で結果を <code>0~1</code> に制限します。</p>
+<p>次に、<code>edgeValue</code> を使って Ramp テクスチャをサンプリングします。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">half3 rampColor = <span class="built_in">SAMPLE_TEXTURE2D</span>(</span><br><span class="line">    _RampTex,</span><br><span class="line">    sampler_RampTex,</span><br><span class="line">    <span class="built_in">float2</span>(edgeValue, <span class="number">0.5</span>h)</span><br><span class="line">).rgb;</span><br></pre></td></tr></table></figure>
+
+<p>エッジからの距離に基づいて Ramp テクスチャをサンプリングするため、テクスチャの <code>U</code> 方向だけを使い、<code>V</code> 方向は中央の <code>0.5</code> に固定します。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">float2</span>(edgeValue, <span class="number">0.5</span>h)</span><br></pre></td></tr></table></figure>
+
+<p>最後に、エッジ色を元の色に加算します。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">color.rgb += rampColor * (<span class="number">1.0</span>h - edgeValue);</span><br></pre></td></tr></table></figure>
+
+<p>ここで <code>1.0h - edgeValue</code> を掛けているのは、色をディゾルブエッジ付近に集中させるためです。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">edgeValue = 0   エッジ色が最も強い</span><br><span class="line">edgeValue = 1   エッジ色を加えない</span><br></pre></td></tr></table></figure>
+
+<p>全体のコードは次のようになります。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">half dissolve = <span class="built_in">SAMPLE_TEXTURE2D</span>(</span><br><span class="line">    _DissolveTex,</span><br><span class="line">    sampler_DissolveTex,</span><br><span class="line">    mainUV</span><br><span class="line">).r;</span><br><span class="line"></span><br><span class="line"><span class="built_in">clip</span>(dissolve - _DissolveThreshold);</span><br><span class="line"></span><br><span class="line">half edgeWidth = <span class="built_in">max</span>(_DissolveEdge, <span class="number">0.001</span>h);</span><br><span class="line">half edgeValue = <span class="built_in">saturate</span>((dissolve - _DissolveThreshold) / edgeWidth);</span><br><span class="line"></span><br><span class="line">half3 rampColor = <span class="built_in">SAMPLE_TEXTURE2D</span>(</span><br><span class="line">    _RampTex,</span><br><span class="line">    sampler_RampTex,</span><br><span class="line">    <span class="built_in">float2</span>(edgeValue, <span class="number">0.5</span>h)</span><br><span class="line">).rgb;</span><br><span class="line"></span><br><span class="line">color.rgb += rampColor * (<span class="number">1.0</span>h - edgeValue);</span><br></pre></td></tr></table></figure>
+
+<p>これにより、ディゾルブは単に消えるだけでなく、消える境界に色の変化が加わります。このエッジは、炎、エネルギー光、腐食表現などに応用できます。単純な <code>clip</code> よりも、見た目の情報量が増えて表現が豊かになります。</p>
+<p>最終効果：</p>
+<p><img src="/2026/07/15/shader-mask-distort-dissolve/MaskDustortTex.gif" alt="テクスチャ歪みディゾルブ"></p>
+<p>エッジの遷移色がより豊かになり、ディゾルブ効果も分かりやすくなっていることが確認できます。</p>
+<h2 id="まとめ"><a href="#まとめ" class="headerlink" title="まとめ"></a>まとめ</h2><p>今回の Shader では、次の内容を実装しました。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">歪み：メインテクスチャ UV を変更する</span><br><span class="line">ディゾルブ：グレースケール値としきい値でピクセルを破棄する</span><br><span class="line">マスク：最終的な透明度または色を制御する</span><br><span class="line">エッジ色：ディゾルブ境界の見た目を強調する</span><br></pre></td></tr></table></figure>
+
+    </div>
+    <footer class="article-footer">
+        <a class="article-category-link" href="/ja/categories/Unity-shader/" title="Unity-shader" data-aos="zoom-in">Unity-shader</a>
+
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/ja/tags/HLSL/" rel="tag" title="HLSL">HLSL</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/ja/tags/Shader/" rel="tag" title="Shader">Shader</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/ja/tags/URP/" rel="tag" title="URP">URP</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/ja/tags/Unity/" rel="tag" title="Unity">Unity</a></li></ul>
+
+    </footer>
+  </div>
+    <nav id="article-nav" aria-label="Article navigation" data-aos="fade-up">
+    <div class="article-nav-link-wrap right">
+          <img data-src="https://d-sketon.top/img/_backwebp/bg1.webp" data-sizes="auto" alt="Shader 学習メモ01：基礎的な Lit Shader" class="lazyload">
+      <a href="/ja/2026/07/12/shader-basic-lit-shader/" aria-label="次の記事: Shader 学習メモ01：基礎的な Lit Shader"  title="次の記事: Shader 学習メモ01：基礎的な Lit Shader"></a>
+      <div class="article-nav-caption">次の記事</div>
+      <h3 class="article-nav-title">
+          Shader 学習メモ01：基礎的な Lit Shader
+      </h3>
+    </div>
+  </nav>
+
+</article>
+
+
+</section>
+        </div>
+        <footer id="footer" aria-label="Site footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    <div>
+      <span class="icon-copyright"></span>
+        2020-2026
+        <span class="footer-info-sep rotate"></span>
+      SANaoi
+    </div>
+      <div>
+        Powered by&nbsp;<a href="https://hexo.io/" rel="noopener nofollow noreferrer" target="_blank">Hexo</a>&nbsp;
+        Theme.<a href="https://github.com/D-Sketon/hexo-theme-reimu" rel="noopener nofollow noreferrer" target="_blank">Reimu</a>
+      </div>
+      <div>
+        <span class="icon-brush"></span>
+        12.2k
+        &nbsp;|&nbsp;
+        <span class="icon-coffee"></span>
+        00:49
+      </div>
+      <div>
+        <span class="icon-eye"></span>
+        <span id="busuanzi_container_site_pv">総閲覧数&nbsp;<span id="busuanzi_value_site_pv"></span></span>
+        &nbsp;|&nbsp;
+        <span class="icon-user"></span>
+        <span id="busuanzi_container_site_uv">総閲覧者数&nbsp;<span id="busuanzi_value_site_uv"></span></span>
+      </div>
+  </div>
+</footer>
+
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav" aria-label="Mobile navigation">
+  <div class="sidebar-wrap">
+        <div class="sidebar-toc-sidebar"><h3 class="toc-title">見出し</h3>
+<div class="sidebar-toc-wrapper toc-div-class" >
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%AE%E6%A8%99"><span class="toc-number">1.</span> <span class="toc-text">目標</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%80%83%E3%81%88%E6%96%B9"><span class="toc-number">2.</span> <span class="toc-text">考え方</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9F%E8%A3%85"><span class="toc-number">3.</span> <span class="toc-text">実装</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E3%83%AC%E3%83%B3%E3%83%80%E3%83%AA%E3%83%B3%E3%82%B0%E3%82%B9%E3%83%86%E3%83%BC%E3%83%88"><span class="toc-number">3.1.</span> <span class="toc-text">レンダリングステート</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%A5%E5%8A%9B%E3%81%A8%E5%87%BA%E5%8A%9B%E3%81%AE%E6%A7%8B%E9%80%A0%E4%BD%93"><span class="toc-number">3.2.</span> <span class="toc-text">入力と出力の構造体</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A0%82%E7%82%B9%E6%AE%B5%E9%9A%8E"><span class="toc-number">3.3.</span> <span class="toc-text">頂点段階</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E3%83%95%E3%83%A9%E3%82%B0%E3%83%A1%E3%83%B3%E3%83%88%E6%AE%B5%E9%9A%8E%EF%BC%9A%E3%83%A1%E3%82%A4%E3%83%B3%E3%83%86%E3%82%AF%E3%82%B9%E3%83%81%E3%83%A3%E3%82%92%E6%AD%AA%E3%81%BE%E3%81%9B%E3%82%8B"><span class="toc-number">3.4.</span> <span class="toc-text">フラグメント段階：メインテクスチャを歪ませる</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E3%83%95%E3%83%A9%E3%82%B0%E3%83%A1%E3%83%B3%E3%83%88%E6%AE%B5%E9%9A%8E%EF%BC%9A%E3%83%87%E3%82%A3%E3%82%BE%E3%83%AB%E3%83%96%E8%A3%81%E5%89%AA"><span class="toc-number">3.5.</span> <span class="toc-text">フラグメント段階：ディゾルブ裁剪</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E3%83%95%E3%83%A9%E3%82%B0%E3%83%A1%E3%83%B3%E3%83%88%E6%AE%B5%E9%9A%8E%EF%BC%9A%E3%83%9E%E3%82%B9%E3%82%AF%E3%82%92%E9%81%A9%E7%94%A8%E3%81%99%E3%82%8B"><span class="toc-number">3.6.</span> <span class="toc-text">フラグメント段階：マスクを適用する</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%83%87%E3%82%A3%E3%82%BE%E3%83%AB%E3%83%96%E3%82%A8%E3%83%83%E3%82%B8%E3%81%AE%E8%89%B2"><span class="toc-number">4.</span> <span class="toc-text">ディゾルブエッジの色</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%81%BE%E3%81%A8%E3%82%81"><span class="toc-number">5.</span> <span class="toc-text">まとめ</span></a></li></ol>
+</div>
+</div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.png" data-sizes="auto" alt="SANaoi" class="lazyload">
+  <div class="sidebar-author-name">SANaoi</div>
+  <div class="sidebar-description"></div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>投稿</div>
+    <div class="sidebar-state-number">8</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>カテゴリー</div>
+    <div class="sidebar-state-number">1</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>タグ</div>
+    <div class="sidebar-state-number">4</div>
+  </div>
+</div>
+<div class="sidebar-social" >
+</div>
+<div class="sidebar-menu">
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/" aria-label="ホーム"></a>
+          <div class="sidebar-menu-icon icon rotate">
+              &#xe62b;
+          </div>
+        <div class="sidebar-menu-link">ホーム</div>
+      </div>
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/archives" aria-label="アーカイブ"></a>
+          <div class="sidebar-menu-icon icon rotate">
+              &#xe62b;
+          </div>
+        <div class="sidebar-menu-link">アーカイブ</div>
+      </div>
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/about" aria-label="プロフィール"></a>
+          <div class="sidebar-menu-icon icon rotate">
+              &#xe62b;
+          </div>
+        <div class="sidebar-menu-link">プロフィール</div>
+      </div>
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/friend" aria-label="フレンド"></a>
+          <div class="sidebar-menu-icon icon rotate">
+              &#xe62b;
+          </div>
+        <div class="sidebar-menu-link">フレンド</div>
+      </div>
+</div>
+</div>
+  </div>
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+</nav>
+
+    </div>
+    
+<script src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js" integrity="sha384-3gT&#x2F;vsepWkfz&#x2F;ff7PpWNUeMzeWoH3cDhm&#x2F;A8jM7ouoAK0&#x2F;fP&#x2F;9bcHHR5kHq2nf+e" crossorigin="anonymous"></script>
+
+
+<script src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js" integrity="sha384-J08i8An&#x2F;QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+  
+<script src="/js/aos.js"></script>
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+<script src="/js/pjax_script.js" data-pjax></script>
+
+
+
+
+  <script>
+    var setupFirework = () => {
+      if (!false || !window.matchMedia('(max-width: 768px)').matches) {
+        window.firework && window.firework(JSON.parse('{"excludeElements":["a","button"],"particles":[{"shape":"circle","move":["emit"],"easing":"easeOutExpo","colors":["var(--red-1)","var(--red-2)","var(--red-3)","var(--red-4)"],"number":20,"duration":[1200,1800],"shapeOptions":{"radius":[16,32],"alpha":[0.3,0.5]}},{"shape":"circle","move":["diffuse"],"easing":"easeOutExpo","colors":["var(--red-0)"],"number":1,"duration":[1200,1800],"shapeOptions":{"radius":20,"alpha":[0.2,0.5],"lineWidth":6}}]}'));
+      }
+    }
+  </script>
+  
+<script src="https://npm.webcache.cn/mouse-firework@0.2.0/dist/index.umd.js" integrity="sha384-qi9WggRt19tv8Vc7pCHW3ulMNLwrn515zaLEWZjl1px07vz8+pUoWX8n1rgq282T" crossorigin="anonymous" onload="setupFirework()" defer></script>
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+      
+      
+      <script data-pjax>
+        window.REIMU_POST = {
+          author: "SANaoi",
+          title: "Shader 学習メモ02：Unity でマスク、歪み、ディゾルブを実装する",
+          url: "https://sanaoi.github.io/2026/07/15/shader-mask-distort-dissolve/",
+          excerpt: "",
+          description: "",
+          stripContent: "目標グラフィックス表現では、現実世界の見た目を再現するだけでなく、エフェクトを実現したり、画面をより魅力的に見せたりすることも多くあります。マスク、歪み、ディゾルブなどは、ゲーム内でもよく使われる代表的なエフェクトです。 この記事では、URP HLSL Shader を使って「テクスチャ歪みディゾルブ」エフェクトを実装します。主に次の 3 つの要素で構成されています。  マスク：テクスチャの表示範囲を制御する。 歪み：ノイズでメインテクスチャの UV を揺らす。 ディゾルブ：グレースケール画像と",
+          date: "Wed Jul 15 2026 00:00:00 GMT+0900",
+          updated: "Wed Jul 15 2026 01:19:05 GMT+0900",
+          cover: "/images/banner.webp",
+        };
+      </script>
+        
+<script src="/js/insert_highlight.js" data-pjax></script>
+
+      
+<script src="/js/tabs.js" data-pjax defer></script>
+
+      <script type="module" data-pjax>
+        (async () => {
+          const PhotoSwipeLightbox = (await safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js", "sha384-DiL6M/gG+wmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF/N6lrZi/")).default;
+          const initPswp = (gallery, children) => {
+            if (_$$(`${gallery} ${children}`).length > 0) {
+              new PhotoSwipeLightbox({
+                gallery,
+                children,
+                pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+              }).init();
+            }
+          }
+          const pswp = () => {
+            initPswp('.article-entry', 'a.article-gallery-item');
+            initPswp('.article-gallery', 'a.article-gallery-item');
+          }
+          pswp();
+        })();
+      </script>
+        
+
+
+  </div>
+</div>
+
+
+  <script>
+    console.log(String.raw`%c 
+ ______     ______     __     __    __     __  __    
+/\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+\ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+ \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+  \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                  
+`,'color: #ff5252;')
+    console.log('%c Theme.Reimu v' + '1.12.5' + ' %c https://github.com/D-Sketon/hexo-theme-reimu ', 'color: white; background: #ff5252; padding:5px 0;', 'padding:4px;border:1px solid #ff5252;')
+  </script>
+  
+
+
+  
+<script src="https://npm.webcache.cn/busuanzi@2.3.0/bsz.pure.mini.js" integrity="sha384-0M75wtSkhjIInv4coYlaJU83+OypaRCIq2SukQVQX04eGTCBXJDuWAbJet56id+S" crossorigin="anonymous" async></script>
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+</script>
+
+
+
+
+  </body>
+  </html>
