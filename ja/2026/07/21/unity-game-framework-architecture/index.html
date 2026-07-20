@@ -1,0 +1,613 @@
+  <!DOCTYPE html>
+  <html lang="ja"  
+      data-theme-mode="auto"
+  >
+  <head>
+  <meta charset="utf-8">
+  
+  
+  
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.icon_font = '4552607_ex15nbittbh';window.REIMU_CONFIG.clipboard_tips = {"success":{"zh-CN":"复制成功 (*^▽^*)","ja":"コピー成功 (*^▽^*)"},"fail":{"zh-CN":"复制失败 (ﾟ⊿ﾟ)ﾂ","ja":"コピー失敗 (ﾟ⊿ﾟ)ﾂ"},"copyright":{"enable":false,"count":50,"license_type":"by-nc-sa"}};window.REIMU_CONFIG.clipboard_tips.copyright.content = '本博客所有文章除特别声明外，均采用 BY-NC-SA 许可协议。转载请注明出处！';window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://SANaoi.github.io';window.REIMU_CONFIG.relative = '/';window.REIMU_CONFIG.i18n_languages = ["ja"];</script>
+  <title>
+    ゲームフレームワーク：UnityGameFramework を例に | SANaoi
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic|Noto Serif SC:400,400italic,700,700italic&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic|Noto Serif SC:400,400italic,700,700italic&display=swap" media="print" onload="this.media='all'">
+    <link rel="preload" href="//at.alicdn.com/t/c/font_4552607_ex15nbittbh.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+    
+<link rel="stylesheet" href="/css/loader.css">
+
+    <meta name="description" content="はじめにUnityGameFramework は、オープンソースの Unity 向けゲームフレームワークです。ゲーム開発でよく使われる基礎モジュールをまとめて提供しており、開発フローをある程度標準化し、基礎機能の構築を速め、コードの安定性や保守性を高めることができます。 このフレームワークはかなり完成度が高く、実際に商用ゲームで採用された例もあり、コミュニティによる解説やチュートリアルも多く存在し">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ゲームフレームワーク：UnityGameFramework を例に">
+<meta property="og:url" content="https://sanaoi.github.io/ja/2026/07/21/unity-game-framework-architecture/index.html">
+<meta property="og:site_name" content="SANaoi">
+<meta property="og:description" content="はじめにUnityGameFramework は、オープンソースの Unity 向けゲームフレームワークです。ゲーム開発でよく使われる基礎モジュールをまとめて提供しており、開発フローをある程度標準化し、基礎機能の構築を速め、コードの安定性や保守性を高めることができます。 このフレームワークはかなり完成度が高く、実際に商用ゲームで採用された例もあり、コミュニティによる解説やチュートリアルも多く存在し">
+<meta property="og:locale" content="ja_JP">
+<meta property="article:published_time" content="2026-07-20T15:00:00.000Z">
+<meta property="article:modified_time" content="2026-07-20T16:04:35.337Z">
+<meta property="article:author" content="SANaoi">
+<meta property="article:tag" content="Unity">
+<meta property="article:tag" content="UnityGameFramework">
+<meta property="article:tag" content="ゲームフレームワーク">
+<meta name="twitter:card" content="summary">
+    <link rel="alternate" href="/atom.xml" title="SANaoi" type="application/atom+xml">
+    <link rel="shortcut icon" href="/images/favicon.ico">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css" integrity="sha384-IfxC36XL/toUyJ939C73PcgMuRzAZuIzZxE38drsmO5p6jD7ei+Zx/1oA/0l8ysE" crossorigin="anonymous">
+    
+<script src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js" integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"></script>
+
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.2/dist/aos.css" integrity="sha384-GMRP93c6Hkz9JVKGAuRR3nTS7M07RwPgTFenXiosjq2VbVgvdDNcz1g6Mkj8AONa" crossorigin="anonymous">
+
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+  <body>
+      <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi rotate">
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="var(--red-1, #ff5252)" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+           M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="var(--red-1, #ff5252)" />
+          </svg>
+      </div>
+      <div class="loading-word">少女祈祷中...</div>
+    </div>
+  </div>
+  <script>
+    var time = null;
+    var loaderEl = document.getElementById('loader');
+    var startLoading = () => {
+      time = Date.now();
+      loaderEl.classList.remove("loading");
+    }
+    var hideLoader = () => {
+      document.body.style.overflow = 'auto';
+      loader.classList.add('loading');
+    };
+
+    var endLoading = () => {
+      if (!time) {
+        hideLoader();
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          hideLoader();
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    loaderEl.addEventListener('click', endLoading);
+  </script>
+<div id="copy-tooltip"></div>
+<div id="heatmap-tooltip"></div>
+
+
+    <div id="container">
+      <div id="wrap">
+        <div id="header-nav">
+  <nav id="main-nav" aria-label="Primary navigation">
+        <a class="main-nav-link-wrap" href="/ja/">
+            <div class="main-nav-icon icon rotate">
+                &#xe62b;
+            </div>
+          <span class="main-nav-link">ホーム</span>
+        </a>
+        <a class="main-nav-link-wrap" href="/ja/archives">
+            <div class="main-nav-icon icon rotate">
+                &#xe62b;
+            </div>
+          <span class="main-nav-link">アーカイブ</span>
+        </a>
+        <a class="main-nav-link-wrap" href="/ja/about">
+            <div class="main-nav-icon icon rotate">
+                &#xe62b;
+            </div>
+          <span class="main-nav-link">プロフィール</span>
+        </a>
+        <a class="main-nav-link-wrap" href="/ja/friend">
+            <div class="main-nav-icon icon rotate">
+                &#xe62b;
+            </div>
+          <span class="main-nav-link">フレンド</span>
+        </a>
+    <a id="main-nav-toggle" class="nav-icon" aria-label="Toggle navigation" role="button"></a>
+  </nav>
+  <nav id="sub-nav" aria-label="Secondary navigation">
+      <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS フィード" aria-label="RSS フィード" target="_blank"></a>
+  </nav>
+    <nav id="i18n-nav" aria-label="Language selection">
+      <div class="custom-dropdown">
+        <div class="select-selected" id="select-selected" role="button" aria-haspopup="listbox" aria-expanded="false" aria-label="Language menu">
+          <span id="nav-language-btn" class="nav-icon" style="padding: 0 20px 0 0"></span>
+          <span id="selected-lang">日本語</span>
+        </div>
+        <ul class="select-items" id="select-items" role="listbox" aria-label="Languages">
+            <li data-value="zh-CN" role="option" aria-selected="false">简体中文</li>
+            <li data-value="ja" role="option" class="selected" aria-selected="true">日本語</li>
+        </ul>
+      </div>
+      <script>
+        var selectSelected = document.getElementById("select-selected");
+        var selectedLang = document.getElementById("selected-lang");
+        var selectItems = document.getElementById("select-items");
+        var selectOptions = selectItems.querySelectorAll("li");
+
+        selectSelected.addEventListener("click", () => {
+          selectItems.classList.toggle("show");
+          var expanded = selectSelected.getAttribute("aria-expanded") === "true";
+          selectSelected.setAttribute("aria-expanded", (!expanded).toString());
+        });
+
+        selectOptions.forEach((item) => {
+          item.addEventListener("click", () => {
+            const langMap = {};
+              langMap['zh-CN'] = '/2026/07/21/unity-game-framework-architecture/';
+              langMap['ja'] = '/ja/2026/07/21/unity-game-framework-architecture/';
+            selectedLang.textContent = item.textContent;
+            selectItems.classList.remove("show");
+            selectOptions.forEach((option) => {
+              option.classList.remove("selected");
+            });
+            item.classList.add("selected");
+            window.location = langMap[item.dataset.value];
+          });
+        });
+
+        document.addEventListener("click", (event) => {
+          if (!event.target.closest(".custom-dropdown")) {
+            selectItems.classList.remove("show");
+            selectSelected.setAttribute("aria-expanded", "false");
+          }
+        });
+      </script>
+    </nav>
+</div>
+<header id="header" aria-label="Site header">
+        <picture>
+        </picture>
+          <img  fetchpriority="high" src="/images/banner.webp" alt="ゲームフレームワーク：UnityGameFramework を例に">
+  <div id="header-outer">
+    <div id="header-title">
+          <span id="logo">
+            <h1 data-aos="slide-up">ゲームフレームワーク：UnityGameFramework を例に</h1>
+          </span>
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+        </h2>
+    </div>
+  </div>
+</header>
+
+        <div id="content" aria-label="Page content"  class="sidebar-right" >
+          <aside id="sidebar" aria-label="Sidebar">
+  <div class="sidebar-wrapper-container sticky">
+  <div class="sidebar-wrapper">
+    <div class="sidebar-wrap" data-aos="fade-up">
+          <div class="sidebar-toc-sidebar"><h3 class="toc-title">見出し</h3>
+<div class="sidebar-toc-wrapper toc-div-class" >
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%81%AF%E3%81%98%E3%82%81%E3%81%AB"><span class="toc-number">1.</span> <span class="toc-text">はじめに</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%82%B2%E3%83%BC%E3%83%A0%E3%83%95%E3%83%AC%E3%83%BC%E3%83%A0%E3%83%AF%E3%83%BC%E3%82%AF%E3%81%A8%E3%81%AF"><span class="toc-number">2.</span> <span class="toc-text">ゲームフレームワークとは</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E3%82%B2%E3%83%BC%E3%83%A0%E3%83%95%E3%83%AC%E3%83%BC%E3%83%A0%E3%83%AF%E3%83%BC%E3%82%AF%E3%81%8C%E8%A7%A3%E6%B1%BA%E3%81%99%E3%82%8B%E4%B8%BB%E3%81%AA%E5%95%8F%E9%A1%8C"><span class="toc-number">3.</span> <span class="toc-text">一、ゲームフレームワークが解決する主な問題</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81UnityGameFramework-%E3%81%AE%E5%9F%BA%E6%9C%AC%E7%9A%84%E3%81%AA%E5%88%86%E5%B1%A4"><span class="toc-number">4.</span> <span class="toc-text">二、UnityGameFramework の基本的な分層</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81Procedure-%E3%81%8B%E3%82%89%E4%B8%BB%E8%A6%81%E3%83%A2%E3%82%B8%E3%83%A5%E3%83%BC%E3%83%AB%E3%81%AE%E5%8D%94%E8%AA%BF%E3%82%92%E8%A6%8B%E3%82%8B"><span class="toc-number">5.</span> <span class="toc-text">三、Procedure から主要モジュールの協調を見る</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81RE-BA-%E3%83%97%E3%83%AD%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E3%82%92%E4%BE%8B%E3%81%AB%E3%81%97%E3%81%9F%E3%83%95%E3%83%AC%E3%83%BC%E3%83%A0%E3%83%AF%E3%83%BC%E3%82%AF%E5%8D%94%E8%AA%BF"><span class="toc-number">6.</span> <span class="toc-text">四、RE_BA プロジェクトを例にしたフレームワーク協調</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E3%83%95%E3%83%AC%E3%83%BC%E3%83%A0%E3%83%AF%E3%83%BC%E3%82%AF%E3%81%AE%E5%88%A9%E7%82%B9%E3%81%A8%E4%BB%A3%E5%84%9F"><span class="toc-number">7.</span> <span class="toc-text">五、フレームワークの利点と代償</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%81%BE%E3%81%A8%E3%82%81"><span class="toc-number">8.</span> <span class="toc-text">まとめ</span></a></li></ol>
+</div>
+</div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.png" data-sizes="auto" alt="SANaoi" class="lazyload">
+  <div class="sidebar-author-name">SANaoi</div>
+  <div class="sidebar-description"></div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>投稿</div>
+    <div class="sidebar-state-number">12</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>カテゴリー</div>
+    <div class="sidebar-state-number">3</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>タグ</div>
+    <div class="sidebar-state-number">9</div>
+  </div>
+</div>
+<div class="sidebar-social" >
+</div>
+<div class="sidebar-menu">
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/" aria-label="ホーム"></a>
+          <div class="sidebar-menu-icon icon rotate">
+              &#xe62b;
+          </div>
+        <div class="sidebar-menu-link">ホーム</div>
+      </div>
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/archives" aria-label="アーカイブ"></a>
+          <div class="sidebar-menu-icon icon rotate">
+              &#xe62b;
+          </div>
+        <div class="sidebar-menu-link">アーカイブ</div>
+      </div>
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/about" aria-label="プロフィール"></a>
+          <div class="sidebar-menu-icon icon rotate">
+              &#xe62b;
+          </div>
+        <div class="sidebar-menu-link">プロフィール</div>
+      </div>
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/friend" aria-label="フレンド"></a>
+          <div class="sidebar-menu-icon icon rotate">
+              &#xe62b;
+          </div>
+        <div class="sidebar-menu-link">フレンド</div>
+      </div>
+</div>
+</div>
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+    </div>
+  </div>
+  <div class="sidebar-widget">
+  </div>
+  </div>
+</aside>
+
+          <section id="main" aria-label="Main content"><article id="post-Unity/unity-game-framework-architecture-ja" class="h-entry article" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner" data-aos="fade-up">
+    <div class="article-meta">
+      <div class="article-date">
+  <span class="article-date-link icon-calendar" data-aos="zoom-in">
+    <time datetime="2026-07-20T15:00:00.000Z" itemprop="datePublished">2026-07-21</time>
+    <time style="display: none;" id="post-update-time">2026-07-21</time>
+  </span>
+</div>
+
+    </div>
+    
+    <div class="hr-line"></div>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+        <h2 id="はじめに"><a href="#はじめに" class="headerlink" title="はじめに"></a>はじめに</h2><p>UnityGameFramework は、オープンソースの Unity 向けゲームフレームワークです。ゲーム開発でよく使われる基礎モジュールをまとめて提供しており、開発フローをある程度標準化し、基礎機能の構築を速め、コードの安定性や保守性を高めることができます。</p>
+<p>このフレームワークはかなり完成度が高く、実際に商用ゲームで採用された例もあり、コミュニティによる解説やチュートリアルも多く存在します。そのため、プロジェクト開発の基盤としてだけでなく、ゲームフレームワークの設計思想を学ぶ対象としても非常に参考になります。</p>
+<p>この記事では、筆者が現在開発している個人プロジェクト RE_BA を切り口に、UnityGameFramework のモジュール構成、実行フロー、そしてその背後にあるフレームワーク設計の考え方を整理していきます。</p>
+<p>UnityGameFramework コードリポジトリ：<a target="_blank" rel="noopener" href="https://github.com/EllanJiang/GameFramework">https://github.com/EllanJiang/GameFramework</a></p>
+<h2 id="ゲームフレームワークとは"><a href="#ゲームフレームワークとは" class="headerlink" title="ゲームフレームワークとは"></a>ゲームフレームワークとは</h2><p>ゲーム開発では、機能が増えるほどコードの複雑度も急速に上がります。キャラクター制御、シーン遷移、リソース読み込み、UI 管理、イベント通信、データテーブル、本地化、サウンド再生などのシステムを明確な方針なしに作っていくと、後の機能追加や保守が難しくなります。</p>
+<p>ゲームフレームワークは、こうした問題を解決するために存在します。単にコードをいくつかの Manager に分けるものではなく、ゲーム開発で繰り返し現れる処理の流れを標準化し、安定した、分かりやすく、再利用しやすい基盤を作るものです。</p>
+<p>これは家を建てることに少し似ています。内装や家具の配置を始める前に、設計図を作り、基礎を打ち、構造を組み、水道や電気を通し、窓やドアを取り付け、品質を確認する必要があります。基礎となる工程が安定していれば、後から増築したり修理したりするときにも大きく崩れにくくなります。</p>
+<p>ゲームプロジェクトも同じです。成熟したゲームフレームワークでは、次のような内容をあらかじめ決めておくことが多いです。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">ゲームをどのように起動するか</span><br><span class="line">リソースをどのように読み込むか</span><br><span class="line">シーンをどのように切り替えるか</span><br><span class="line">オブジェクトをどのように生成・破棄するか</span><br><span class="line">UI をどのように開閉するか</span><br><span class="line">モジュール間でどのように通信するか</span><br><span class="line">設定データをどのように読み込むか</span><br><span class="line">例外やログをどのように扱うか</span><br></pre></td></tr></table></figure>
+
+<p>これらはキャラクタースキル、戦闘演出、UI アニメーションほど目立つものではありません。しかし、プロジェクトが安定して前に進めるかどうかを決める重要な部分です。この記事では UnityGameFramework 風のプロジェクトを例に、ゲームフレームワークが Unity プロジェクトでどのような役割を担い、ばらばらになりがちな MonoBehaviour のロジックをどのように保守しやすい構造へ整理するのかを見ていきます。</p>
+<h2 id="一、ゲームフレームワークが解決する主な問題"><a href="#一、ゲームフレームワークが解決する主な問題" class="headerlink" title="一、ゲームフレームワークが解決する主な問題"></a>一、ゲームフレームワークが解決する主な問題</h2><p>フレームワークの制約がないプロジェクトでは、最初のうちは多くの機能を素早く実装できます。キャラクターを生成したければ <code>Instantiate</code> を呼び、シーンを切り替えたければ <code>SceneManager.LoadScene</code> を使い、UI を開きたければスクリプトに UI 参照を持たせ、他のモジュールへ通知したければ対象オブジェクトを直接呼び出せます。</p>
+<p>この書き方は初期段階では分かりやすいですが、機能が増えるにつれて問題が出てきます。起動順序が制御しにくい、モジュール間の参照が複雑になる、リソース読み込み方式が統一されない、オブジェクトのライフサイクルが分散する、UI 状態とゲーム状態が互いに影響し合う、といった問題です。</p>
+<p>ゲームフレームワークが解決しようとしているのは、こうした共通問題です。具体的なゲームプレイロジックを置き換えるのではなく、ゲームをどう起動するか、リソースをどう読み込むか、シーンをどう切り替えるか、オブジェクトをどう生成・破棄するか、UI をどう開閉するか、モジュール間でどう通信するかをあらかじめ定めます。つまり、フレームワークは安定した実行秩序を提供し、その上に各種機能を拡張できるようにするものです。</p>
+<h2 id="二、UnityGameFramework-の基本的な分層"><a href="#二、UnityGameFramework-の基本的な分層" class="headerlink" title="二、UnityGameFramework の基本的な分層"></a>二、UnityGameFramework の基本的な分層</h2><p>UnityGameFramework は Game Framework をベースにした Unity 実装です。設計思想としては、ひとつのクラスにすべてを抱え込ませるのではなく、ゲーム実行時によく使う基礎能力を複数のコンポーネントへ分けています。</p>
+<p>典型的なプロジェクトでは、次のようなグローバル入口を見ることができます。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">GameEntry.Resource</span><br><span class="line">GameEntry.Entity</span><br><span class="line">GameEntry.UI</span><br><span class="line">GameEntry.Event</span><br><span class="line">GameEntry.DataTable</span><br><span class="line">GameEntry.Procedure</span><br><span class="line">GameEntry.Localization</span><br><span class="line">GameEntry.Sound</span><br></pre></td></tr></table></figure>
+
+<p>各コンポーネントは、それぞれ異なる基礎機能を担当します。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Procedure      ゲームフローの状態管理</span><br><span class="line">Resource       リソース読み込みとリソースモード管理</span><br><span class="line">Entity         エンティティのライフサイクル管理</span><br><span class="line">UI             UI の読み込み、グループ分け、開閉</span><br><span class="line">Event          モジュール間イベント通信</span><br><span class="line">DataTable      データテーブル読み込み</span><br><span class="line">Localization   ローカライズ辞書読み込み</span><br><span class="line">Setting        ローカル設定保存</span><br><span class="line">Sound          サウンド再生</span><br><span class="line">ObjectPool     オブジェクトプール</span><br><span class="line">Fsm            有限状態機械</span><br></pre></td></tr></table></figure>
+
+<p>業務コードから見ると、<code>GameEntry</code> は統一されたサービス入口のような存在です。UI を開く、リソースを読み込む、エンティティを表示する、イベントを送るといったフレームワーク機能へ素早くアクセスできます。</p>
+<p>この設計の利点は、呼び出しが簡単で、ルールが統一され、学習しやすいことです。一方で、モジュール境界を理解せずに <code>GameEntry</code> を万能入口として使いすぎると、業務コードがグローバルサービスへ過度に依存してしまいます。フレームワークは秩序を提供しますが、その秩序を正しく使えるかどうかは、プロジェクト側の規律にも依存します。</p>
+<h2 id="三、Procedure-から主要モジュールの協調を見る"><a href="#三、Procedure-から主要モジュールの協調を見る" class="headerlink" title="三、Procedure から主要モジュールの協調を見る"></a>三、Procedure から主要モジュールの協調を見る</h2><p>前述したモジュールの中でも、Procedure は UnityGameFramework の実行方式を理解するための入り口として適しています。これは単なる「画面遷移」ではなく、状態機械によってゲームの実行段階を表すものです。</p>
+<p>ゲームが起動してからステージへ入るまでには、通常いくつかの段階があります。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Launch -&gt; Splash -&gt; Preload -&gt; ChangeScene -&gt; Menu -&gt; Level</span><br></pre></td></tr></table></figure>
+
+<p>それぞれの Procedure には明確な役割があります。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Launch       言語、リソースバリアント、基礎設定の初期化</span><br><span class="line">Splash       起動画面や遷移演出の表示</span><br><span class="line">Preload      データテーブル、辞書、フォントなどの事前読み込み</span><br><span class="line">ChangeScene  シーン読み込みとアンロードの統一処理</span><br><span class="line">Menu         メインメニューのフロー</span><br><span class="line">Level        ゲームステージのフロー</span><br></pre></td></tr></table></figure>
+
+<p>この書き方の良いところは、起動の流れを読みやすく、追跡しやすく、拡張しやすくする点です。</p>
+<p>将来的にバージョンチェック、リソース更新、ログイン、サーバー選択などを追加したい場合も、既存の流れに新しい Procedure を差し込めます。すべての処理をひとつの <code>Start</code> メソッドへ詰め込む必要はありません。</p>
+<p>たとえば、より完全な起動フローは次のようになります。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Launch</span><br><span class="line">-&gt; CheckVersion</span><br><span class="line">-&gt; UpdateResources</span><br><span class="line">-&gt; Preload</span><br><span class="line">-&gt; Login</span><br><span class="line">-&gt; Menu</span><br><span class="line">-&gt; Level</span><br></pre></td></tr></table></figure>
+
+<p>これが Procedure の価値です。ゲームの実行過程を隠れた呼び出しの集まりではなく、明確な状態チェーンとして扱えるようにします。</p>
+<p>もちろん、Procedure はあくまでフローの骨格です。そのフローを実際に動かしているのは、各段階で協調する他のモジュールです。</p>
+<p>Resource はリソース読み込みを統一し、業務層がリソースの取得元をできるだけ意識しなくて済むようにします。リソースがエディタ上のディレクトリにあるのか、AssetBundle にあるのか、将来的な更新パッケージにあるのかを、業務層が直接扱わないようにするためです。Entity はゲームオブジェクトのライフサイクルを統一管理します。プレイヤー、敵、弾、アイテム、エフェクト、カメラなどがその対象になります。UI は画面の読み込み、グループ分け、開閉を担当し、入力ロックやマウス表示といったゲーム状態にも影響します。</p>
+<p>Event はモジュール間通信を担当し、システム同士の直接参照を減らします。たとえばアイテムを拾うとき、アイテム側のロジックが直接バッグ画面を変更する必要はありません。拾得イベントを送信し、バッグデータと UI 表示がそれぞれ反応すればよいのです。DataTable はキャラクター属性、エンティティのリソース名、UI 設定、弾データ、アイテム説明などをコードから切り離し、設定として扱いやすくします。</p>
+<p>簡単にまとめると、各モジュールの分担は次のようになります。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Resource   リソースを管理する</span><br><span class="line">Entity     オブジェクトを管理する</span><br><span class="line">UI         画面を管理する</span><br><span class="line">Event      通信を管理する</span><br><span class="line">DataTable  設定を管理する</span><br></pre></td></tr></table></figure>
+
+<h2 id="四、RE-BA-プロジェクトを例にしたフレームワーク協調"><a href="#四、RE-BA-プロジェクトを例にしたフレームワーク協調" class="headerlink" title="四、RE_BA プロジェクトを例にしたフレームワーク協調"></a>四、RE_BA プロジェクトを例にしたフレームワーク協調</h2><p>UnityGameFramework 風のプロジェクトでは、実際の実行フローはおおよそ次のように理解できます。</p>
+<p>大まかな流れは次のようになります。</p>
+<ol>
+<li><code>Init.unity</code> からプロジェクトを起動する。</li>
+<li><code>GameEntry.Start</code> でフレームワークコンポーネントを初期化する。</li>
+<li><code>ProcedureLaunch</code> に入り、言語やリソースバリアントなどの基礎設定を処理する。</li>
+<li><code>ProcedureSplash</code> と <code>ProcedurePreload</code> で、データテーブル、辞書、フォントなどの基礎リソースを読み込む。</li>
+<li><code>ProcedureChangeScene</code> を通して <code>Menu.unity</code> または <code>Game.unity</code> へ切り替える。</li>
+<li><code>ProcedureLevel</code> に入ると、<code>LevelControl</code> がプレイヤー、カメラ、アイテムを表示する。</li>
+<li>プレイヤー入力、FSM、拾得イベント、バッグデータ、<code>BagForm</code> がゲームフロー内で協調して動く。</li>
+</ol>
+<p>ここから分かるのは、フレームワークが業務ロジックそのものを置き換えているわけではない、ということです。</p>
+<p>プレイヤーがどう移動するか、弾がどう命中するか、バッグをどう表示するかは、依然として業務コードが解決する問題です。しかし、プレイヤーをどう生成するか、リソースをどう読み込むか、UI をどう開くか、モジュール同士がどう通信するか、シーンをどう切り替えるかといった共通問題には、フレームワークが統一された経路を提供します。</p>
+<p>これこそがゲームフレームワークの中心的な意味です。フレームワークは特定の遊びを面白くしてくれるものではありません。しかし、その遊びを安定して追加し、組み合わせ、保守できるようにしてくれます。</p>
+<h2 id="五、フレームワークの利点と代償"><a href="#五、フレームワークの利点と代償" class="headerlink" title="五、フレームワークの利点と代償"></a>五、フレームワークの利点と代償</h2><p>ゲームフレームワークを使う利点は分かりやすいです。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">プロジェクト構造が統一される</span><br><span class="line">起動フローが明確になる</span><br><span class="line">リソース読み込みを制御しやすい</span><br><span class="line">モジュール境界が分かりやすい</span><br><span class="line">オブジェクトのライフサイクルが安定する</span><br><span class="line">機能拡張の置き場所が明確になる</span><br></pre></td></tr></table></figure>
+
+<p>一方で、フレームワークには代償もあります。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">学習コストが高くなる</span><br><span class="line">呼び出しチェーンが長くなる</span><br><span class="line">直接参照よりデバッグ経路が分かりにくい</span><br><span class="line">グローバル入口へ依存しすぎると暗黙の結合が増える</span><br><span class="line">イベントシステムを乱用すると追跡しにくくなる</span><br></pre></td></tr></table></figure>
+
+<p>そのため、フレームワークは複雑であればよいというものではありません。良いフレームワークはプロジェクト規模に合わせて機能するべきであり、プロジェクトがフレームワークに振り回されるべきではありません。</p>
+<p>小さなプロトタイプであれば、直接 MonoBehaviour を書いた方が速い場合もあります。一方で、長期保守、多人数開発、大量のリソース、多数のシステムを扱うプロジェクトでは、フレームワークの価値が少しずつ見えてきます。</p>
+<h2 id="まとめ"><a href="#まとめ" class="headerlink" title="まとめ"></a>まとめ</h2><p>ゲームフレームワークは Manager の寄せ集めではありません。また、すべてのコードを見栄えのよい構造で包むためのものでもありません。本当に解決しているのは、プロジェクトの複雑度が増した後に発生する「整理の問題」です。</p>
+<p>UnityGameFramework を例にすると、ゲーム内の共通機能は次のように分担されます。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">起動フローは Procedure に任せる</span><br><span class="line">リソース読み込みは Resource に任せる</span><br><span class="line">オブジェクトのライフサイクルは Entity に任せる</span><br><span class="line">モジュール間通信は Event に任せる</span><br><span class="line">設定データは DataTable に任せる</span><br><span class="line">UI 管理は UI に任せる</span><br><span class="line">ローカライズは Localization に任せる</span><br><span class="line">サウンド再生は Sound に任せる</span><br></pre></td></tr></table></figure>
+
+<p>これらのシステムが組み合わさることで、ゲーム実行時の基盤が作られます。プロジェクトは、ばらばらのスクリプト同士の一時的な接続に頼るのではなく、理解しやすく、拡張しやすく、保守しやすい実行秩序を持てるようになります。</p>
+<p>フレームワークの価値は、コードを複雑に見せることではありません。プロジェクトが本当に複雑になったときに、機能をどこへ置くべきか、データはどこから来るべきか、オブジェクトは誰が作るべきか、モジュール同士はどう通信すべきかを判断できるようにすることです。</p>
+<p>それこそが、ゲームフレームワークのもっとも重要な意味だと思います。</p>
+<p>次回以降は、いくつかのモジュールをより詳しく紹介し、UnityGameFramework の設計の面白さをさらに深く見ていきます。</p>
+
+    </div>
+    <footer class="article-footer">
+        <a class="article-category-link" href="/ja/categories/Unity/" title="Unity" data-aos="zoom-in">Unity</a>
+
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/ja/tags/Unity/" rel="tag" title="Unity">Unity</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/ja/tags/UnityGameFramework/" rel="tag" title="UnityGameFramework">UnityGameFramework</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/ja/tags/%E3%82%B2%E3%83%BC%E3%83%A0%E3%83%95%E3%83%AC%E3%83%BC%E3%83%A0%E3%83%AF%E3%83%BC%E3%82%AF/" rel="tag" title="ゲームフレームワーク">ゲームフレームワーク</a></li></ul>
+
+    </footer>
+  </div>
+    <nav id="article-nav" aria-label="Article navigation" data-aos="fade-up">
+    <div class="article-nav-link-wrap right">
+          <img data-src="https://d-sketon.top/img/_backwebp/bg1.webp" data-sizes="auto" alt="wblog：Django で作った個人ブログ兼情報管理システム" class="lazyload">
+      <a href="/ja/2026/07/20/wblog-django-personal-blog/" aria-label="次の記事: wblog：Django で作った個人ブログ兼情報管理システム"  title="次の記事: wblog：Django で作った個人ブログ兼情報管理システム"></a>
+      <div class="article-nav-caption">次の記事</div>
+      <h3 class="article-nav-title">
+          wblog：Django で作った個人ブログ兼情報管理システム
+      </h3>
+    </div>
+  </nav>
+
+</article>
+
+
+</section>
+        </div>
+        <footer id="footer" aria-label="Site footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    <div>
+      <span class="icon-copyright"></span>
+        2020-2026
+        <span class="footer-info-sep rotate"></span>
+      SANaoi
+    </div>
+      <div>
+        Powered by&nbsp;<a href="https://hexo.io/" rel="noopener nofollow noreferrer" target="_blank">Hexo</a>&nbsp;
+        Theme.<a href="https://github.com/D-Sketon/hexo-theme-reimu" rel="noopener nofollow noreferrer" target="_blank">Reimu</a>
+      </div>
+      <div>
+        <span class="icon-brush"></span>
+        23.9k
+        &nbsp;|&nbsp;
+        <span class="icon-coffee"></span>
+        01:31
+      </div>
+      <div>
+        <span class="icon-eye"></span>
+        <span id="busuanzi_container_site_pv">総閲覧数&nbsp;<span id="busuanzi_value_site_pv"></span></span>
+        &nbsp;|&nbsp;
+        <span class="icon-user"></span>
+        <span id="busuanzi_container_site_uv">総閲覧者数&nbsp;<span id="busuanzi_value_site_uv"></span></span>
+      </div>
+  </div>
+</footer>
+
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav" aria-label="Mobile navigation">
+  <div class="sidebar-wrap">
+        <div class="sidebar-toc-sidebar"><h3 class="toc-title">見出し</h3>
+<div class="sidebar-toc-wrapper toc-div-class" >
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%81%AF%E3%81%98%E3%82%81%E3%81%AB"><span class="toc-number">1.</span> <span class="toc-text">はじめに</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%82%B2%E3%83%BC%E3%83%A0%E3%83%95%E3%83%AC%E3%83%BC%E3%83%A0%E3%83%AF%E3%83%BC%E3%82%AF%E3%81%A8%E3%81%AF"><span class="toc-number">2.</span> <span class="toc-text">ゲームフレームワークとは</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E3%82%B2%E3%83%BC%E3%83%A0%E3%83%95%E3%83%AC%E3%83%BC%E3%83%A0%E3%83%AF%E3%83%BC%E3%82%AF%E3%81%8C%E8%A7%A3%E6%B1%BA%E3%81%99%E3%82%8B%E4%B8%BB%E3%81%AA%E5%95%8F%E9%A1%8C"><span class="toc-number">3.</span> <span class="toc-text">一、ゲームフレームワークが解決する主な問題</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81UnityGameFramework-%E3%81%AE%E5%9F%BA%E6%9C%AC%E7%9A%84%E3%81%AA%E5%88%86%E5%B1%A4"><span class="toc-number">4.</span> <span class="toc-text">二、UnityGameFramework の基本的な分層</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81Procedure-%E3%81%8B%E3%82%89%E4%B8%BB%E8%A6%81%E3%83%A2%E3%82%B8%E3%83%A5%E3%83%BC%E3%83%AB%E3%81%AE%E5%8D%94%E8%AA%BF%E3%82%92%E8%A6%8B%E3%82%8B"><span class="toc-number">5.</span> <span class="toc-text">三、Procedure から主要モジュールの協調を見る</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81RE-BA-%E3%83%97%E3%83%AD%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E3%82%92%E4%BE%8B%E3%81%AB%E3%81%97%E3%81%9F%E3%83%95%E3%83%AC%E3%83%BC%E3%83%A0%E3%83%AF%E3%83%BC%E3%82%AF%E5%8D%94%E8%AA%BF"><span class="toc-number">6.</span> <span class="toc-text">四、RE_BA プロジェクトを例にしたフレームワーク協調</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E3%83%95%E3%83%AC%E3%83%BC%E3%83%A0%E3%83%AF%E3%83%BC%E3%82%AF%E3%81%AE%E5%88%A9%E7%82%B9%E3%81%A8%E4%BB%A3%E5%84%9F"><span class="toc-number">7.</span> <span class="toc-text">五、フレームワークの利点と代償</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E3%81%BE%E3%81%A8%E3%82%81"><span class="toc-number">8.</span> <span class="toc-text">まとめ</span></a></li></ol>
+</div>
+</div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.png" data-sizes="auto" alt="SANaoi" class="lazyload">
+  <div class="sidebar-author-name">SANaoi</div>
+  <div class="sidebar-description"></div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>投稿</div>
+    <div class="sidebar-state-number">12</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>カテゴリー</div>
+    <div class="sidebar-state-number">3</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>タグ</div>
+    <div class="sidebar-state-number">9</div>
+  </div>
+</div>
+<div class="sidebar-social" >
+</div>
+<div class="sidebar-menu">
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/" aria-label="ホーム"></a>
+          <div class="sidebar-menu-icon icon rotate">
+              &#xe62b;
+          </div>
+        <div class="sidebar-menu-link">ホーム</div>
+      </div>
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/archives" aria-label="アーカイブ"></a>
+          <div class="sidebar-menu-icon icon rotate">
+              &#xe62b;
+          </div>
+        <div class="sidebar-menu-link">アーカイブ</div>
+      </div>
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/about" aria-label="プロフィール"></a>
+          <div class="sidebar-menu-icon icon rotate">
+              &#xe62b;
+          </div>
+        <div class="sidebar-menu-link">プロフィール</div>
+      </div>
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/ja/friend" aria-label="フレンド"></a>
+          <div class="sidebar-menu-icon icon rotate">
+              &#xe62b;
+          </div>
+        <div class="sidebar-menu-link">フレンド</div>
+      </div>
+</div>
+</div>
+  </div>
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+</nav>
+
+    </div>
+    
+<script src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js" integrity="sha384-3gT&#x2F;vsepWkfz&#x2F;ff7PpWNUeMzeWoH3cDhm&#x2F;A8jM7ouoAK0&#x2F;fP&#x2F;9bcHHR5kHq2nf+e" crossorigin="anonymous"></script>
+
+
+<script src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js" integrity="sha384-J08i8An&#x2F;QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+  
+<script src="/js/aos.js"></script>
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+<script src="/js/pjax_script.js" data-pjax></script>
+
+
+
+
+  <script>
+    var setupFirework = () => {
+      if (!false || !window.matchMedia('(max-width: 768px)').matches) {
+        window.firework && window.firework(JSON.parse('{"excludeElements":["a","button"],"particles":[{"shape":"circle","move":["emit"],"easing":"easeOutExpo","colors":["var(--red-1)","var(--red-2)","var(--red-3)","var(--red-4)"],"number":20,"duration":[1200,1800],"shapeOptions":{"radius":[16,32],"alpha":[0.3,0.5]}},{"shape":"circle","move":["diffuse"],"easing":"easeOutExpo","colors":["var(--red-0)"],"number":1,"duration":[1200,1800],"shapeOptions":{"radius":20,"alpha":[0.2,0.5],"lineWidth":6}}]}'));
+      }
+    }
+  </script>
+  
+<script src="https://npm.webcache.cn/mouse-firework@0.2.0/dist/index.umd.js" integrity="sha384-qi9WggRt19tv8Vc7pCHW3ulMNLwrn515zaLEWZjl1px07vz8+pUoWX8n1rgq282T" crossorigin="anonymous" onload="setupFirework()" defer></script>
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+      
+      
+      <script data-pjax>
+        window.REIMU_POST = {
+          author: "SANaoi",
+          title: "ゲームフレームワーク：UnityGameFramework を例に",
+          url: "https://sanaoi.github.io/2026/07/21/unity-game-framework-architecture/",
+          excerpt: "",
+          description: "",
+          stripContent: "はじめにUnityGameFramework は、オープンソースの Unity 向けゲームフレームワークです。ゲーム開発でよく使われる基礎モジュールをまとめて提供しており、開発フローをある程度標準化し、基礎機能の構築を速め、コードの安定性や保守性を高めることができます。 このフレームワークはかなり完成度が高く、実際に商用ゲームで採用された例もあり、コミュニティによる解説やチュートリアルも多く存在します。そのため、プロジェクト開発の基盤としてだけでなく、ゲームフレームワークの設計思想を学ぶ対象とし",
+          date: "Tue Jul 21 2026 00:00:00 GMT+0900",
+          updated: "Tue Jul 21 2026 01:04:35 GMT+0900",
+          cover: "/images/banner.webp",
+        };
+      </script>
+        
+<script src="/js/insert_highlight.js" data-pjax></script>
+
+      
+<script src="/js/tabs.js" data-pjax defer></script>
+
+      <script type="module" data-pjax>
+        (async () => {
+          const PhotoSwipeLightbox = (await safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js", "sha384-DiL6M/gG+wmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF/N6lrZi/")).default;
+          const initPswp = (gallery, children) => {
+            if (_$$(`${gallery} ${children}`).length > 0) {
+              new PhotoSwipeLightbox({
+                gallery,
+                children,
+                pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+              }).init();
+            }
+          }
+          const pswp = () => {
+            initPswp('.article-entry', 'a.article-gallery-item');
+            initPswp('.article-gallery', 'a.article-gallery-item');
+          }
+          pswp();
+        })();
+      </script>
+        
+
+
+  </div>
+</div>
+
+
+  <script>
+    console.log(String.raw`%c 
+ ______     ______     __     __    __     __  __    
+/\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+\ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+ \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+  \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                  
+`,'color: #ff5252;')
+    console.log('%c Theme.Reimu v' + '1.12.5' + ' %c https://github.com/D-Sketon/hexo-theme-reimu ', 'color: white; background: #ff5252; padding:5px 0;', 'padding:4px;border:1px solid #ff5252;')
+  </script>
+  
+
+
+  
+<script src="https://npm.webcache.cn/busuanzi@2.3.0/bsz.pure.mini.js" integrity="sha384-0M75wtSkhjIInv4coYlaJU83+OypaRCIq2SukQVQX04eGTCBXJDuWAbJet56id+S" crossorigin="anonymous" async></script>
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+</script>
+
+
+
+
+  </body>
+  </html>

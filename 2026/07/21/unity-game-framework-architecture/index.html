@@ -1,0 +1,613 @@
+  <!DOCTYPE html>
+  <html lang="zh-CN"  
+      data-theme-mode="auto"
+  >
+  <head>
+  <meta charset="utf-8">
+  
+  
+  
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.icon_font = '4552607_ex15nbittbh';window.REIMU_CONFIG.clipboard_tips = {"success":{"zh-CN":"复制成功 (*^▽^*)","ja":"コピー成功 (*^▽^*)"},"fail":{"zh-CN":"复制失败 (ﾟ⊿ﾟ)ﾂ","ja":"コピー失敗 (ﾟ⊿ﾟ)ﾂ"},"copyright":{"enable":false,"count":50,"license_type":"by-nc-sa"}};window.REIMU_CONFIG.clipboard_tips.copyright.content = '本博客所有文章除特别声明外，均采用 BY-NC-SA 许可协议。转载请注明出处！';window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://SANaoi.github.io';window.REIMU_CONFIG.relative = '/';window.REIMU_CONFIG.i18n_languages = ["ja"];</script>
+  <title>
+    游戏框架：以 UnityGameFramework 为例 | SANaoi
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic|Noto Serif SC:400,400italic,700,700italic&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic|Noto Serif SC:400,400italic,700,700italic&display=swap" media="print" onload="this.media='all'">
+    <link rel="preload" href="//at.alicdn.com/t/c/font_4552607_ex15nbittbh.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+    
+<link rel="stylesheet" href="/css/loader.css">
+
+    <meta name="description" content="前言UnityGameFramework 是一款开源的 Unity 游戏框架，主要对游戏开发过程中常用的基础模块进行了封装。它在很大程度上规范了开发流程，能够加快项目基础功能的搭建，并提升代码的稳定性和可维护性。 这个框架本身已经足够完善：既有基于它开发的商业游戏，也有许多社区开发者围绕它整理教程和实践经验。因此，它不仅可以作为项目开发中的基础框架，也很适合作为学习游戏框架设计的参考对象。 本文会">
+<meta property="og:type" content="article">
+<meta property="og:title" content="游戏框架：以 UnityGameFramework 为例">
+<meta property="og:url" content="https://sanaoi.github.io/2026/07/21/unity-game-framework-architecture/index.html">
+<meta property="og:site_name" content="SANaoi">
+<meta property="og:description" content="前言UnityGameFramework 是一款开源的 Unity 游戏框架，主要对游戏开发过程中常用的基础模块进行了封装。它在很大程度上规范了开发流程，能够加快项目基础功能的搭建，并提升代码的稳定性和可维护性。 这个框架本身已经足够完善：既有基于它开发的商业游戏，也有许多社区开发者围绕它整理教程和实践经验。因此，它不仅可以作为项目开发中的基础框架，也很适合作为学习游戏框架设计的参考对象。 本文会">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-07-20T15:00:00.000Z">
+<meta property="article:modified_time" content="2026-07-20T16:04:35.336Z">
+<meta property="article:author" content="SANaoi">
+<meta property="article:tag" content="Unity">
+<meta property="article:tag" content="UnityGameFramework">
+<meta property="article:tag" content="游戏框架">
+<meta name="twitter:card" content="summary">
+    <link rel="alternate" href="/atom.xml" title="SANaoi" type="application/atom+xml">
+    <link rel="shortcut icon" href="/images/favicon.ico">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css" integrity="sha384-IfxC36XL/toUyJ939C73PcgMuRzAZuIzZxE38drsmO5p6jD7ei+Zx/1oA/0l8ysE" crossorigin="anonymous">
+    
+<script src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js" integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"></script>
+
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.2/dist/aos.css" integrity="sha384-GMRP93c6Hkz9JVKGAuRR3nTS7M07RwPgTFenXiosjq2VbVgvdDNcz1g6Mkj8AONa" crossorigin="anonymous">
+
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+  <body>
+      <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi rotate">
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="var(--red-1, #ff5252)" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+           M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="var(--red-1, #ff5252)" />
+          </svg>
+      </div>
+      <div class="loading-word">少女祈祷中...</div>
+    </div>
+  </div>
+  <script>
+    var time = null;
+    var loaderEl = document.getElementById('loader');
+    var startLoading = () => {
+      time = Date.now();
+      loaderEl.classList.remove("loading");
+    }
+    var hideLoader = () => {
+      document.body.style.overflow = 'auto';
+      loader.classList.add('loading');
+    };
+
+    var endLoading = () => {
+      if (!time) {
+        hideLoader();
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          hideLoader();
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    loaderEl.addEventListener('click', endLoading);
+  </script>
+<div id="copy-tooltip"></div>
+<div id="heatmap-tooltip"></div>
+
+
+    <div id="container">
+      <div id="wrap">
+        <div id="header-nav">
+  <nav id="main-nav" aria-label="Primary navigation">
+        <a class="main-nav-link-wrap" href="/">
+            <div class="main-nav-icon icon rotate">
+                &#xe62b;
+            </div>
+          <span class="main-nav-link">首页</span>
+        </a>
+        <a class="main-nav-link-wrap" href="/archives">
+            <div class="main-nav-icon icon rotate">
+                &#xe62b;
+            </div>
+          <span class="main-nav-link">归档</span>
+        </a>
+        <a class="main-nav-link-wrap" href="/about">
+            <div class="main-nav-icon icon rotate">
+                &#xe62b;
+            </div>
+          <span class="main-nav-link">关于</span>
+        </a>
+        <a class="main-nav-link-wrap" href="/friend">
+            <div class="main-nav-icon icon rotate">
+                &#xe62b;
+            </div>
+          <span class="main-nav-link">友链</span>
+        </a>
+    <a id="main-nav-toggle" class="nav-icon" aria-label="Toggle navigation" role="button"></a>
+  </nav>
+  <nav id="sub-nav" aria-label="Secondary navigation">
+      <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅" aria-label="RSS 订阅" target="_blank"></a>
+  </nav>
+    <nav id="i18n-nav" aria-label="Language selection">
+      <div class="custom-dropdown">
+        <div class="select-selected" id="select-selected" role="button" aria-haspopup="listbox" aria-expanded="false" aria-label="Language menu">
+          <span id="nav-language-btn" class="nav-icon" style="padding: 0 20px 0 0"></span>
+          <span id="selected-lang">简体中文</span>
+        </div>
+        <ul class="select-items" id="select-items" role="listbox" aria-label="Languages">
+            <li data-value="zh-CN" role="option" class="selected" aria-selected="true">简体中文</li>
+            <li data-value="ja" role="option" aria-selected="false">日本語</li>
+        </ul>
+      </div>
+      <script>
+        var selectSelected = document.getElementById("select-selected");
+        var selectedLang = document.getElementById("selected-lang");
+        var selectItems = document.getElementById("select-items");
+        var selectOptions = selectItems.querySelectorAll("li");
+
+        selectSelected.addEventListener("click", () => {
+          selectItems.classList.toggle("show");
+          var expanded = selectSelected.getAttribute("aria-expanded") === "true";
+          selectSelected.setAttribute("aria-expanded", (!expanded).toString());
+        });
+
+        selectOptions.forEach((item) => {
+          item.addEventListener("click", () => {
+            const langMap = {};
+              langMap['zh-CN'] = '/2026/07/21/unity-game-framework-architecture/';
+              langMap['ja'] = '/ja/2026/07/21/unity-game-framework-architecture/';
+            selectedLang.textContent = item.textContent;
+            selectItems.classList.remove("show");
+            selectOptions.forEach((option) => {
+              option.classList.remove("selected");
+            });
+            item.classList.add("selected");
+            window.location = langMap[item.dataset.value];
+          });
+        });
+
+        document.addEventListener("click", (event) => {
+          if (!event.target.closest(".custom-dropdown")) {
+            selectItems.classList.remove("show");
+            selectSelected.setAttribute("aria-expanded", "false");
+          }
+        });
+      </script>
+    </nav>
+</div>
+<header id="header" aria-label="Site header">
+        <picture>
+        </picture>
+          <img  fetchpriority="high" src="/images/banner.webp" alt="游戏框架：以 UnityGameFramework 为例">
+  <div id="header-outer">
+    <div id="header-title">
+          <span id="logo">
+            <h1 data-aos="slide-up">游戏框架：以 UnityGameFramework 为例</h1>
+          </span>
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+        </h2>
+    </div>
+  </div>
+</header>
+
+        <div id="content" aria-label="Page content"  class="sidebar-right" >
+          <aside id="sidebar" aria-label="Sidebar">
+  <div class="sidebar-wrapper-container sticky">
+  <div class="sidebar-wrapper">
+    <div class="sidebar-wrap" data-aos="fade-up">
+          <div class="sidebar-toc-sidebar"><h3 class="toc-title">文章目录</h3>
+<div class="sidebar-toc-wrapper toc-div-class" >
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%B8%B8%E6%88%8F%E6%A1%86%E6%9E%B6"><span class="toc-number">2.</span> <span class="toc-text">什么是游戏框架</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E6%B8%B8%E6%88%8F%E6%A1%86%E6%9E%B6%E8%A7%A3%E5%86%B3%E7%9A%84%E6%A0%B8%E5%BF%83%E9%97%AE%E9%A2%98"><span class="toc-number">3.</span> <span class="toc-text">一、游戏框架解决的核心问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81UnityGameFramework-%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%88%86%E5%B1%82"><span class="toc-number">4.</span> <span class="toc-text">二、UnityGameFramework 的基本分层</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E4%BB%8E-Procedure-%E7%9C%8B%E6%A0%B8%E5%BF%83%E6%A8%A1%E5%9D%97%E5%A6%82%E4%BD%95%E5%8D%8F%E4%BD%9C"><span class="toc-number">5.</span> <span class="toc-text">三、从 Procedure 看核心模块如何协作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E4%BB%A5-RE-BA-%E9%A1%B9%E7%9B%AE%E4%B8%BA%E4%BE%8B%E7%9C%8B%E4%B8%80%E6%AC%A1%E6%A1%86%E6%9E%B6%E5%8D%8F%E4%BD%9C"><span class="toc-number">6.</span> <span class="toc-text">四、以 RE_BA 项目为例看一次框架协作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E6%A1%86%E6%9E%B6%E5%B8%A6%E6%9D%A5%E7%9A%84%E5%A5%BD%E5%A4%84%E4%B8%8E%E4%BB%A3%E4%BB%B7"><span class="toc-number">7.</span> <span class="toc-text">五、框架带来的好处与代价</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">8.</span> <span class="toc-text">总结</span></a></li></ol>
+</div>
+</div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.png" data-sizes="auto" alt="SANaoi" class="lazyload">
+  <div class="sidebar-author-name">SANaoi</div>
+  <div class="sidebar-description"></div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">12</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">3</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">9</div>
+  </div>
+</div>
+<div class="sidebar-social" >
+</div>
+<div class="sidebar-menu">
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/" aria-label="首页"></a>
+          <div class="sidebar-menu-icon icon rotate">
+              &#xe62b;
+          </div>
+        <div class="sidebar-menu-link">首页</div>
+      </div>
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/archives" aria-label="归档"></a>
+          <div class="sidebar-menu-icon icon rotate">
+              &#xe62b;
+          </div>
+        <div class="sidebar-menu-link">归档</div>
+      </div>
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/about" aria-label="关于"></a>
+          <div class="sidebar-menu-icon icon rotate">
+              &#xe62b;
+          </div>
+        <div class="sidebar-menu-link">关于</div>
+      </div>
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/friend" aria-label="友链"></a>
+          <div class="sidebar-menu-icon icon rotate">
+              &#xe62b;
+          </div>
+        <div class="sidebar-menu-link">友链</div>
+      </div>
+</div>
+</div>
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+    </div>
+  </div>
+  <div class="sidebar-widget">
+  </div>
+  </div>
+</aside>
+
+          <section id="main" aria-label="Main content"><article id="post-Unity/unity-game-framework-architecture" class="h-entry article" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner" data-aos="fade-up">
+    <div class="article-meta">
+      <div class="article-date">
+  <span class="article-date-link icon-calendar" data-aos="zoom-in">
+    <time datetime="2026-07-20T15:00:00.000Z" itemprop="datePublished">2026-07-21</time>
+    <time style="display: none;" id="post-update-time">2026-07-21</time>
+  </span>
+</div>
+
+    </div>
+    
+    <div class="hr-line"></div>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>UnityGameFramework 是一款开源的 Unity 游戏框架，主要对游戏开发过程中常用的基础模块进行了封装。它在很大程度上规范了开发流程，能够加快项目基础功能的搭建，并提升代码的稳定性和可维护性。</p>
+<p>这个框架本身已经足够完善：既有基于它开发的商业游戏，也有许多社区开发者围绕它整理教程和实践经验。因此，它不仅可以作为项目开发中的基础框架，也很适合作为学习游戏框架设计的参考对象。</p>
+<p>本文会以笔者目前正在开发的个人项目 RE_BA 为切入点，尝试梳理它的模块构成、运行流程，以及背后的框架搭建思路。</p>
+<p>UnityGameFramework代码仓库<a target="_blank" rel="noopener" href="https://github.com/EllanJiang/GameFramework">https://github.com/EllanJiang/GameFramework</a></p>
+<h2 id="什么是游戏框架"><a href="#什么是游戏框架" class="headerlink" title="什么是游戏框架"></a>什么是游戏框架</h2><p>在游戏程序开发过程中，随着游戏功能不断丰富，代码复杂度也会快速增加。角色控制、场景切换、资源加载、UI 管理、事件通信、数据表读取、本地化、声音播放等系统，如果一开始没有清晰的组织方式，后续功能开发和项目维护就会变得越来越困难。</p>
+<p>游戏框架正是为了解决这类问题而出现的。它并不是简单地把代码拆成几个 Manager，也不是为了追求某种看起来更高级的架构，而是把游戏开发中反复出现的流程规范化，形成一套稳定、清晰、可复用的基础设施。</p>
+<p>这有点像造房子。真正开始装修和摆家具之前，我们需要先完成设计图纸、打地基、搭建主体结构、水电布线、门窗安装、质量验收等流程。只有这些基础环节可靠，后续扩建、维修和改造才不会牵一发而动全身。</p>
+<p>游戏项目也是如此。一个成熟的游戏框架，通常会提前规定好：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">游戏如何启动</span><br><span class="line">资源如何加载</span><br><span class="line">场景如何切换</span><br><span class="line">对象如何创建和销毁</span><br><span class="line">UI 如何打开和关闭</span><br><span class="line">模块之间如何通信</span><br><span class="line">配置数据如何读取</span><br><span class="line">异常和日志如何处理</span><br></pre></td></tr></table></figure>
+
+<p>这些内容平时可能不如角色技能、战斗表现、UI 动效那样直观，但它们决定了项目能不能稳定地往前走。本文将以 UnityGameFramework 风格的项目为例，讨论游戏框架在 Unity 项目中到底承担了哪些职责，以及它如何把零散的 MonoBehaviour 逻辑组织成一套可维护的运行结构。</p>
+<h2 id="一、游戏框架解决的核心问题"><a href="#一、游戏框架解决的核心问题" class="headerlink" title="一、游戏框架解决的核心问题"></a>一、游戏框架解决的核心问题</h2><p>在没有框架约束的项目中，很多功能一开始看起来都能快速完成。需要生成角色，就直接 <code>Instantiate</code>；需要切换场景，就直接调用 <code>SceneManager.LoadScene</code>；需要打开界面，就在脚本中拖一个 UI 引用；需要通知其他模块，就直接拿到对象调用方法。</p>
+<p>这种写法在项目初期非常直观，但随着功能增加，问题也会逐渐暴露出来：启动顺序难以控制，模块之间引用混乱，资源加载方式不统一，对象生命周期分散，UI 状态和游戏状态互相影响。</p>
+<p>游戏框架要解决的就是这些通用问题。它不是替代具体玩法逻辑，而是提前规定好游戏如何启动、资源如何加载、场景如何切换、对象如何创建和销毁、UI 如何打开和关闭、模块之间如何通信。换句话说，框架提供的是一套稳定的运行秩序，让业务功能可以在这套秩序上继续扩展。</p>
+<h2 id="二、UnityGameFramework-的基本分层"><a href="#二、UnityGameFramework-的基本分层" class="headerlink" title="二、UnityGameFramework 的基本分层"></a>二、UnityGameFramework 的基本分层</h2><p>UnityGameFramework 是基于 Game Framework 的 Unity 实现。它的设计思路不是让某一个类包揽所有逻辑，而是把游戏运行时常见的基础能力拆成多个组件。</p>
+<p>在一个典型项目中，我们经常会看到类似这样的全局入口：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">GameEntry.Resource</span><br><span class="line">GameEntry.Entity</span><br><span class="line">GameEntry.UI</span><br><span class="line">GameEntry.Event</span><br><span class="line">GameEntry.DataTable</span><br><span class="line">GameEntry.Procedure</span><br><span class="line">GameEntry.Localization</span><br><span class="line">GameEntry.Sound</span><br></pre></td></tr></table></figure>
+
+<p>这些组件分别负责不同的基础能力：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Procedure      游戏流程状态机</span><br><span class="line">Resource       资源加载与资源模式管理</span><br><span class="line">Entity         实体生命周期管理</span><br><span class="line">UI             界面加载、分组和打开关闭</span><br><span class="line">Event          跨模块事件通信</span><br><span class="line">DataTable      数据表读取</span><br><span class="line">Localization   本地化字典读取</span><br><span class="line">Setting        本地设置存储</span><br><span class="line">Sound          声音播放</span><br><span class="line">ObjectPool     对象池</span><br><span class="line">Fsm            有限状态机</span><br></pre></td></tr></table></figure>
+
+<p>从业务代码的角度看，<code>GameEntry</code> 像是一个统一的服务入口。它让业务模块可以快速访问框架能力，比如打开 UI、加载资源、显示实体、发送事件。</p>
+<p>这种设计的优点是调用简单、规则统一、上手速度快。缺点也很明显：如果项目成员不理解模块边界，就容易把 <code>GameEntry</code> 当成万能入口，导致业务代码到处依赖全局服务。框架提供的是秩序，但秩序能不能被正确使用，仍然取决于项目自身的约束。</p>
+<h2 id="三、从-Procedure-看核心模块如何协作"><a href="#三、从-Procedure-看核心模块如何协作" class="headerlink" title="三、从 Procedure 看核心模块如何协作"></a>三、从 Procedure 看核心模块如何协作</h2><p>在上面这些模块中，Procedure 很适合作为理解 UnityGameFramework 运行方式的切入点。它并不是普通意义上的“页面跳转”，而是用状态机描述游戏运行阶段。</p>
+<p>游戏从启动到进入关卡，通常不是一步完成的，而是要经过多个阶段：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Launch -&gt; Splash -&gt; Preload -&gt; ChangeScene -&gt; Menu -&gt; Level</span><br></pre></td></tr></table></figure>
+
+<p>每个 Procedure 都有清晰的职责：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Launch       初始化语言、资源变体、基础配置</span><br><span class="line">Splash       展示启动画面或过渡动画</span><br><span class="line">Preload      预加载数据表、字典、字体等基础资源</span><br><span class="line">ChangeScene  统一处理场景加载和卸载</span><br><span class="line">Menu         主菜单流程</span><br><span class="line">Level        游戏关卡流程</span><br></pre></td></tr></table></figure>
+
+<p>这种写法的好处是，启动链路变得可以阅读、可以追踪、可以扩展。</p>
+<p>如果以后要加入版本检查、资源热更新、登录、服务器选择，只需要在现有流程中插入新的 Procedure，而不是把所有逻辑塞进某个 <code>Start</code> 方法里。</p>
+<p>例如，一个更完整的启动流程可能会变成：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Launch</span><br><span class="line">-&gt; CheckVersion</span><br><span class="line">-&gt; UpdateResources</span><br><span class="line">-&gt; Preload</span><br><span class="line">-&gt; Login</span><br><span class="line">-&gt; Menu</span><br><span class="line">-&gt; Level</span><br></pre></td></tr></table></figure>
+
+<p>这就是 Procedure 的价值：它把游戏运行过程从一堆隐式调用，变成了一条明确的状态链。</p>
+<p>当然，Procedure 只是流程骨架。真正让流程运转起来的，是其他模块在不同阶段中的协作。</p>
+<p>Resource 负责统一资源加载，让业务层尽量不直接关心资源来自编辑器目录、AssetBundle，还是后续的热更新包。Entity 负责统一管理游戏对象的生命周期，例如玩家、敌人、子弹、道具、特效和相机等。UI 负责界面加载、分组、打开与关闭，同时也会影响输入锁定、鼠标显示等游戏状态。</p>
+<p>Event 负责模块之间的通信，用事件来减少系统之间的直接引用。例如拾取物品时，物品逻辑不需要直接修改背包界面，而是发送拾取事件，由背包数据和 UI 显示分别响应。DataTable 则负责把角色属性、实体资源名、UI 配置、子弹数据、物品描述等内容从代码中抽离出来，使配置更容易维护。</p>
+<p>简单来说，这些模块的分工可以概括为：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Resource   管资源</span><br><span class="line">Entity     管对象</span><br><span class="line">UI         管界面</span><br><span class="line">Event      管通信</span><br><span class="line">DataTable  管配置</span><br></pre></td></tr></table></figure>
+
+<h2 id="四、以-RE-BA-项目为例看一次框架协作"><a href="#四、以-RE-BA-项目为例看一次框架协作" class="headerlink" title="四、以 RE_BA 项目为例看一次框架协作"></a>四、以 RE_BA 项目为例看一次框架协作</h2><p>在一个 UnityGameFramework 风格的项目中，实际运行流程大致可以这样理解：</p>
+<p>大致流程如下：</p>
+<ol>
+<li><code>Init.unity</code> 启动项目。</li>
+<li><code>GameEntry.Start</code> 初始化框架组件。</li>
+<li>进入 <code>ProcedureLaunch</code>，处理语言、资源变体等基础设置。</li>
+<li>进入 <code>ProcedureSplash</code> 和 <code>ProcedurePreload</code>，加载数据表、字典、字体等基础资源。</li>
+<li>通过 <code>ProcedureChangeScene</code> 切换到 <code>Menu.unity</code> 或 <code>Game.unity</code>。</li>
+<li>进入 <code>ProcedureLevel</code> 后，由 <code>LevelControl</code> 显示玩家、相机和道具。</li>
+<li>玩家输入、FSM、拾取事件、背包数据和 <code>BagForm</code> 在游戏流程中继续协作。</li>
+</ol>
+<p>这里可以看到，框架并不是替代业务逻辑，而是在业务逻辑之外提供了一套运行骨架。</p>
+<p>玩家如何移动、子弹如何命中、背包如何展示，这些仍然是业务代码要解决的问题。但玩家如何被创建、资源如何加载、UI 如何打开、模块如何通信、场景如何切换，这些通用问题都由框架提供了统一路径。</p>
+<p>这也是游戏框架最核心的意义：它不负责让某个玩法变得有趣，但它负责让玩法可以被稳定地添加、组合和维护。</p>
+<h2 id="五、框架带来的好处与代价"><a href="#五、框架带来的好处与代价" class="headerlink" title="五、框架带来的好处与代价"></a>五、框架带来的好处与代价</h2><p>使用游戏框架的好处很明显：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">项目结构更统一</span><br><span class="line">启动流程更清晰</span><br><span class="line">资源加载更可控</span><br><span class="line">模块边界更明确</span><br><span class="line">对象生命周期更稳定</span><br><span class="line">功能扩展更有位置</span><br></pre></td></tr></table></figure>
+
+<p>但框架也会带来代价：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">学习成本更高</span><br><span class="line">调用链更长</span><br><span class="line">调试路径不如直接引用直观</span><br><span class="line">过度依赖全局入口容易形成隐式耦合</span><br><span class="line">事件系统滥用后会变得难以追踪</span><br></pre></td></tr></table></figure>
+
+<p>所以，框架不是越复杂越好。好的框架应该服务于项目规模，而不是让项目迁就框架。</p>
+<p>对于小型原型，直接写 MonoBehaviour 可能更快；对于需要长期维护、多人协作、资源量较大、系统较多的项目，框架的价值才会逐渐显现出来。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>游戏框架不是 Manager 大全，也不是把所有代码包一层名字好看的架构。它真正解决的是项目复杂度增长之后的组织问题。</p>
+<p>以 UnityGameFramework 为例，它将游戏中的通用能力拆分为：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">启动流程交给 Procedure</span><br><span class="line">资源加载交给 Resource</span><br><span class="line">对象生命周期交给 Entity</span><br><span class="line">跨模块通信交给 Event</span><br><span class="line">配置数据交给 DataTable</span><br><span class="line">界面管理交给 UI</span><br><span class="line">本地化交给 Localization</span><br><span class="line">声音播放交给 Sound</span><br></pre></td></tr></table></figure>
+
+<p>这些系统共同构成了一套游戏运行时基础设施。它们让项目不再依赖零散脚本之间的临时连接，而是形成一条可以理解、可以扩展、可以维护的运行秩序。</p>
+<p>框架的价值不在于让代码看起来更复杂，而在于当项目真的变复杂时，仍然能让开发者知道：功能应该放在哪里，数据应该从哪里来，对象应该由谁创建，模块之间应该如何通信。</p>
+<p>这才是游戏框架最重要的意义。</p>
+<p>接下来将对某些模块进行更加详细的介绍，以对UnityGameFramework的精妙之处有更深一步的理解。</p>
+
+    </div>
+    <footer class="article-footer">
+        <a class="article-category-link" href="/categories/Unity/" title="Unity" data-aos="zoom-in">Unity</a>
+
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/Unity/" rel="tag" title="Unity">Unity</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/UnityGameFramework/" rel="tag" title="UnityGameFramework">UnityGameFramework</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/%E6%B8%B8%E6%88%8F%E6%A1%86%E6%9E%B6/" rel="tag" title="游戏框架">游戏框架</a></li></ul>
+
+    </footer>
+  </div>
+    <nav id="article-nav" aria-label="Article navigation" data-aos="fade-up">
+    <div class="article-nav-link-wrap right">
+          <img data-src="https://d-sketon.top/img/_backwebp/bg1.webp" data-sizes="auto" alt="wblog：一个基于 Django 的个人博客与信息管理系统" class="lazyload">
+      <a href="/2026/07/20/wblog-django-personal-blog/" aria-label="后一篇: wblog：一个基于 Django 的个人博客与信息管理系统"  title="后一篇: wblog：一个基于 Django 的个人博客与信息管理系统"></a>
+      <div class="article-nav-caption">后一篇</div>
+      <h3 class="article-nav-title">
+          wblog：一个基于 Django 的个人博客与信息管理系统
+      </h3>
+    </div>
+  </nav>
+
+</article>
+
+
+</section>
+        </div>
+        <footer id="footer" aria-label="Site footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    <div>
+      <span class="icon-copyright"></span>
+        2020-2026
+        <span class="footer-info-sep rotate"></span>
+      SANaoi
+    </div>
+      <div>
+        基于&nbsp;<a href="https://hexo.io/" rel="noopener nofollow noreferrer" target="_blank">Hexo</a>&nbsp;
+        Theme.<a href="https://github.com/D-Sketon/hexo-theme-reimu" rel="noopener nofollow noreferrer" target="_blank">Reimu</a>
+      </div>
+      <div>
+        <span class="icon-brush"></span>
+        23.9k
+        &nbsp;|&nbsp;
+        <span class="icon-coffee"></span>
+        01:31
+      </div>
+      <div>
+        <span class="icon-eye"></span>
+        <span id="busuanzi_container_site_pv">总访问量&nbsp;<span id="busuanzi_value_site_pv"></span></span>
+        &nbsp;|&nbsp;
+        <span class="icon-user"></span>
+        <span id="busuanzi_container_site_uv">总访客量&nbsp;<span id="busuanzi_value_site_uv"></span></span>
+      </div>
+  </div>
+</footer>
+
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav" aria-label="Mobile navigation">
+  <div class="sidebar-wrap">
+        <div class="sidebar-toc-sidebar"><h3 class="toc-title">文章目录</h3>
+<div class="sidebar-toc-wrapper toc-div-class" >
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%B8%B8%E6%88%8F%E6%A1%86%E6%9E%B6"><span class="toc-number">2.</span> <span class="toc-text">什么是游戏框架</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E6%B8%B8%E6%88%8F%E6%A1%86%E6%9E%B6%E8%A7%A3%E5%86%B3%E7%9A%84%E6%A0%B8%E5%BF%83%E9%97%AE%E9%A2%98"><span class="toc-number">3.</span> <span class="toc-text">一、游戏框架解决的核心问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81UnityGameFramework-%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%88%86%E5%B1%82"><span class="toc-number">4.</span> <span class="toc-text">二、UnityGameFramework 的基本分层</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E4%BB%8E-Procedure-%E7%9C%8B%E6%A0%B8%E5%BF%83%E6%A8%A1%E5%9D%97%E5%A6%82%E4%BD%95%E5%8D%8F%E4%BD%9C"><span class="toc-number">5.</span> <span class="toc-text">三、从 Procedure 看核心模块如何协作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E4%BB%A5-RE-BA-%E9%A1%B9%E7%9B%AE%E4%B8%BA%E4%BE%8B%E7%9C%8B%E4%B8%80%E6%AC%A1%E6%A1%86%E6%9E%B6%E5%8D%8F%E4%BD%9C"><span class="toc-number">6.</span> <span class="toc-text">四、以 RE_BA 项目为例看一次框架协作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E6%A1%86%E6%9E%B6%E5%B8%A6%E6%9D%A5%E7%9A%84%E5%A5%BD%E5%A4%84%E4%B8%8E%E4%BB%A3%E4%BB%B7"><span class="toc-number">7.</span> <span class="toc-text">五、框架带来的好处与代价</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">8.</span> <span class="toc-text">总结</span></a></li></ol>
+</div>
+</div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.png" data-sizes="auto" alt="SANaoi" class="lazyload">
+  <div class="sidebar-author-name">SANaoi</div>
+  <div class="sidebar-description"></div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">12</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">3</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">9</div>
+  </div>
+</div>
+<div class="sidebar-social" >
+</div>
+<div class="sidebar-menu">
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/" aria-label="首页"></a>
+          <div class="sidebar-menu-icon icon rotate">
+              &#xe62b;
+          </div>
+        <div class="sidebar-menu-link">首页</div>
+      </div>
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/archives" aria-label="归档"></a>
+          <div class="sidebar-menu-icon icon rotate">
+              &#xe62b;
+          </div>
+        <div class="sidebar-menu-link">归档</div>
+      </div>
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/about" aria-label="关于"></a>
+          <div class="sidebar-menu-icon icon rotate">
+              &#xe62b;
+          </div>
+        <div class="sidebar-menu-link">关于</div>
+      </div>
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/friend" aria-label="友链"></a>
+          <div class="sidebar-menu-icon icon rotate">
+              &#xe62b;
+          </div>
+        <div class="sidebar-menu-link">友链</div>
+      </div>
+</div>
+</div>
+  </div>
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+</nav>
+
+    </div>
+    
+<script src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js" integrity="sha384-3gT&#x2F;vsepWkfz&#x2F;ff7PpWNUeMzeWoH3cDhm&#x2F;A8jM7ouoAK0&#x2F;fP&#x2F;9bcHHR5kHq2nf+e" crossorigin="anonymous"></script>
+
+
+<script src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js" integrity="sha384-J08i8An&#x2F;QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+  
+<script src="/js/aos.js"></script>
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+<script src="/js/pjax_script.js" data-pjax></script>
+
+
+
+
+  <script>
+    var setupFirework = () => {
+      if (!false || !window.matchMedia('(max-width: 768px)').matches) {
+        window.firework && window.firework(JSON.parse('{"excludeElements":["a","button"],"particles":[{"shape":"circle","move":["emit"],"easing":"easeOutExpo","colors":["var(--red-1)","var(--red-2)","var(--red-3)","var(--red-4)"],"number":20,"duration":[1200,1800],"shapeOptions":{"radius":[16,32],"alpha":[0.3,0.5]}},{"shape":"circle","move":["diffuse"],"easing":"easeOutExpo","colors":["var(--red-0)"],"number":1,"duration":[1200,1800],"shapeOptions":{"radius":20,"alpha":[0.2,0.5],"lineWidth":6}}]}'));
+      }
+    }
+  </script>
+  
+<script src="https://npm.webcache.cn/mouse-firework@0.2.0/dist/index.umd.js" integrity="sha384-qi9WggRt19tv8Vc7pCHW3ulMNLwrn515zaLEWZjl1px07vz8+pUoWX8n1rgq282T" crossorigin="anonymous" onload="setupFirework()" defer></script>
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+      
+      
+      <script data-pjax>
+        window.REIMU_POST = {
+          author: "SANaoi",
+          title: "游戏框架：以 UnityGameFramework 为例",
+          url: "https://sanaoi.github.io/2026/07/21/unity-game-framework-architecture/",
+          excerpt: "",
+          description: "",
+          stripContent: "前言UnityGameFramework 是一款开源的 Unity 游戏框架，主要对游戏开发过程中常用的基础模块进行了封装。它在很大程度上规范了开发流程，能够加快项目基础功能的搭建，并提升代码的稳定性和可维护性。 这个框架本身已经足够完善：既有基于它开发的商业游戏，也有许多社区开发者围绕它整理教程和实践经验。因此，它不仅可以作为项目开发中的基础框架，也很适合作为学习游戏框架设计的参考对象。 本文会以笔者目前正在开发的个人项目 RE_BA 为切入点，尝试梳理它的模块构成、运行流程，以及背后的框架搭",
+          date: "Tue Jul 21 2026 00:00:00 GMT+0900",
+          updated: "Tue Jul 21 2026 01:04:35 GMT+0900",
+          cover: "/images/banner.webp",
+        };
+      </script>
+        
+<script src="/js/insert_highlight.js" data-pjax></script>
+
+      
+<script src="/js/tabs.js" data-pjax defer></script>
+
+      <script type="module" data-pjax>
+        (async () => {
+          const PhotoSwipeLightbox = (await safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js", "sha384-DiL6M/gG+wmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF/N6lrZi/")).default;
+          const initPswp = (gallery, children) => {
+            if (_$$(`${gallery} ${children}`).length > 0) {
+              new PhotoSwipeLightbox({
+                gallery,
+                children,
+                pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+              }).init();
+            }
+          }
+          const pswp = () => {
+            initPswp('.article-entry', 'a.article-gallery-item');
+            initPswp('.article-gallery', 'a.article-gallery-item');
+          }
+          pswp();
+        })();
+      </script>
+        
+
+
+  </div>
+</div>
+
+
+  <script>
+    console.log(String.raw`%c 
+ ______     ______     __     __    __     __  __    
+/\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+\ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+ \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+  \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                  
+`,'color: #ff5252;')
+    console.log('%c Theme.Reimu v' + '1.12.5' + ' %c https://github.com/D-Sketon/hexo-theme-reimu ', 'color: white; background: #ff5252; padding:5px 0;', 'padding:4px;border:1px solid #ff5252;')
+  </script>
+  
+
+
+  
+<script src="https://npm.webcache.cn/busuanzi@2.3.0/bsz.pure.mini.js" integrity="sha384-0M75wtSkhjIInv4coYlaJU83+OypaRCIq2SukQVQX04eGTCBXJDuWAbJet56id+S" crossorigin="anonymous" async></script>
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+</script>
+
+
+
+
+  </body>
+  </html>
