@@ -69,6 +69,87 @@
   line-height: 1.3;
 }
 
+.sidebar-social .icon-bilibili::before {
+  content: "B";
+  display: inline-flex;
+  width: 1.35em;
+  height: 1.35em;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid currentColor;
+  border-radius: 6px;
+  font-family: Arial, sans-serif;
+  font-size: 0.72em;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.sidebar-widget {
+  width: 100%;
+}
+
+.sidebar-widget .widget-wrap {
+  overflow: hidden;
+}
+
+.sidebar-widget .widget-title {
+  margin: 0;
+  letter-spacing: 0;
+}
+
+.sidebar-widget .widget ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sidebar-widget .widget li {
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+.sidebar-widget .widget a {
+  color: var(--color-link);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.sidebar-widget .category-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.sidebar-widget .category-list-link {
+  min-width: 0;
+}
+
+.sidebar-widget .category-list-count {
+  flex: 0 0 auto;
+  margin-left: 0;
+  color: var(--grey-7);
+  font-size: 0.9em;
+}
+
+.sidebar-widget .tagcloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.sidebar-widget .tagcloud a {
+  display: inline-flex;
+  max-width: 100%;
+  margin: 0;
+  padding: 4px 8px;
+  border: 1px solid rgba(255, 82, 82, 0.35);
+  border-radius: 999px;
+  background: rgba(255, 82, 82, 0.08);
+  line-height: 1.25;
+  white-space: normal;
+}
+
 @media (max-width: 768px) {
   .post-categories-wrapper {
     display: grid !important;
@@ -117,5 +198,56 @@
     overflow-wrap: anywhere;
     white-space: normal;
     line-height: 1.35;
+  }
+}
+
+@media (max-width: 959px) {
+  #content.sidebar-left,
+  #content.sidebar-right {
+    display: block !important;
+  }
+
+  #content.sidebar-left > #sidebar,
+  #content.sidebar-right > #sidebar {
+    display: none !important;
+  }
+
+  #mobile-nav {
+    max-width: min(280px, 88vw);
+  }
+
+  #mobile-nav .sidebar-wrap {
+    box-sizing: border-box;
+    width: 100%;
+    max-height: none;
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .sidebar-widget .widget-wrap {
+    margin-top: 18px;
+    border-radius: 8px;
+  }
+
+  .sidebar-widget .widget-title {
+    padding: 16px 16px 6px;
+    font-size: 1rem;
+  }
+
+  .sidebar-widget .widget {
+    padding: 6px 16px 16px;
+  }
+
+  .sidebar-widget .widget li {
+    line-height: 1.45;
+    white-space: normal;
+  }
+
+  .sidebar-widget .tagcloud {
+    gap: 6px;
+  }
+
+  .sidebar-widget .tagcloud a {
+    font-size: 12px !important;
   }
 }
