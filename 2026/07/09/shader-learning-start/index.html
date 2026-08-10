@@ -28,7 +28,7 @@
 <meta property="og:image" content="https://sanaoi.github.io/2026/07/09/shader-learning-start/LOD.gif">
 <meta property="og:image" content="https://sanaoi.github.io/2026/07/09/shader-learning-start/MaskDustortTex.gif">
 <meta property="article:published_time" content="2026-07-09T13:35:00.000Z">
-<meta property="article:modified_time" content="2026-07-12T17:06:22.592Z">
+<meta property="article:modified_time" content="2026-08-10T07:37:54.569Z">
 <meta property="article:author" content="SANaoi">
 <meta property="article:tag" content="Shader">
 <meta property="article:tag" content="Unity">
@@ -46,6 +46,7 @@
     
 <link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.2/dist/aos.css" integrity="sha384-GMRP93c6Hkz9JVKGAuRR3nTS7M07RwPgTFenXiosjq2VbVgvdDNcz1g6Mkj8AONa" crossorigin="anonymous">
 
+    <link rel="stylesheet" href="/css/mobile-fixes.css">
 <meta name="generator" content="Hexo 8.1.2"></head>
 
   <body>
@@ -212,7 +213,7 @@
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
-    <div class="sidebar-state-number">3</div>
+    <div class="sidebar-state-number">2</div>
   </div>
   <div class="sidebar-state-tag">
     <div>标签</div>
@@ -222,6 +223,9 @@
 <div class="sidebar-social" >
     <div class="icon-github sidebar-social-icon">
       <a href=https://github.com/SANaoi itemprop="url" target="_blank" aria-label="github" rel="noopener nofollow noreferrer"></a>
+    </div>
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://space.bilibili.com/28296502 itemprop="url" target="_blank" aria-label="bilibili" rel="noopener nofollow noreferrer"></a>
     </div>
 </div>
 <div class="sidebar-menu">
@@ -272,7 +276,7 @@
       <div class="article-date">
   <span class="article-date-link icon-calendar" data-aos="zoom-in">
     <time datetime="2026-07-09T13:35:00.000Z" itemprop="datePublished">2026-07-09</time>
-    <time style="display: none;" id="post-update-time">2026-07-13</time>
+    <time style="display: none;" id="post-update-time">2026-08-10</time>
   </span>
 </div>
 
@@ -300,7 +304,7 @@
 
     </div>
     <footer class="article-footer">
-        <ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Unity-shader/" title="Unity-shader" data-aos="zoom-in">Unity-shader</a></li></ul>
+        <ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Unity/" title="Unity" data-aos="zoom-in">Unity</a></li></ul>
 
         <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/Shader/" rel="tag" title="Shader">Shader</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/Unity/" rel="tag" title="Unity">Unity</a></li></ul>
 
@@ -308,7 +312,7 @@
   </div>
     <nav id="article-nav" aria-label="Article navigation" data-aos="fade-up">
       <div class="article-nav-link-wrap left">
-            <img data-src="/covers/reimu-banner-600w.webp" data-sizes="auto" alt="Shader 学习笔记01：一个基础 Lit Shader" class="lazyload">
+            <img data-src="/covers/reimu-banner.webp" data-sizes="auto" alt="Shader 学习笔记01：一个基础 Lit Shader" class="lazyload">
         <a href="/2026/07/12/shader-basic-lit-shader/" aria-label="前一篇: Shader 学习笔记01：一个基础 Lit Shader" title="前一篇: Shader 学习笔记01：一个基础 Lit Shader"></a>
         <div class="article-nav-caption">前一篇</div>
         <h3 class="article-nav-title">
@@ -316,7 +320,7 @@
         </h3>
       </div>
     <div class="article-nav-link-wrap right">
-          <img data-src="/covers/reimu-banner-600w.webp" data-sizes="auto" alt="测试" class="lazyload">
+          <img data-src="/covers/reimu-banner-800w.webp" data-sizes="auto" alt="测试" class="lazyload">
       <a href="/2024/01/20/test/" aria-label="后一篇: 测试"  title="后一篇: 测试"></a>
       <div class="article-nav-caption">后一篇</div>
       <h3 class="article-nav-title">
@@ -387,7 +391,7 @@
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
-    <div class="sidebar-state-number">3</div>
+    <div class="sidebar-state-number">2</div>
   </div>
   <div class="sidebar-state-tag">
     <div>标签</div>
@@ -397,6 +401,9 @@
 <div class="sidebar-social" >
     <div class="icon-github sidebar-social-icon">
       <a href=https://github.com/SANaoi itemprop="url" target="_blank" aria-label="github" rel="noopener nofollow noreferrer"></a>
+    </div>
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://space.bilibili.com/28296502 itemprop="url" target="_blank" aria-label="bilibili" rel="noopener nofollow noreferrer"></a>
     </div>
 </div>
 <div class="sidebar-menu">
@@ -503,7 +510,7 @@
           description: "",
           stripContent: "前言很多时候，在做游戏项目的过程中慢慢意识到：有些功能如果只靠普通脚本、材质参数或者 UI 组件去堆，会变得很绕，效果也不一定稳定；但如果换成 Shader 的思路，反而可以用更直接、更高效的方式解决。 这也是我开始认真学习 Shader 的主要契机。 目前我的学习方式比较偏实践，对一个效果感兴趣的话就会尝试去实现。 一边阅读 Shader 相关书籍和文章，理解基础概念；拆解别人实现过的效果，尝试在游戏里复现出来，并借助 AI 来解释代码、拆解流程。 虽然还谈不上系统掌握，但已经有了一些阶段性的",
           date: "Thu Jul 09 2026 22:35:00 GMT+0900",
-          updated: "Mon Jul 13 2026 02:06:22 GMT+0900",
+          updated: "Mon Aug 10 2026 16:37:54 GMT+0900",
           cover: "/images/banner.webp",
         };
       </script>

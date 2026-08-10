@@ -27,7 +27,7 @@
 <meta property="og:image" content="https://sanaoi.github.io/2026/07/15/shader-mask-distort-dissolve/MaskDustortNoT.gif">
 <meta property="og:image" content="https://sanaoi.github.io/2026/07/15/shader-mask-distort-dissolve/MaskDustortTex.gif">
 <meta property="article:published_time" content="2026-07-14T15:00:00.000Z">
-<meta property="article:modified_time" content="2026-07-14T16:11:07.368Z">
+<meta property="article:modified_time" content="2026-08-10T07:37:56.403Z">
 <meta property="article:author" content="SANaoi">
 <meta property="article:tag" content="HLSL">
 <meta property="article:tag" content="Shader">
@@ -47,6 +47,7 @@
     
 <link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.2/dist/aos.css" integrity="sha384-GMRP93c6Hkz9JVKGAuRR3nTS7M07RwPgTFenXiosjq2VbVgvdDNcz1g6Mkj8AONa" crossorigin="anonymous">
 
+    <link rel="stylesheet" href="/css/mobile-fixes.css">
 <meta name="generator" content="Hexo 8.1.2"></head>
 
   <body>
@@ -213,7 +214,7 @@
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
-    <div class="sidebar-state-number">3</div>
+    <div class="sidebar-state-number">2</div>
   </div>
   <div class="sidebar-state-tag">
     <div>标签</div>
@@ -223,6 +224,9 @@
 <div class="sidebar-social" >
     <div class="icon-github sidebar-social-icon">
       <a href=https://github.com/SANaoi itemprop="url" target="_blank" aria-label="github" rel="noopener nofollow noreferrer"></a>
+    </div>
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://space.bilibili.com/28296502 itemprop="url" target="_blank" aria-label="bilibili" rel="noopener nofollow noreferrer"></a>
     </div>
 </div>
 <div class="sidebar-menu">
@@ -273,7 +277,7 @@
       <div class="article-date">
   <span class="article-date-link icon-calendar" data-aos="zoom-in">
     <time datetime="2026-07-14T15:00:00.000Z" itemprop="datePublished">2026-07-15</time>
-    <time style="display: none;" id="post-update-time">2026-07-15</time>
+    <time style="display: none;" id="post-update-time">2026-08-10</time>
   </span>
 </div>
 
@@ -418,9 +422,10 @@
 <p>可以看到，边缘过度色彩更加丰富，溶解效果也更明显。</p>
 <h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>这次的 Shader 实现了：</p>
 <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">扭曲：修改主纹理 UV</span><br><span class="line">溶解：用灰度值和阈值裁剪像素</span><br><span class="line">遮罩：控制最终透明度或颜色</span><br><span class="line">边缘颜色：强化溶解边界的视觉表现</span><br></pre></td></tr></table></figure>
+
     </div>
     <footer class="article-footer">
-        <ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Unity-shader/" title="Unity-shader" data-aos="zoom-in">Unity-shader</a></li></ul>
+        <ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Unity/" title="Unity" data-aos="zoom-in">Unity</a></li></ul>
 
         <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/HLSL/" rel="tag" title="HLSL">HLSL</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/Shader/" rel="tag" title="Shader">Shader</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/URP/" rel="tag" title="URP">URP</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/Unity/" rel="tag" title="Unity">Unity</a></li></ul>
 
@@ -428,7 +433,7 @@
   </div>
     <nav id="article-nav" aria-label="Article navigation" data-aos="fade-up">
       <div class="article-nav-link-wrap left">
-            <img data-src="https://d-sketon.top/img/_backwebp/bg1.webp" data-sizes="auto" alt="wblog：一个基于 Django 的个人博客与信息管理系统" class="lazyload">
+            <img data-src="/covers/reimu-banner-600w.webp" data-sizes="auto" alt="wblog：一个基于 Django 的个人博客与信息管理系统" class="lazyload">
         <a href="/2026/07/20/wblog-django-personal-blog/" aria-label="前一篇: wblog：一个基于 Django 的个人博客与信息管理系统" title="前一篇: wblog：一个基于 Django 的个人博客与信息管理系统"></a>
         <div class="article-nav-caption">前一篇</div>
         <h3 class="article-nav-title">
@@ -436,7 +441,7 @@
         </h3>
       </div>
     <div class="article-nav-link-wrap right">
-          <img data-src="/covers/reimu-banner.webp" data-sizes="auto" alt="Shader 学习笔记01：一个基础 Lit Shader" class="lazyload">
+          <img data-src="https://d-sketon.top/img/_backwebp/bg1.webp" data-sizes="auto" alt="Shader 学习笔记01：一个基础 Lit Shader" class="lazyload">
       <a href="/2026/07/12/shader-basic-lit-shader/" aria-label="后一篇: Shader 学习笔记01：一个基础 Lit Shader"  title="后一篇: Shader 学习笔记01：一个基础 Lit Shader"></a>
       <div class="article-nav-caption">后一篇</div>
       <h3 class="article-nav-title">
@@ -507,7 +512,7 @@
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
-    <div class="sidebar-state-number">3</div>
+    <div class="sidebar-state-number">2</div>
   </div>
   <div class="sidebar-state-tag">
     <div>标签</div>
@@ -517,6 +522,9 @@
 <div class="sidebar-social" >
     <div class="icon-github sidebar-social-icon">
       <a href=https://github.com/SANaoi itemprop="url" target="_blank" aria-label="github" rel="noopener nofollow noreferrer"></a>
+    </div>
+    <div class="icon-bilibili sidebar-social-icon">
+      <a href=https://space.bilibili.com/28296502 itemprop="url" target="_blank" aria-label="bilibili" rel="noopener nofollow noreferrer"></a>
     </div>
 </div>
 <div class="sidebar-menu">
@@ -623,7 +631,7 @@
           description: "",
           stripContent: "目标图形渲染中除了模仿现实世界的效果外，更多时候是为了实现一些特效，或者说是为了让画面更好看。常见的特效有遮罩、扭曲、溶解等，这些效果在游戏中经常会用到。 本文用一个 URP HLSL Shader 来实现一个“纹理扭曲溶解”效果。它主要包含三个部分：  遮罩：控制纹理的显示范围。 扭曲：通过噪声扰动主纹理 UV。 溶解：通过灰度图和阈值控制像素是否显示。  思路分析当对图形渲染的理解不断加深，就越意识到 Shader 能实现很多酷炫的效果，但基本思路都是类似的：控制顶点的位置，控制纹理的采样，",
           date: "Wed Jul 15 2026 00:00:00 GMT+0900",
-          updated: "Wed Jul 15 2026 01:11:07 GMT+0900",
+          updated: "Mon Aug 10 2026 16:37:56 GMT+0900",
           cover: "/images/banner.webp",
         };
       </script>

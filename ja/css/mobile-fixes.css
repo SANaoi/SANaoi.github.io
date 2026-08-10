@@ -1,0 +1,50 @@
+@media (max-width: 768px) {
+  .post-categories-wrapper {
+    display: grid !important;
+    grid-template-columns: 1fr;
+    gap: 16px !important;
+    margin-bottom: 20px !important;
+  }
+
+  .post-categories-wrap {
+    width: 100% !important;
+    min-width: 0;
+    height: 140px !important;
+    flex: none !important;
+  }
+
+  .post-categories-cover h2 {
+    max-width: calc(100% - 32px);
+    font-size: 1.35rem;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+    text-align: center;
+  }
+
+  .post-categories-cover h3 {
+    max-width: calc(100% - 32px);
+    font-size: 0.95rem;
+    line-height: 1.3;
+    text-align: center;
+  }
+
+  .category-wrap {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+    gap: 8px;
+  }
+
+  .archives-category-list-item {
+    max-width: 100%;
+    box-sizing: border-box;
+    margin: 4px;
+    padding: 8px 12px !important;
+  }
+
+  .archives-category-list-link {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    white-space: normal;
+    line-height: 1.35;
+  }
+}
