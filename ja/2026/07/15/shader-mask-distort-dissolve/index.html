@@ -47,6 +47,7 @@
     
 <link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.2/dist/aos.css" integrity="sha384-GMRP93c6Hkz9JVKGAuRR3nTS7M07RwPgTFenXiosjq2VbVgvdDNcz1g6Mkj8AONa" crossorigin="anonymous">
 
+    <link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="https://npm.webcache.cn/aplayer@1.10.1/dist/APlayer.min.css" integrity="sha384-tLMkTWh2pfXNWGFlUS0w1TFtRG5xZ9lPWFOooj+vDDLIL+xBGQU/voDBY5XE2lVh" crossorigin="anonymous">
     <link rel="stylesheet" href="/css/mobile-fixes.css">
 <meta name="generator" content="Hexo 8.1.2"></head>
 
@@ -195,6 +196,22 @@
         <div id="content" aria-label="Page content"  class="sidebar-right" >
           <aside id="sidebar" aria-label="Sidebar">
   <div class="sidebar-wrapper-container sticky">
+      <meting-js
+        theme="var(--color-link)"
+        id="18408314296"
+        server="netease"
+        type="playlist"
+        
+        
+        autoplay="false"
+        loop="all"
+        order="list"
+        
+        volume="0.7"
+        mutex="true"
+        list-folded="false"
+        
+      ></meting-js>
   <div class="sidebar-wrapper">
     <div class="sidebar-wrap" data-aos="fade-up">
           <div class="sidebar-toc-sidebar"><h3 class="toc-title">見出し</h3>
@@ -438,7 +455,7 @@
         </h3>
       </div>
     <div class="article-nav-link-wrap right">
-          <img data-src="/covers/blue-archive-kivotos-starry-sky.png" data-sizes="auto" alt="Shader 学習メモ01：基礎的な Lit Shader" class="lazyload">
+          <img data-src="/covers/blue-archive-classroom-monitor.png" data-sizes="auto" alt="Shader 学習メモ01：基礎的な Lit Shader" class="lazyload">
       <a href="/ja/2026/07/12/shader-basic-lit-shader/" aria-label="次の記事: Shader 学習メモ01：基礎的な Lit Shader"  title="次の記事: Shader 学習メモ01：基礎的な Lit Shader"></a>
       <div class="article-nav-caption">次の記事</div>
       <h3 class="article-nav-title">
@@ -611,6 +628,12 @@
 <script src="https://npm.webcache.cn/mouse-firework@0.2.0/dist/index.umd.js" integrity="sha384-qi9WggRt19tv8Vc7pCHW3ulMNLwrn515zaLEWZjl1px07vz8+pUoWX8n1rgq282T" crossorigin="anonymous" onload="setupFirework()" defer></script>
 
 
+  
+<script src="https://npm.webcache.cn/theme-shokax-pjax@0.0.3/dist/index.umd.js" integrity="sha384-xneY1WY8hOfUzswrE4CrYq35N4BdVcxqxwHPr9zawE&#x2F;jMSCxD+jAPU55x&#x2F;jj3wlf" crossorigin="anonymous"></script>
+
+  
+<script src="/js/pjax.js"></script>
+
 
 
 
@@ -692,6 +715,30 @@
   }
 </script>
 
+
+    <script>
+      var setupAPlayer = () => {
+        if (!false || !window.matchMedia('(max-width: 768px)').matches) {
+          if (window.matchMedia('(max-width: 959px)').matches) {
+            const meting = _$('meting-js');
+            if (meting) {
+              meting.setAttribute('fixed', 'true');
+              const aside = meting.parentNode?.parentNode;
+              if (aside?.tagName === 'ASIDE') {
+                meting.parentNode.removeChild(meting);
+                document.body.appendChild(meting);
+              }
+            }
+          }
+        }
+      };
+        var meting_api = "https://api.injahow.cn/meting/?server=:server&type=:type&id=:id&auth=:auth&r=:r";
+    </script>
+  
+<script src="https://npm.webcache.cn/aplayer@1.10.1/dist/APlayer.min.js" integrity="sha384-gdGYZwHnfJM54evoZhpO0s6ZF5BQiybkiyW7VXr+h5UfruuRL&#x2F;aORyw+5+HZoU6e" crossorigin="anonymous" defer onload="setupAPlayer()"></script>
+
+    
+<script src="https://npm.webcache.cn/meting@2.0.1/dist/Meting.min.js" integrity="sha384-ASVlpKF80A22OXTK3tfEjZm1EL6uFMKIC4p8+0maanw1S&#x2F;IyB+Y4JG+ZDU7GpKE8" crossorigin="anonymous" defer></script>
 
 
 

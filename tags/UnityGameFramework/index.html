@@ -38,6 +38,7 @@
     
 <link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.2/dist/aos.css" integrity="sha384-GMRP93c6Hkz9JVKGAuRR3nTS7M07RwPgTFenXiosjq2VbVgvdDNcz1g6Mkj8AONa" crossorigin="anonymous">
 
+    <link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="https://npm.webcache.cn/aplayer@1.10.1/dist/APlayer.min.css" integrity="sha384-tLMkTWh2pfXNWGFlUS0w1TFtRG5xZ9lPWFOooj+vDDLIL+xBGQU/voDBY5XE2lVh" crossorigin="anonymous">
     <link rel="stylesheet" href="/css/mobile-fixes.css">
 <meta name="generator" content="Hexo 8.1.2"></head>
 
@@ -187,6 +188,22 @@
         <div id="content" aria-label="Page content"  class="sidebar-right" >
           <aside id="sidebar" aria-label="Sidebar">
   <div class="sidebar-wrapper-container ">
+      <meting-js
+        theme="var(--color-link)"
+        id="18408314296"
+        server="netease"
+        type="playlist"
+        
+        
+        autoplay="false"
+        loop="all"
+        order="list"
+        
+        volume="0.7"
+        mutex="true"
+        list-folded="false"
+        
+      ></meting-js>
   <div class="sidebar-wrapper">
     <div class="sidebar-wrap" data-aos="fade-up">
         <div class="sidebar-author">
@@ -303,28 +320,28 @@
       <a class="archives-tag-list-link" href="/tags/Unity/">Unity</a>
     </div>
     <div class="archives-tag-list-item" data-aos="zoom-in">
-      <a class="archives-tag-list-link" href="/tags/%E6%B8%B8%E6%88%8F%E6%A1%86%E6%9E%B6/">游戏框架</a>
+      <a class="archives-tag-list-link" href="/tags/%E3%82%B2%E3%83%BC%E3%83%A0%E3%83%95%E3%83%AC%E3%83%BC%E3%83%A0%E3%83%AF%E3%83%BC%E3%82%AF/">ゲームフレームワーク</a>
     </div>
     <div class="archives-tag-list-item" data-aos="zoom-in">
       <a class="archives-tag-list-link" href="/tags/UnityGameFramework/">UnityGameFramework</a>
     </div>
     <div class="archives-tag-list-item" data-aos="zoom-in">
-      <a class="archives-tag-list-link" href="/tags/%E3%82%B2%E3%83%BC%E3%83%A0%E3%83%95%E3%83%AC%E3%83%BC%E3%83%A0%E3%83%AF%E3%83%BC%E3%82%AF/">ゲームフレームワーク</a>
-    </div>
-    <div class="archives-tag-list-item" data-aos="zoom-in">
-      <a class="archives-tag-list-link" href="/tags/Django/">Django</a>
-    </div>
-    <div class="archives-tag-list-item" data-aos="zoom-in">
-      <a class="archives-tag-list-link" href="/tags/Python/">Python</a>
-    </div>
-    <div class="archives-tag-list-item" data-aos="zoom-in">
       <a class="archives-tag-list-link" href="/tags/Shader/">Shader</a>
+    </div>
+    <div class="archives-tag-list-item" data-aos="zoom-in">
+      <a class="archives-tag-list-link" href="/tags/%E6%B8%B8%E6%88%8F%E6%A1%86%E6%9E%B6/">游戏框架</a>
     </div>
     <div class="archives-tag-list-item" data-aos="zoom-in">
       <a class="archives-tag-list-link" href="/tags/URP/">URP</a>
     </div>
     <div class="archives-tag-list-item" data-aos="zoom-in">
       <a class="archives-tag-list-link" href="/tags/HLSL/">HLSL</a>
+    </div>
+    <div class="archives-tag-list-item" data-aos="zoom-in">
+      <a class="archives-tag-list-link" href="/tags/Django/">Django</a>
+    </div>
+    <div class="archives-tag-list-item" data-aos="zoom-in">
+      <a class="archives-tag-list-link" href="/tags/Python/">Python</a>
     </div>
 </div>
 <div class="category-wrap">
@@ -505,6 +522,12 @@
 <script src="https://npm.webcache.cn/mouse-firework@0.2.0/dist/index.umd.js" integrity="sha384-qi9WggRt19tv8Vc7pCHW3ulMNLwrn515zaLEWZjl1px07vz8+pUoWX8n1rgq282T" crossorigin="anonymous" onload="setupFirework()" defer></script>
 
 
+  
+<script src="https://npm.webcache.cn/theme-shokax-pjax@0.0.3/dist/index.umd.js" integrity="sha384-xneY1WY8hOfUzswrE4CrYq35N4BdVcxqxwHPr9zawE&#x2F;jMSCxD+jAPU55x&#x2F;jj3wlf" crossorigin="anonymous"></script>
+
+  
+<script src="/js/pjax.js"></script>
+
 
 
 
@@ -543,6 +566,30 @@
   }
 </script>
 
+
+    <script>
+      var setupAPlayer = () => {
+        if (!false || !window.matchMedia('(max-width: 768px)').matches) {
+          if (window.matchMedia('(max-width: 959px)').matches) {
+            const meting = _$('meting-js');
+            if (meting) {
+              meting.setAttribute('fixed', 'true');
+              const aside = meting.parentNode?.parentNode;
+              if (aside?.tagName === 'ASIDE') {
+                meting.parentNode.removeChild(meting);
+                document.body.appendChild(meting);
+              }
+            }
+          }
+        }
+      };
+        var meting_api = "https://api.injahow.cn/meting/?server=:server&type=:type&id=:id&auth=:auth&r=:r";
+    </script>
+  
+<script src="https://npm.webcache.cn/aplayer@1.10.1/dist/APlayer.min.js" integrity="sha384-gdGYZwHnfJM54evoZhpO0s6ZF5BQiybkiyW7VXr+h5UfruuRL&#x2F;aORyw+5+HZoU6e" crossorigin="anonymous" defer onload="setupAPlayer()"></script>
+
+    
+<script src="https://npm.webcache.cn/meting@2.0.1/dist/Meting.min.js" integrity="sha384-ASVlpKF80A22OXTK3tfEjZm1EL6uFMKIC4p8+0maanw1S&#x2F;IyB+Y4JG+ZDU7GpKE8" crossorigin="anonymous" defer></script>
 
 
 
